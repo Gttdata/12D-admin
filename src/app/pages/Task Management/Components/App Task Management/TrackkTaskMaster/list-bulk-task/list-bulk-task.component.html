@@ -1,0 +1,739 @@
+<div>
+  <div nz-row>
+    <div nz-col nzXs="12">
+      <div class="formname">{{ formTitle }}</div>
+    </div>
+    <div nz-col nzSpan="12" style="text-align: right">
+      <button
+        *ngIf="ticketId != null && ticketId != undefined && ticketId != 0"
+        nz-button
+        nzType="primary"
+        (click)="Visible(1)"
+      >
+        Update First Question
+      </button>
+    </div>
+    <div nz-col nzSpan="24">
+      <nz-empty
+        *ngIf="ticketId == null || ticketId == undefined || ticketId == 0"
+        [nzNotFoundImage]="
+          'https://gw.alipayobjects.com/mdn/miniapp_social/afts/img/A*pevERLJC9v0AAAAAAAAAAABjAQAAAQ/original'
+        "
+        [nzNotFoundContent]="contentTpl"
+        [nzNotFoundFooter]="footerTpl"
+      >
+        <ng-template #contentTpl>
+          <span>No Question Found</span>
+        </ng-template>
+        <ng-template #footerTpl>
+          <button nz-button nzType="primary" (click)="Visible(1)">
+            Add First Question
+          </button>
+        </ng-template>
+      </nz-empty>
+      <div
+        *ngIf="ticketId != null && ticketId != undefined && ticketId != 0"
+        style="margin-top: 5px"
+      >
+        <div nz-row>
+          <div nz-col nzSpan="24">
+            <div class="sc">
+              <nz-tree
+                [nzData]="nodes"
+                [nzTreeTemplate]="nzTreeTemplate"
+                (nzExpandChange)="nzEvent($event)"
+              >
+              </nz-tree>
+              <!-- <label>{{ nodes | json }}</label> -->
+              <ng-template #nzTreeTemplate let-node>
+                <span class="custom-node">
+                
+
+
+                  <span *ngIf="node.title[0] == 'Q'">
+                    <span
+                      class="folder-name"
+                      style="color: #ff5d74; font-weight: bold; font-size: 15px"
+                      (click)="editOption(node.key)"
+                      >{{ node.title }}</span
+                    >
+                    <span
+                      class="file-desc"
+                      *ngIf="node.origin['islast'] == 'No'"
+                      (click)="add2($event, 'O', node)"
+                    >
+                      + Add Options</span
+                    >
+                    <!-- <span
+                      class="file-desc"
+                      *ngIf="node.origin['islast'] == 'Yes'"
+                      (click)="mapFaq2(node)"
+                    >
+                      +Map FAQ</span
+                    > -->
+                  </span>
+                  <span *ngIf="node.title[0] == 'O'">
+                    <span
+                      class="file-name"
+                      style="
+                        color: #0097d3;
+                        font-weight: bold;
+                        font-size: 12px;
+                        cursor: pointer;
+                      "
+                      (click)="editOption(node.key)"
+                      >{{ node.title }}</span
+                    >
+                    <span
+                      class="file-desc"
+                      *ngIf="node.origin['islast'] == 'No'"
+                      (click)="add2($event, 'Q', node)"
+                    >
+                      + Add Questions</span
+                    >
+                    <!-- <span
+                      class="file-desc"
+                      *ngIf="node.origin['islast'] == 'Yes'"
+                      (click)="mapFaq2(node)"
+                    >
+                      + Map FAQ</span
+                    > -->
+                  </span>
+                </span>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drawers -->
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="900"
+    [nzVisible]="addOptionVisible"
+    [nzTitle]="formTitleHead"
+    (nzOnClose)="drawerClose1()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <div>
+        <div nz-row nzType="flex" *ngIf="type == 'O'">
+          <div
+            nz-col
+            nzXs="24"
+            nzSm="24"
+            nzMd="4"
+            nzLg="6"
+            nzXl="24"
+            style="display: flex; justify-content: flex-end"
+          >
+            <form nz-form [nzLayout]="'inline'">
+              <nz-form-item *ngIf="ticketQuestion.length == 0">
+                <button
+                  nz-button
+                  nzType="primary"
+                  (click)="add()"
+                  nzJustify="end"
+                >
+                  <i nz-icon nzType="plus"></i>Add New Question
+                </button>
+              </nz-form-item>
+            </form>
+          </div>
+        </div>
+
+        <!-- <div nz-row *ngIf="type == 'O'">
+          <div nz-col nzSpan="24">
+            <nz-table
+              class="my-scroll no-wrap1"
+              nzBordered
+              #ticketTable
+              [nzShowSizeChanger]="false"
+              [nzShowPagination]="false"
+              [nzData]="ticketQuestion"
+              [nzLoading]="loadingRecords"
+              [nzTotal]="totalRecords"
+            >
+              <thead>
+                <tr>
+                  <th>action</th>
+                  <th *ngFor="let column of columns">{{ column[1] }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data2 of ticketTable.data">
+                  <td>
+                    <a (click)="edit(data2)">Edit</a>
+                  </td>
+                  <td *ngFor="let column of columns">{{ data2[column[0]] }}</td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div> -->
+
+        <div nz-row nzType="flex" *ngIf="type == 'Q'">
+          <div
+            nz-col
+            nzXs="24"
+            nzSm="24"
+            nzMd="4"
+            nzLg="6"
+            nzXl="24"
+            style="display: flex; justify-content: flex-end"
+          >
+            <form nz-form [nzLayout]="'inline'">
+              <nz-form-item>
+                <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                  <input
+                    type="text"
+                    name="search"
+                    nz-input
+                    placeholder="Search Records"
+                    [(ngModel)]="searchText"
+                  />
+                </nz-input-group>
+                <ng-template #suffixIconButton>
+                  <button
+                    nz-button
+                    nzType="primary"
+                    (click)="loadTicketGroups2(filterQuery)"
+                    nzSearch
+                  >
+                    <i nz-icon nzType="search"></i>
+                  </button>
+                </ng-template>
+              </nz-form-item>
+              <nz-form-item>
+                <button
+                  nz-button
+                  nzType="primary"
+                  (click)="add()"
+                  *ngIf="visibleAdd"
+                  nzJustify="end"
+                >
+                  <i nz-icon nzType="plus"></i>Add New Options
+                </button>
+              </nz-form-item>
+            </form>
+          </div>
+        </div>
+
+        <!-- <div nz-row *ngIf="type == 'Q'">
+          <div nz-col nzSpan="24">
+            <nz-table
+              class="my-scroll no-wrap1"
+              nzBordered
+              #ticketTable1
+              nzShowSizeChanger
+              [nzFrontPagination]="true"
+              [nzData]="ticketGroups"
+              [nzLoading]="loadingRecords"
+              [nzTotal]="totalRecords"
+            >
+              <thead (nzSortChange)="sort($event)" nzSingleSort>
+                <tr>
+                  <th>action</th>
+                  <th>Map FAQ</th>
+                  <th
+                    *ngFor="let column of columns"
+                    nzShowSort
+                    nzSortKey="{{ column[0] }}"
+                  >
+                    {{ column[1] }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of ticketTable1.data">
+                  <td>
+                    <a (click)="edit(data)">Edit</a>
+                  </td>
+                  <td>
+                    <a (click)="mapFaq(data)">Map</a>
+                  </td>
+                  <td *ngFor="let column of columns">{{ data[column[0]] }}</td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div> -->
+      </div>
+    </ng-container>
+  </nz-drawer>
+
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="800"
+    [nzVisible]="addFirstQuestion"
+    [nzTitle]="Title"
+    (nzOnClose)="drawerClose()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <div>
+        <form nz-form #accountMasterPage="ngForm">
+          <nz-spin [nzSpinning]="isSpinning">
+            <div nz-row>
+              <div nz-col nzSpan="11">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon
+                    >Parent Name
+                  </nz-form-label>
+                  <nz-input-group>
+                    <nz-select
+                      name="parent_id23"
+                      [nzLoading]="parentLoading"
+                      nzShowSearch
+                      style="width: 100%"
+                      nzPlaceHolder="Select parent Name"
+                      disabled
+                      [(ngModel)]="ticketData.PARENT_ID"
+                    >
+                      <nz-option
+                        *ngIf="ticketData.PARENT_ID == 0"
+                        [nzValue]="newId"
+                        [nzLabel]="name1"
+                      ></nz-option>
+                      <nz-option
+                        *ngFor="let val of parentTicketGroups"
+                        [nzValue]="val.ID"
+                        [nzLabel]="val.VALUE"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </nz-input-group>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="1"></div>
+
+              <div nz-col nzSpan="6" *ngIf="ticketData.IS_LAST">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon
+                    >Task Assign Type
+                  </nz-form-label>
+                  <nz-input-group>
+                    <nz-select
+                      nz-input
+                      name="priorityfdf"
+                      nzPlaceHolder="Select Task Type"
+                      style="width: 100%"
+                      [(ngModel)]="ticketData.TASK_ASSIGN_TYPE"
+                      nzAllowClear
+                    >
+                      <nz-option nzValue="C" nzLabel="Custom"> </nz-option>
+                      <nz-option nzValue="D" nzLabel="Daily"> </nz-option>
+                    </nz-select>
+                  </nz-input-group>
+                </nz-form-item>
+              </div>
+
+              <div
+                nz-col
+                nzSpan="6"
+                *ngIf="ticketData.TASK_ASSIGN_TYPE == 'C' && ticketData.IS_LAST"
+              >
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon
+                    >Task Assign Days
+                  </nz-form-label>
+                  <nz-form-control nzErrorTip="Please Enter Valid Days">
+                    <nz-input-group style="width: 100%" nzAddOnAfter="Days">
+                      <input
+                        nz-input
+                        autocomplete="off"
+                        (keypress)="commonFunction.omit($event)"
+                        [(ngModel)]="ticketData.TASK_ASSIGN_DAYS"
+                        name="DAYS"
+                        type="text"
+                        maxlength="9"
+                        placeHolder="Enter Days"
+                        required
+                      />
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row>
+              <div nz-col nzSpan="4" *ngIf="ticketData.TYPE == 'O'">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>Seq. No.</nz-form-label>
+                  <nz-form-control nzErrorTip="Input is required">
+                    <input
+                      nz-input
+                      name="seq_no"
+                      type="number"
+                      [(ngModel)]="ticketData.SEQ_NO"
+                      required
+                      disabled
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="3" *ngIf="ticketData.TYPE == 'O'">
+                <nz-form-item>
+                  <nz-form-label nzNoColon>Is Last?</nz-form-label>
+                  <nz-form-control>
+                    <nz-switch
+                      name="isLast"
+                      [(ngModel)]="ticketData.IS_LAST"
+                    ></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="3">
+                <nz-form-item>
+                  <nz-form-label nzNoColon>Status</nz-form-label>
+                  <nz-form-control>
+                    <nz-switch
+                      name="status"
+                      [(ngModel)]="ticketData.STATUS"
+                    ></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="2"></div>
+              <div
+                nz-col
+                nz-col
+                nzXs="24"
+                nzSm="24"
+                nzMd="24"
+                nzLg="24"
+                nzXl="12"
+                *ngIf="ticketData.IS_LAST"
+              >
+                <nz-form-item>
+                  <nz-form-label nzNoColon>Upload Image</nz-form-label>
+                  <!-- <nz-form-control nzHasFeedback nzErrorTip="Upload Invoice Url"> -->
+                  <div style="text-align: left">
+                    <div
+                      *ngIf="
+                        ticketData.IMAGE_URL == null ||
+                        ticketData.IMAGE_URL == undefined ||
+                        ticketData.IMAGE_URL == ''
+                      "
+                      style="color: blue"
+                    >
+                      <button
+                        nz-button
+                        style="
+                          height: 28px;
+                          padding: 0px 7px;
+                          font-size: 12px;
+                          width: 152px;
+                        "
+                        (click)="fileInput.click()"
+                      >
+                        <span
+                          style="width: 138px"
+                          nz-icon
+                          nzType="upload"
+                          nzTheme="outline"
+                        ></span>
+                        <input
+                          #fileInput
+                          name="invoice"
+                          accept=".jpg, .jpeg, .png"
+                          (change)="onFileSelected($event)"
+                          type="file"
+                          style="display: none"
+                        />
+                      </button>
+                    </div>
+                    <span
+                      *ngIf="
+                        ticketData.IMAGE_URL !== null &&
+                        ticketData.IMAGE_URL !== undefined &&
+                        ticketData.IMAGE_URL !== ''
+                      "
+                    >
+                      <div
+                        *ngIf="
+                          progressBarProfilePhoto && percentProfilePhoto < 100
+                        "
+                      >
+                        <nz-progress
+                          [style.width]="percentProfilePhoto + '%'"
+                          [nzPercent]="percentProfilePhoto"
+                          >{{ percentProfilePhoto }}%</nz-progress
+                        >
+                      </div>
+                    </span>
+                    <br />
+
+                    <div
+                      *ngIf="
+                        ticketData.IMAGE_URL !== null &&
+                        ticketData.IMAGE_URL !== undefined &&
+                        ticketData.IMAGE_URL !== ''
+                      "
+                      style="
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                      "
+                    >
+                      <!-- First row -->
+                      <div style="display: flex; justify-content: center">
+                        <div
+                          *ngIf="
+                            ticketData.IMAGE_URL !== null &&
+                            ticketData.IMAGE_URL !== undefined &&
+                            ticketData.IMAGE_URL !== ''
+                          "
+                        >
+                          <!-- <img width="70%" nz-image style="    width: 246px;
+                        height: 140px;margin-left: 16px;margin-bottom: 10px;"
+                          src="{{ imgurl }}classWiseTask/{{ ticketData.IMAGE_URL }}" /> -->
+
+                          <img
+                            class="img"
+                            nz-image
+                            style="border-radius: 5px"
+                            width="100%"
+                            height="100%"
+                            [nzSrc]="taskurl"
+                            alt="No Image Found"
+                          />
+                        </div>
+                      </div>
+
+                      <!-- Second row -->
+                      <div
+                        style="
+                          display: flex;
+                          flex-direction: row;
+                          align-items: center;
+                        "
+                      >
+                        <div style="margin-top: 10px">
+                          <!-- Adjust margin-top as needed -->
+                          {{ ticketData.IMAGE_URL }}
+                        </div>
+                        <span
+                          style="
+                            cursor: pointer;
+                            margin-top: 12px;
+                            padding-left: 7px;
+                          "
+                          nz-popconfirm
+                          nzPopconfirmTitle="Are you sure want delete?"
+                          (nzOnConfirm)="deleteConfirm(ticketData)"
+                          (nzOnCancel)="deleteCancel()"
+                          (nzOnCancel)="deleteCancel()"
+                          nzPopconfirmPlacement="top"
+                        >
+                          <span
+                            nz-icon
+                            nzType="delete"
+                            nzTheme="twotone"
+                            nz-tooltip
+                            nzTooltipTitle="Delete"
+                          >
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row>
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>Value</nz-form-label>
+                  <nz-form-control nzErrorTip="Please Enter Valid Value">
+                    <textarea
+                      nz-input
+                      rows="2"
+                      name="value"
+                      maxlength="128"
+                      [(ngModel)]="ticketData.VALUE"
+                      required
+                      placeholder="Enter Value"
+                    ></textarea>
+                  </nz-form-control>
+                  <small *ngIf="ticketData.VALUE != undefined"
+                    >{{ ticketData.VALUE.length }}/128</small
+                  >
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row *ngIf="ticketData.TYPE == 'O' && ticketData.IS_LAST">
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label nzNoColon>Description</nz-form-label>
+                  <nz-form-control>
+                    <textarea
+                      nz-input
+                      rows="2"
+                      name="desc"
+                      [(ngModel)]="ticketData.DESCRIPTION"
+                      maxlength="128"
+                      placeholder="Enter Description"
+                    ></textarea>
+                  </nz-form-control>
+                  <small *ngIf="ticketData.DESCRIPTION != undefined"
+                    >{{ ticketData.DESCRIPTION.length }}/128</small
+                  >
+                </nz-form-item>
+              </div>
+            </div>
+          </nz-spin>
+        </form>
+        <div class="footer">
+          <button
+            type="button"
+            nz-button
+            (click)="close(accountMasterPage)"
+            class="ant-btn"
+            style="margin-right: 8px"
+          >
+            <span>Cancel</span>
+          </button>
+          <button
+            type="button"
+            class="ant-btn ant-btn-primary"
+            *ngIf="!ticketData.ID"
+            nz-button
+            (click)="save(false, accountMasterPage)"
+          >
+            <span>Save & Close</span>
+          </button>
+
+          <button
+            type="button"
+            class="ant-btn ant-btn-primary"
+            nz-button
+            [nzLoading]="isSpinning"
+            *ngIf="ticketData.ID"
+            (click)="save(false, accountMasterPage)"
+          >
+            <span>Update & close</span>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </nz-drawer>
+
+  <!-- <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="900"
+    [nzVisible]="mapFaqVisible"
+    [nzTitle]="'Map FAQs'"
+    (nzOnClose)="drawerClose2()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <div>
+        <div nz-row>
+          <div nz-col nzSpan="24">
+            <div style="font-weight: bold">{{ Question }}</div>
+            <div nz-row>
+              <div nz-col nzSpan="16"></div>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzNoColon>FAQ Head</nz-form-label>
+                  <nz-select
+                    name="FAQHead"
+                    nzShowSearch
+                    style="width: 100%"
+                    [(ngModel)]="FAQHead"
+                    (ngModelChange)="setFilter($event)"
+                  >
+                    <nz-option
+                      *ngFor="let data of faqdataList"
+                      [nzValue]="data.ID"
+                      [nzLabel]="data.NAME"
+                    ></nz-option>
+                  </nz-select>
+                </nz-form-item>
+              </div>
+            </div>
+            <nz-table
+              nzBordered
+              #table2
+              [nzLoading]="loadingRecordsFaqs"
+              [nzDataSource]="faqs"
+              nzShowPagination
+              nzShowSizeChanger
+            >
+              <thead>
+                <tr>
+                  <th><b>Status</b></th>
+                  <th><b>FAQ</b></th>
+                  <th style="width: 70px !important"><b>Seq. No.</b></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of table2.data; let i = index">
+                  <td>
+                    <nz-switch
+                      name="status"
+                      [(ngModel)]="data.IS_SELECTED"
+                    ></nz-switch>
+                  </td>
+                  <td>{{ data.QUESTION }}</td>
+                  <td style="width: 70px !important">
+                    <nz-input-number
+                      name="saq_no{{ i }}"
+                      [(ngModel)]="faqs[i]['SEQ_NO']"
+                      [nzMin]="0"
+                      [nzStep]="1"
+                    ></nz-input-number>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
+        <div class="footer" *ngIf="mapFaqVisible">
+          <button
+            nz-button
+            (click)="closeFaqMap()"
+            class="ant-btn"
+            style="margin-right: 8px"
+          >
+            <span>Cancel</span>
+          </button>
+          <button
+            nz-button
+            nzType="primary"
+            [nzLoading]="isSpinning"
+            (click)="saveMapping()"
+          >
+            <span>Map FAQs</span>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </nz-drawer> -->
+</div>

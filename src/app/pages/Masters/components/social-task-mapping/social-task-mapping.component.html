@@ -1,0 +1,185 @@
+<div nz-row nzType="flex">
+    <div nz-col nzXs="24" nzSm="24" nzMd="20" nzLg="20" nzXl="8">
+        <div class="formname">
+            <b> {{ formTitle }} </b>
+        </div>
+    </div>
+
+    <div nz-col nzXs="24" nzSm="24" nzMd="4" nzLg="6" nzXl="16" style="display: flex; justify-content: flex-end">
+        <form nz-form [nzLayout]="'inline'">
+            <nz-form-item>
+                <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                    <input type="text" name="aboutsearch" (keyup)="keyup($event)" [(ngModel)]="searchText" nz-input
+                        placeholder=" Search Record" />
+                </nz-input-group>
+                <ng-template #suffixIconButton>
+                    <button nz-button nzType="primary" (click)="search(true)" nzSearch>
+                        <i nz-icon nzType="search"></i>
+                    </button>
+                </ng-template>
+            </nz-form-item>
+            <nz-form-item>
+                <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+                    <i nz-icon nzType="plus"></i>Add New Task
+                </button>
+            </nz-form-item>
+        </form>
+    </div>
+</div>
+<br />
+<div nz-row>
+    <div nz-col nzSpan="24">
+        <nz-table class="my-scroll no-wrap1" nzBordered #socialtaskmapping nzShowSizeChanger [nzFrontPagination]="false"
+            [nzData]="dataList" [nzLoading]="loadingRecords" [nzSize]="'small'" [nzScroll]="{ y: '55vh' }"
+            [nzTotal]="totalRecords" [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize"
+            (nzPageIndexChange)="search()" (nzPageSizeChange)="search(true)" (nzQueryParams)="sort($event)">
+            <thead>
+                <tr>
+                    <th nzWidth="20px" style="text-align: center">Action</th>
+
+                    <th nzColumnKey="{{ 'AGE_GROUP_NAME' }}" [nzSortFn]="true" nzWidth="80px"
+                        style="text-align: center">
+                        Age Group 
+                    </th>
+
+                    <th nzColumnKey="{{ 'SOCIAL_TASK_NAME' }}" [nzSortFn]="true" nzWidth="80px"
+                        style="text-align: center">
+                        Social Task 
+                    </th>
+
+
+                    <!-- <th nzColumnKey="{{ 'SEQ_NO' }}" [nzSortFn]="true" nzWidth="25px" style="text-align: center">
+                        Seq. No.
+                    </th> -->
+                    <th nzColumnKey="{{ 'STATUS' }}" [nzSortFn]="true" nzWidth="25px" style="text-align: center">
+                        Status
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of socialtaskmapping.data">
+                    <td style="text-align: center">
+                        <i nz-icon nzType="edit" nz-tooltip nzTooltipTitle="Edit" nzTheme="twotone"
+                            (click)="edit(data)"></i>
+                    </td>
+                    <td style="white-space: pre-line; text-align: left">
+                        {{ data["AGE_GROUP_NAME"] }}
+                    </td>
+                    <td style="white-space: pre-line; text-align: left">
+                        {{ data["SOCIAL_TASK_NAME"] }}
+                    </td>
+
+                    <!-- <td style="text-align: center">{{ data["SEQ_NO"] }}</td> -->
+
+                    <td style="text-align: center">
+                        <i nz-icon *ngIf="data['STATUS']" [nzType]="'check-circle'" [nzTheme]="'twotone'"
+                            [nzTwotoneColor]="'#52c41a'"></i>
+                        <i nz-icon *ngIf="!data['STATUS']" [nzType]="'close-circle'" [nzTheme]="'twotone'"
+                            [nzTwotoneColor]="'#f50'"></i>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+</div>
+<div *ngIf="drawerVisible">
+    <nz-drawer [nzBodyStyle]="{
+          height: 'calc(100% - 55px)',
+          overflow: 'auto',
+          'padding-bottom': '53px'
+        }" [nzClosable]="true" [nzMask]="true" [nzMaskClosable]="false" [nzWidth]="420" [nzVisible]="drawerVisible"
+        [nzTitle]="drawerTitle" (nzOnClose)="drawerClose()" (nzKeyboard)="(true)">
+        <ng-container *nzDrawerContent>
+            <div>
+                <form nz-form #socialtaskpage="ngForm">
+                    <nz-spin [nzSpinning]="isSpinning">
+                        <div nz-row class="custom-form-item">
+
+
+                            <div nz-col nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                                <nz-form-item>
+                                    <nz-form-label nzNoColon> Age Cateogary </nz-form-label>
+                                    <nz-form-control nzHasFeedback nzErrorTip="Please Select Age Cateogary ">
+                                        <nz-select [nzLoading]="agedataload" nzShowSearch nzAllowClear
+                                            nzPlaceHolder="Select Country" name="agecat"
+                                            [(ngModel)]="drawerData.AGE_GROUP_ID" required>
+                                            <nz-option nzValue="India" nzLabel="India"></nz-option>
+
+                                            <!-- <nz-option *ngFor="let report of agedata" [nzValue]="report.ID"
+                                                [nzLabel]="report.NAME">
+                                            </nz-option> -->
+                                        </nz-select>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                            <div nz-col nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                                <nz-form-item>
+                                    <nz-form-label nzNoColon> Social Task </nz-form-label>
+                                    <nz-form-control nzHasFeedback nzErrorTip="Please Select Social Task ">
+                                        <nz-select [nzLoading]="socialdataload" nzShowSearch nzAllowClear
+                                            nzPlaceHolder="Select Country" name="socialtask"
+                                            [(ngModel)]="drawerData.SOCIAL_TASK_ID" required>
+                                            <nz-option nzValue="India" nzLabel="India"></nz-option>
+
+                                            <!-- <nz-option *ngFor="let report of socialdata" [nzValue]="report.ID"
+                                                [nzLabel]="report.NAME">
+                                            </nz-option> -->
+                                        </nz-select>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+
+
+                            <div nz-col nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired nzNoColon> Sequence No. </nz-form-label>
+                                    <nz-form-control nzHasFeedback nzErrorTip=" Please Enter Correct Sequence Number ">
+                                        <input nz-input placeholder="Sequence No." name="unitseq" style="width: 100%"
+                                            minlength="1" maxlength="3" [(ngModel)]="drawerData.SEQ_NO"
+                                            (keypress)="commonFunction.omit($event)" maxlength="5" required disabled/>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+
+                            <div nz-col nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="8">
+                                <nz-form-item>
+                                    <nz-form-label nzNoColon> Status </nz-form-label>
+                                    <nz-form-control>
+                                        <nz-switch name="unitstatus" [(ngModel)]="drawerData.STATUS"
+                                            nzCheckedChildren="Yes" nzUnCheckedChildren="No"></nz-switch>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+
+
+
+                        </div>
+                    </nz-spin>
+                </form>
+
+                <div class="footer">
+                    <button type="button" nz-button (click)="close()" class="ant-btn" style="margin-right: 8px">
+                        <span> Cancel </span>
+                    </button>
+                    <button type="button" class="ant-btn ant-btn-primary" *ngIf="!drawerData.ID" nz-button nz-dropdown
+                        [nzDropdownMenu]="menu" (click)="save(false, socialtaskpage)">
+                        <span> Save & Close</span>
+                    </button>
+                    <nz-dropdown-menu #menu="nzDropdownMenu">
+                        <ul nz-menu>
+                            <li nz-menu-item class="menuc" style="border-radius: 4px; background-color: #40a9ff">
+                                <a style="color: white" (click)="save(true, socialtaskpage)">
+                                    Save & New</a>
+                            </li>
+                        </ul>
+                    </nz-dropdown-menu>
+                    <button type="button" class="ant-btn ant-btn-primary" nz-button [nzLoading]="isSpinning"
+                        *ngIf="drawerData.ID" (click)="save(false, socialtaskpage)">
+                        <span> Update & Close</span>
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+    </nz-drawer>
+</div>

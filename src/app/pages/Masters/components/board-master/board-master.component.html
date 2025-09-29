@@ -1,0 +1,253 @@
+<div nz-row nzType="flex">
+    <div nz-col nzXs="24" nzSm="24" nzMd="20" nzLg="20" nzXl="8">
+      <div class="formname">
+        <b> {{ formTitle }} </b>
+      </div>
+    </div>
+  
+    <div
+      nz-col
+      nzXs="24"
+      nzSm="24"
+      nzMd="4"
+      nzLg="6"
+      nzXl="16"
+      style="display: flex; justify-content: flex-end"
+    >
+      <form nz-form [nzLayout]="'inline'">
+        <nz-form-item>
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+            <input
+              type="text"
+              name="search"
+              nz-input
+              placeholder="Search Records"
+              (keyup)="keyup($event)"
+              [(ngModel)]="searchText"
+            />
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <button nz-button nzType="primary" (click)="search(true)" nzSearch>
+              <i nz-icon nzType="search"></i>
+            </button>
+          </ng-template>
+        </nz-form-item>
+        <nz-form-item>
+          <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+            <i nz-icon nzType="plus"></i>Add New Board 
+          </button>
+        </nz-form-item>
+      </form>
+    </div>
+  </div>
+  <br />
+  <div nz-row>
+    <div nz-col nzSpan="24">
+      <nz-table
+        class="my-scroll no-wrap1"
+        nzBordered
+        #boarddatas
+        nzShowSizeChanger
+        [nzFrontPagination]="false"
+        [nzData]="dataList"
+        [nzLoading]="loadingRecords"
+        nzSize="small"
+        [nzTotal]="totalRecords"
+        [(nzPageIndex)]="pageIndex"
+        [(nzPageSize)]="pageSize"
+        (nzPageIndexChange)="search()"
+        (nzPageSizeChange)="search(true)"
+        (nzQueryParams)="sort($event)"
+        [nzScroll]="screenwidth > 500 ? { y: '55vh' } : { x: '800px', y: '55vh' }"
+      >
+        <thead>
+          <tr>
+            <th nzWidth="20px" nzLeft>Action</th>
+            <th nzWidth="150px" nzColumnKey="{{ 'NAME' }}" [nzSortFn]="true">
+              Board Name
+            </th>
+            <!-- <th
+              nzColumnKey="{{ 'SEQ_NO' }}"
+              [nzSortFn]="true"
+              nzWidth="20px"
+              style="text-align: center"
+            >
+              Seq. No.
+            </th> -->
+            <th nzWidth="20px" nzColumnKey="{{ 'STATUS' }}" [nzSortFn]="true">
+              Status
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of boarddatas.data">
+            <td align="center" nzLeft>
+              <a (click)="edit(data)" nz-tooltip nzTooltipTitle="Edit">
+                <span
+                  nz-icon
+                  nzType="edit"
+                  nzTheme="twotone"
+                  style="font-size: 15px"
+                ></span>
+              </a>
+            </td>
+            <td style="text-align: left;white-space: pre-line;">
+              {{ data["NAME"] }}
+            </td>
+  
+            <!-- <td style="text-align: center">{{ data["SEQ_NO"] }}</td> -->
+  
+            <td align="center">
+              <i
+                nz-icon
+                *ngIf="data['STATUS']"
+                [nzType]="'check-circle'"
+                [nzTheme]="'twotone'"
+                [nzTwotoneColor]="'#52c41a'"
+              ></i>
+              <i
+                nz-icon
+                *ngIf="!data['STATUS']"
+                [nzType]="'close-circle'"
+                [nzTheme]="'twotone'"
+                [nzTwotoneColor]="'#f50'"
+              ></i>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+  <div *ngIf="drawerVisible">
+    <nz-drawer
+      [nzBodyStyle]="{
+        height: 'calc(100% - 55px)',
+        overflow: 'auto',
+        'padding-bottom': '53px'
+      }"
+      [nzClosable]="true"
+      [nzMask]="true"
+      [nzMaskClosable]="false"
+      [nzWidth]="YearWidth"
+      [nzVisible]="drawerVisible"
+      [nzTitle]="drawerTitle"
+      (nzOnClose)="drawerClose()"
+      (nzKeyboard)="(true)"
+    >
+      <ng-container *nzDrawerContent>
+        <div>
+          <form nz-form #boarddata="ngForm">
+            <nz-spin [nzSpinning]="isSpinning">
+              <div nz-row>
+                <div nz-col nzSpan="24">
+                  <nz-form-item class="custom-form-item">
+                    <nz-form-label nzRequired nzNoColon> Board Name </nz-form-label>
+                    <nz-form-control
+                      nzHasFeedback
+                      nzErrorTip="Please Enter Board Name "
+                    >
+                      <input
+                        nz-input
+                        name="name"
+                        placeholder="Enter Board Name"
+                        minlength="1"
+                        [(ngModel)]="drawerData.NAME"
+                        maxlength="128"
+                        required
+                      />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+  
+                <div nz-col nzSpan="12">
+                  <nz-form-item class="custom-form-item">
+                    <nz-form-label nzRequired nzNoColon>
+                      Sequence No.
+                    </nz-form-label>
+                    <nz-form-control
+                      nzHasFeedback
+                      nzErrorTip=" Please Enter Correct Sequence Number "
+                    >
+                      <input
+                        nz-input
+                        placeholder="Sequence No."
+                        name="unitseq"
+                        style="width: 100%"
+                        minlength="1"
+                        [(ngModel)]="drawerData.SEQ_NO"
+                        (keypress)="commonFunction.omit($event)"
+                        maxlength="5"
+                        required
+                        disabled
+                      />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="8" style="margin-left: 6px">
+                  <nz-form-item class="custom-form-item">
+                    <nz-form-label nzNoColon> Status </nz-form-label>
+                    <nz-form-control>
+                      <nz-switch
+                        name="yearstatus"
+                        [(ngModel)]="drawerData.STATUS"
+                        nzCheckedChildren="Active"
+                      nzUnCheckedChildren="InActive"
+                      ></nz-switch>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </nz-spin>
+          </form>
+  
+          <div class="footer">
+            <button
+              type="button"
+              nz-button
+              (click)="close()"
+              class="ant-btn"
+              style="margin-right: 8px"
+            >
+              <span> Cancel </span>
+            </button>
+            <button
+              type="button"
+              class="ant-btn ant-btn-primary"
+              *ngIf="!drawerData.ID"
+              nz-button
+              nz-dropdown
+              [nzDropdownMenu]="menu"
+              [nzLoading]="isSpinning"
+              (click)="save(false, boarddata)"
+            >
+              <span> Save & Close</span>
+            </button>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu>
+                <li
+                  nz-menu-item
+                  class="menuc"
+                  style="border-radius: 4px; background-color: #40a9ff"
+                >
+                  <a style="color: white" (click)="save(true, boarddata)">
+                    Save & New</a
+                  >
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+            <button
+              type="button"
+              class="ant-btn ant-btn-primary"
+              nz-button
+              [nzLoading]="isSpinning"
+              *ngIf="drawerData.ID"
+              (click)="save(false, boarddata)"
+            >
+              <span> Update & Close</span>
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </nz-drawer>
+  </div>
+  

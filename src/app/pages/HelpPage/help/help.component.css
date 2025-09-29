@@ -1,0 +1,26 @@
+.model {
+  min-height: 50% !important;
+  max-height: 50% !important;
+}
+
+.nz-form-item {
+  display: inline-block;
+  margin-bottom: 5px;
+  width: -webkit-fill-available;
+  padding: 0px 10px;
+}
+
+
+.custom-form-item11 nz-form-item{
+    
+  display: inline-block;
+  margin-bottom: 5px;
+  width: -webkit-fill-available;
+  padding: 0px 10px;
+}
+/* nz-form-item{
+  display: inline-block;
+  margin-bottom: 5px;
+  width: -webkit-fill-available;
+  padding: 0px 10px;
+} */

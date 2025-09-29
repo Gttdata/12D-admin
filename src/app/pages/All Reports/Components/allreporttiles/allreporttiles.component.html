@@ -1,0 +1,274 @@
+<div nz-row>
+  <div nz-col nzSpan="2" style="margin-top: -10px">
+    <button
+      *ngIf="(roleId == 2) && this.currentroute.trim() !== 'admindashboard'"
+      nz-button
+      nz-tooltip
+      nzTooltipTitle="Back To Dashboard"
+      nzType="primary"
+      nzShape="circle"
+      (click)="redirectToAdminDashboard()"
+    >
+      <i nz-icon nzType="arrow-left" nzTheme="outline"> </i>
+    </button>
+  </div>
+  <div *ngIf="(roleId == 2)" nz-col nzSpan="21">
+    <div style="margin-top: -5px; margin-left: -10px" class="formname">
+      {{ title }}
+    </div>
+  </div>
+</div>
+<div *ngIf="roleId==6 || roleId==1" nz-row style="overflow: scroll;height: 90vh;padding-bottom: 10px;">
+  <div
+    style="display: block; width: 100%; font-weight: bold; margin: 10px 30px"
+  >
+    ERP Reports
+  </div>
+  <div
+    class="zoom"
+    *ngFor="let menu of erpreports; let d = index"
+    nz-col
+    [nzSpan]="screenWidth > 1500 && roleId == 2 ? 11 : 11"
+    [routerLink]="[menu.link]"
+    style="
+      width: 70%;
+      height: 40px;
+      border-radius: 10px;
+      margin-top: 10px;
+      margin-left: 30px;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+        0 3px 10px 0 rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      align-items: center;
+
+    "
+  >
+    <a style="color: rgba(0, 0, 0, 0.85)">
+      <span nz-icon nzType="file" nzTheme="outline"></span> {{ menu.title }}
+    </a>
+  </div>
+  <div
+    style="
+      display: block;
+      width: 100%;
+      font-weight: bold;
+      margin: 20px 10px 10px 30px;
+    "
+  >
+    User Reports
+  </div>
+  <div
+    class="zoom"
+    *ngFor="let menu of userreports; let d = index"
+    nz-col
+    [nzSpan]="screenWidth > 1500 && roleId == 2 ? 11 : 11"
+    [routerLink]="[menu.link]"
+    style="
+      width: 70%;
+      height: 40px;
+      border-radius: 10px;
+      margin-top: 10px;
+      margin-left: 30px;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+        0 3px 10px 0 rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      align-items: center;
+
+    "
+  >
+    <a style="color: rgba(0, 0, 0, 0.85)">
+      <span nz-icon nzType="file" nzTheme="outline"></span> {{ menu.title }}
+    </a>
+  </div>
+  <div
+    style="
+      display: block;
+      width: 100%;
+      font-weight: bold;
+      margin: 20px 10px 10px 30px;
+    "
+  >
+    Health And Fitness Reports
+  </div>
+  <div
+    class="zoom"
+    *ngFor="let menu of healthandfitnessreports; let d = index"
+    nz-col
+    [nzSpan]="screenWidth > 1500 && roleId == 2 ? 11 : 11"
+    [routerLink]="[menu.link]"
+    style="
+      width: 70%;
+      height: 40px;
+      border-radius: 10px;
+      margin-top: 10px;
+      margin-left: 30px;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+        0 3px 10px 0 rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      align-items: center;
+
+    "
+  >
+    <a style="color: rgba(0, 0, 0, 0.85)">
+      <span nz-icon nzType="file" nzTheme="outline"></span> {{ menu.title }}
+    </a>
+  </div>
+  <div
+    style="
+      display: block;
+      width: 100%;
+      font-weight: bold;
+      margin: 20px 10px 10px 30px;
+    "
+  >
+    Trackbook Reports
+  </div>
+  <div
+    class="zoom"
+    *ngFor="let menu of trackbookreports; let d = index"
+    nz-col
+    [nzSpan]="screenWidth > 1500 && roleId == 2 ? 11 : 11"
+    [routerLink]="[menu.link]"
+    style="
+      width: 70%;
+      height: 40px;
+      border-radius: 10px;
+      margin-top: 10px;
+      margin-left: 30px;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+        0 3px 10px 0 rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      align-items: center;
+    "
+  >
+    <a style="color: rgba(0, 0, 0, 0.85)">
+      <span nz-icon nzType="file" nzTheme="outline"></span> {{ menu.title }}
+    </a>
+  </div>
+</div>
+<div *ngIf="roleId==2" nz-row style="overflow: scroll;height: 90vh;">
+  <!-- <div
+    style="display: block; width: 100%; font-weight: bold; margin: 10px 30px"
+  >
+     Reports
+  </div> -->
+  <div
+    class="zoom"
+    *ngFor="let menu of reports; let d = index"
+    nz-col
+    [nzSpan]="screenWidth > 1500 && roleId == 2 ? 11 : 11"
+    [routerLink]="[menu.link]"
+    style="
+      width: 70%;
+      height: 40px;
+      border-radius: 10px;
+      margin-top: 10px;
+      margin-left: 30px;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+        0 3px 10px 0 rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      align-items: center;
+
+    "
+  >
+    <a style="color: rgba(0, 0, 0, 0.85)">
+      <span nz-icon nzType="file" nzTheme="outline"></span> {{ menu.title }}
+    </a>
+  </div>
+  
+</div>
+<!-- <div style="margin-top: 20px" class="formname">{{ FileTitle }}</div>
+<div nz-row>
+  <div
+    class="zoom"
+    *ngFor="let menu1 of FILEREPORTS; let f = index"
+    nz-col
+    nzSpan="11"
+    style="
+      width: 70%;
+      height: 50px;
+      border-radius: 10px;
+      margin-top: 10px;
+      margin-left: 30px;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+        0 3px 10px 0 rgba(0, 0, 0, 0.2);
+      padding: 10px;
+    "
+  >
+    <a style="color: rgba(0, 0, 0, 0.85)" [routerLink]="[menu1.link]">
+      <span nz-icon nzType="file" nzTheme="outline"></span> {{ menu1.title }}
+    </a>
+  </div>
+</div>
+
+<div style="margin-top: 20px" class="formname">{{ LTCTitle }}</div>
+<div nz-row>
+  <div
+    class="zoom"
+    *ngFor="let menu2 of LTCREPORTS; let f = index"
+    nz-col
+    nzSpan="11"
+    style="
+      width: 70%;
+      height: 50px;
+      border-radius: 10px;
+      margin-top: 10px;
+      margin-left: 30px;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+        0 3px 10px 0 rgba(0, 0, 0, 0.2);
+      padding: 10px;
+    "
+  >
+    <a style="color: rgba(0, 0, 0, 0.85)" [routerLink]="[menu2.link]">
+      <span nz-icon nzType="file" nzTheme="outline"></span> {{ menu2.title }}
+    </a>
+  </div>
+</div>
+
+<div style="margin-top: 20px" class="formname">{{ TourTitle }}</div>
+<div nz-row>
+  <div
+    class="zoom"
+    *ngFor="let menu3 of TOURREPORTS; let f = index"
+    nz-col
+    nzSpan="11"
+    style="
+      width: 70%;
+      height: 50px;
+      border-radius: 10px;
+      margin-top: 10px;
+      margin-left: 30px;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+        0 3px 10px 0 rgba(0, 0, 0, 0.2);
+      padding: 10px;
+    "
+  >
+    <a style="color: rgba(0, 0, 0, 0.85)" [routerLink]="[menu3.link]">
+      <span nz-icon nzType="file" nzTheme="outline"></span> {{ menu3.title }}
+    </a>
+  </div>
+</div>
+
+<div style="margin-top: 20px" class="formname">{{ TransferTitle }}</div>
+<div nz-row>
+  <div
+    class="zoom"
+    *ngFor="let menu4 of TransferREPORTS; let f = index"
+    nz-col
+    nzSpan="11"
+    style="
+      width: 70%;
+      height: 50px;
+      border-radius: 10px;
+      margin-top: 10px;
+      margin-left: 30px;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+        0 3px 10px 0 rgba(0, 0, 0, 0.2);
+      padding: 10px;
+    "
+  >
+    <a style="color: rgba(0, 0, 0, 0.85)" [routerLink]="[menu4.link]">
+      <span nz-icon nzType="file" nzTheme="outline"></span> {{ menu4.title }}
+    </a>
+  </div>
+</div> -->

@@ -1,0 +1,24 @@
+.headerbg {
+    text-align: center;
+  }
+ 
+  .custom-form-item nz-form-item{
+     
+    display: inline-block;
+    margin-bottom: 5px;
+    width: -webkit-fill-available;
+    padding: 0px 10px;
+ }
+
+legend { 
+  display: block;
+  padding-left: 2px;
+  padding-right: 2px;
+  border: none;
+}
+.rowQuestion nz-form-item {
+  display: inline-block;
+  margin-bottom: 5px;
+  width: -webkit-fill-available;
+  padding: 0px 10px;
+}

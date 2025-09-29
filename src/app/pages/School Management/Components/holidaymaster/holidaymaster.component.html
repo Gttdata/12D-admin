@@ -1,0 +1,312 @@
+<div nz-row nzType="flex">
+  <div nz-col nzXs="24" nzSm="24" nzMd="20" nzLg="20" nzXl="12">
+    <div nz-row>
+      <div nz-col nzSpan="2" style="margin-top: -5px">
+        <button
+          *ngIf="roleId == 2 && this.currentroute.trim() !== 'admindashboard'"
+          nz-button
+          nz-tooltip
+          nzTooltipTitle="Back To Dashboard"
+          nzType="primary"
+          nzShape="circle"
+          (click)="redirectToAdminDashboard()"
+        >
+          <i nz-icon nzType="arrow-left" nzTheme="outline"> </i>
+        </button>
+      </div>
+      <div nz-col nzSpan="21" style="margin-left: 10px">
+        <div class="formname">{{ formTitle }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    nz-col
+    nzXs="24"
+    nzSm="24"
+    nzMd="4"
+    nzLg="6"
+    nzXl="12"
+    style="display: flex; justify-content: flex-end"
+  >
+    <form nz-form [nzLayout]="'inline'">
+      <nz-form-item>
+        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+          <input
+            type="text"
+            name="search"
+            (keyup)="keyup($event)"
+            [(ngModel)]="searchText"
+            nz-input
+            placeholder="Search"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconButton>
+          <button nz-button nzType="primary" (click)="search(true)" nzSearch>
+            <i nz-icon nzType="search"></i>
+          </button>
+        </ng-template>
+      </nz-form-item>
+      <nz-form-item>
+        <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+          <i nz-icon nzType="plus"></i>Add Holiday Details
+        </button>
+      </nz-form-item>
+    </form>
+  </div>
+</div>
+<br />
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <nz-table
+      class="my-scroll no-wrap1"
+      nzBordered
+      #postTable
+      nzShowSizeChanger
+      [nzFrontPagination]="false"
+      [nzData]="dataList"
+      [nzLoading]="loadingRecords"
+      [nzSize]="'small'"
+      [nzTotal]="totalRecords"
+      [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize"
+      (nzPageIndexChange)="search()"
+      (nzPageSizeChange)="search(true)"
+      (nzQueryParams)="sort($event)"
+      [nzScroll]="{ x: '800px', y: '55vh' }"
+    >
+      <thead>
+        <tr>
+          <th nzWidth="40px" style="text-align: center"><b>Action</b></th>
+          <th nzWidth="40px" nzLeft>Delete</th>
+          <th
+            nzWidth="40px"
+            nzColumnKey="{{ 'DATE' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Date </b>
+          </th>
+          <th
+            nzWidth="200px"
+            nzColumnKey="{{ 'DESCRIPTION' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Description </b>
+          </th>
+          <!-- <th
+            nzWidth="40px"
+            nzColumnKey="{{ 'STATUS' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b>Status</b>
+          </th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of postTable.data" style="text-align: center">
+          <td align="center" nzLeft>
+            <nz-space>
+              <a
+                *nzSpaceItem
+                (click)="edit(data)"
+                nz-tooltip
+                nzTooltipTitle="Edit"
+              >
+                <span
+                  nz-icon
+                  nzType="edit"
+                  nzTheme="twotone"
+                  style="font-size: 15px"
+                ></span>
+              </a>
+            </nz-space>
+          </td>
+          <td nzLeft style="text-align: center">
+            <a nz-tooltip nzTooltipTitle="Delete">
+              <span
+                nz-icon
+                nz-popconfirm
+                nzPopconfirmTitle="Are you sure You Want to delete data?"
+                nzOkText="Ok"
+                nzCancelText="Cancel"
+                (nzOnConfirm)="OnConfirmDelete(data)"
+                nzType="delete"
+                style="cursor: pointer; color: red; margin-right: 5px"
+                nzTheme="outline"
+              >
+              </span>
+            </a>
+          </td>
+          <td style="white-space: pre-line">
+            {{ data["DATE"] | date : "dd/MMM/yy" }}
+          </td>
+
+          <td style="white-space: pre-line; text-align: left">
+            {{ data["DESCRIPTION"] }}
+          </td>
+
+          <!-- <td>
+            <i
+              nz-icon
+              *ngIf="data['STATUS']"
+              [nzType]="'check-circle'"
+              [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#52c41a'"
+            ></i>
+            <i
+              nz-icon
+              *ngIf="!data['STATUS']"
+              [nzType]="'close-circle'"
+              [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#f50'"
+            ></i>
+          </td> -->
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+<div *ngIf="drawerVisible">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="500"
+    [nzVisible]="drawerVisible"
+    [nzTitle]="drawerTitle"
+    (nzOnClose)="drawerClose()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <div>
+        <form nz-form #websitebannerPage="ngForm">
+          <nz-spin [nzSpinning]="isSpinning">
+            <div nz-row class="custom-form-item">
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="12" nzXl="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon> Date </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzRequired
+                    nzErrorTip="Please Select Date"
+                  >
+                    <nz-date-picker
+                      name="date"
+                      style="width: 100%"
+                      [nzFormat]="commonFunction.dateFormatMMM"
+                      [(ngModel)]="drawerData.DATE"
+                      nzPlaceholder="Select Date"
+                      required
+                    ></nz-date-picker>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon
+                    >Description</nz-form-label
+                  >
+                  <nz-form-control nzHasFeedback nzErrorTip="Enter Description">
+                    <textarea
+                      nz-input
+                      name="description"
+                      [(ngModel)]="drawerData.DESCRIPTION"
+                      required
+                      placeholder="Enter Description..."
+                      rows="3"
+                      autocomplete="off"
+                      maxlength="256"
+                    >
+                    </textarea>
+                    <span
+                      *ngIf="drawerData.DESCRIPTION"
+                      style="color: red; font-size: 11px"
+                    >
+                      {{ drawerData.DESCRIPTION.length }}/256
+                    </span>
+                    <span
+                      *ngIf="!drawerData.DESCRIPTION"
+                      style="color: red; font-size: 11px"
+                    >
+                      0/256
+                    </span>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <!-- <div nz-col nzSpan="10">
+                <nz-form-item>
+                  <nz-form-label nzNoColon>Status</nz-form-label>
+                  <nz-form-control>
+                    <nz-switch
+                      name="is_active"
+                      [(ngModel)]="drawerData.STATUS"
+                      nzCheckedChildren="Yes"
+                      nzUnCheckedChildren="No"
+                    ></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div> -->
+            </div>
+          </nz-spin>
+        </form>
+      </div>
+
+      <div class="footer">
+        <button
+          type="button"
+          nz-button
+          (click)="close()"
+          class="ant-btn"
+          style="margin-right: 8px"
+        >
+          <span>Close</span>
+        </button>
+        <button
+          type="button"
+          class="ant-btn ant-btn-primary"
+          *ngIf="!drawerData.ID"
+          nz-button
+          nz-dropdown
+          [nzDropdownMenu]="menu"
+          [nzLoading]="isSpinning"
+          (click)="save(false, websitebannerPage)"
+        >
+          <span>Save And Close</span>
+        </button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu>
+            <li
+              nz-menu-item
+              class="menuc"
+              style="border-radius: 4px; background-color: #40a9ff"
+            >
+              <a style="color: white" (click)="save(true, websitebannerPage)"
+                >Save And New</a
+              >
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+        <button
+          type="button"
+          class="ant-btn ant-btn-primary"
+          nz-button
+          [nzLoading]="isSpinning"
+          *ngIf="drawerData.ID"
+          (click)="save(false, websitebannerPage)"
+        >
+          <span>Update And Close</span>
+        </button>
+      </div>
+    </ng-container>
+  </nz-drawer>
+</div>

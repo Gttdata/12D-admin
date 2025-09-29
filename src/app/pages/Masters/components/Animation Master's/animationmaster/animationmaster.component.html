@@ -1,0 +1,651 @@
+<div nz-row nzType="flex">
+  <div nz-col nzXs="24" nzSm="24" nzMd="20" nzLg="20" nzXl="8">
+    <div class="formname">
+      <b> {{ formTitle }} </b>
+    </div>
+  </div>
+
+  <div
+    nz-col
+    nzXs="24"
+    nzSm="24"
+    nzMd="4"
+    nzLg="6"
+    nzXl="16"
+    style="display: flex; justify-content: flex-end"
+  >
+    <form nz-form [nzLayout]="'inline'">
+      <nz-form-item>
+        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+          <input
+            type="text"
+            name="aboutsearch"
+            [(ngModel)]="searchText"
+            nz-input
+            placeholder=" Search Record"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconButton>
+          <button nz-button nzType="primary" (click)="search(true)" nzSearch>
+            <i nz-icon nzType="search"></i>
+          </button>
+        </ng-template>
+      </nz-form-item>
+      <nz-form-item>
+        <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+          <i nz-icon nzType="plus"></i>Add New Animation
+        </button>
+      </nz-form-item>
+    </form>
+  </div>
+</div>
+<br />
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <nz-table
+      class="my-scroll no-wrap1"
+      nzBordered
+      #animationmaster
+      nzShowSizeChanger
+      [nzFrontPagination]="false"
+      [nzData]="dataList"
+      [nzLoading]="loadingRecords"
+      [nzSize]="'small'"
+      [nzScroll]="{ x: '900px', y: '55vh' }"
+      [nzTotal]="totalRecords"
+      [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize"
+      (nzPageIndexChange)="search()"
+      (nzPageSizeChange)="search(true)"
+      (nzQueryParams)="sort($event)"
+    >
+      <thead>
+        <tr>
+          <th nzWidth="20px" style="text-align: center" nzLeft>Action</th>
+          <th nzWidth="25px" style="text-align: center">
+            <b> Map Details</b>
+          </th>
+          <th
+            nzColumnKey="{{ 'TITLE' }}"
+            [nzSortFn]="true"
+            nzWidth="60px"
+            style="text-align: center"
+          >
+            Title
+          </th>
+
+          <th
+            nzColumnKey="{{ 'DESCRIPTION' }}"
+            [nzSortFn]="true"
+            nzWidth="80px"
+            style="text-align: center"
+          >
+            Description
+          </th>
+          <!-- <th
+              nzColumnKey="{{ 'SEQ_NO' }}"
+              [nzSortFn]="true"
+              nzWidth="25px"
+              style="text-align: center"
+            >
+              Seq. No.
+            </th> -->
+          <th
+            nzColumnKey="{{ 'STATUS' }}"
+            [nzSortFn]="true"
+            nzWidth="20px"
+            style="text-align: center"
+          >
+            Status
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of animationmaster.data">
+          <td nzLeft style="text-align: center">
+            <i
+              nz-icon
+              nzType="edit"
+              nz-tooltip
+              nzTooltipTitle="Edit"
+              nzTheme="twotone"
+              (click)="edit(data)"
+            ></i>
+          </td>
+          <td align="center" nzLeft>
+            <nz-space>
+              <a
+                *nzSpaceItem
+                (click)="MapAnimationDetails(data)"
+                nz-tooltip
+                nzTooltipTitle="Map Animation Details "
+              >
+                <span
+                  nz-icon
+                  nzType="form"
+                  nzTheme="outline"
+                  style="font-size: 15px; color: #0d6efd; margin-left: 10px"
+                ></span>
+              </a>
+            </nz-space>
+          </td>
+          <td nz-tooltip [nzTooltipTitle]="data['TITLE']" class="Elipsis">
+            {{ data["TITLE"] }}
+          </td>
+
+          <td nz-tooltip [nzTooltipTitle]="data['DESCRIPTION']" class="Elipsis">
+            {{ data["DESCRIPTION"] }}
+          </td>
+
+          <!-- <td style="text-align: center">{{ data["SEQ_NO"] }}</td> -->
+
+          <td style="text-align: center">
+            <i
+              nz-icon
+              *ngIf="data['STATUS']"
+              [nzType]="'check-circle'"
+              [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#52c41a'"
+            ></i>
+            <i
+              nz-icon
+              *ngIf="!data['STATUS']"
+              [nzType]="'close-circle'"
+              [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#f50'"
+            ></i>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+<div *ngIf="drawerVisible">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="500"
+    [nzVisible]="drawerVisible"
+    [nzTitle]="drawerTitle"
+    (nzOnClose)="AnimdrawerClose()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <div>
+        <form nz-form #AnimationPage="ngForm">
+          <nz-spin [nzSpinning]="isSpinning">
+            <div nz-row class="custom-form-item">
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon> Title </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Enter Correct  Title "
+                  >
+                    <input
+                      nz-input
+                      name="advname"
+                      autocomplete="off"
+                      placeholder="Enter Title"
+                      [(ngModel)]="drawerData.TITLE"
+                      minlength="2"
+                      maxlength="256"
+                      required
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                  <nz-form-label nzNoColon> Description </nz-form-label>
+                  <nz-form-control>
+                    <textarea
+                      rows="2"
+                      nz-input
+                      maxlength="256"
+                      minlength="2"
+                      name="DESC"
+                      placeholder=" Enter  Description"
+                      [(ngModel)]="drawerData.DESCRIPTION"
+                    ></textarea>
+                    <span
+                      style="color: red; font-size: 10px"
+                      *ngIf="drawerData.DESCRIPTION"
+                      >{{ drawerData.DESCRIPTION.length }}/256</span
+                    >
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="10">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Sequence No.
+                  </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Enter Correct Sequence Number "
+                  >
+                    <input
+                      nz-input
+                      placeholder="Sequence No."
+                      name="unitseq"
+                      style="width: 100%"
+                      minlength="1"
+                      maxlength="3"
+                      [(ngModel)]="drawerData.SEQ_NO"
+                      (keypress)="commonFunction.omit($event)"
+                      maxlength="5"
+                      required
+                      disabled
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzNoColon> Status </nz-form-label>
+                  <nz-form-control>
+                    <nz-switch
+                      name="unitstatus"
+                      [(ngModel)]="drawerData.STATUS"
+                      nzCheckedChildren="Active"
+                      nzUnCheckedChildren="InActive"
+                    ></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div nz-col nzSpan="24">
+                <div nz-row>
+                  <div nz-col nzSpan="10">
+                    <nz-form-item>
+                      <nz-form-label nzNoColon
+                        >Template Image</nz-form-label
+                      >
+                      <!-- <nz-form-control nzHasFeedback nzErrorTip="Upload Invoice Url"> -->
+                      <div style="color: blue">
+                        <button
+                          nz-button
+                          style="
+                            height: 28px;
+                            padding: 0px 7px;
+                            font-size: 12px;
+                            width: 152px;
+                          "
+                          (click)="fileInput2.click()"
+                        >
+                          <span
+                            style="width: 138px"
+                            nz-icon
+                            nzType="upload"
+                            nzTheme="outline"
+                          ></span>
+                          <input
+                            #fileInput2
+                            name="invoice2"
+                            accept=".jpg, .jpeg, .png"
+                            (change)="onFileSelected2($event)"
+                            type="file"
+                            style="display: none"
+                          />
+                        </button>
+                      </div>
+                    </nz-form-item>
+                  </div>
+                  <div
+                    nz-col
+                    [nzSpan]="
+                      progressBarProfilePhoto2 &&
+                      percentProfilePhoto2 < 100 &&
+                      percentProfilePhoto2 > 0
+                        ? 7
+                        : 0
+                    "
+                  >
+                    <span
+                      *ngIf="
+                        drawerData.TEMPLATE_IMAGE !== null &&
+                        drawerData.TEMPLATE_IMAGE !== undefined &&
+                        drawerData.TEMPLATE_IMAGE !== ''
+                      "
+                    >
+                      <div
+                        *ngIf="
+                          progressBarProfilePhoto2 &&
+                          percentProfilePhoto2 < 100 &&
+                          percentProfilePhoto2 > 0
+                        "
+                      >
+                        <nz-progress
+                          style="color: black"
+                          [style.width]="percentProfilePhoto2 + '%'"
+                          [nzPercent]="percentProfilePhoto2"
+                          >{{ percentProfilePhoto2 }}%</nz-progress
+                        >
+                      </div>
+                    </span>
+                  </div>
+
+                  <div nz-col nzSpan="24">
+                    <!-- First row -->
+                    <div
+                      style="display: flex; justify-content: center"
+                      [ngClass]="drawerData.TEMPLATE_IMAGE ? 'my-box' : ''"
+                    >
+                      <div
+                        *ngIf="
+                          drawerData.TEMPLATE_IMAGE !== null &&
+                          drawerData.TEMPLATE_IMAGE !== undefined &&
+                          drawerData.TEMPLATE_IMAGE !== ''
+                        "
+                      >
+                        <!-- <img width="70%" nz-image style="    width: 246px;
+                      height: 140px;margin-left: 16px;margin-bottom: 10px;"
+                        src="{{ imgurl }}classWiseTask/{{ ticketData.HEAD_IMAGE }}" /> -->
+
+                        <img
+                          class="img"
+                          nz-image
+                          style="
+                            border-radius: 5px;
+                            max-height: 524px;
+                            max-width: 524px;
+                            aspect-ratio: 1;
+                          "
+                          [nzSrc]="taskUrl2"
+                          alt="No Image Found "
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    nz-col
+                    [nzSpan]="24"
+                    *ngIf="
+                      drawerData.TEMPLATE_IMAGE !== null &&
+                      drawerData.TEMPLATE_IMAGE !== undefined &&
+                      drawerData.TEMPLATE_IMAGE !== ''
+                    "
+                  >
+                    <!-- fisrt row -->
+                    <div style="margin: 10px 37px; text-align: center">
+                      <!-- Adjust margin-top as needed -->
+                      {{ drawerData.TEMPLATE_IMAGE }}
+                      <span
+                        style="
+                          cursor: pointer;
+                          margin-top: 12px;
+                          padding-left: 7px;
+                        "
+                        nz-popconfirm
+                        nzPopconfirmTitle="Are you sure want delete?"
+                        (nzOnConfirm)="deleteConfirm2(drawerData)"
+                        (nzOnCancel)="deleteCancel2()"
+                        nzPopconfirmPlacement="top"
+                      >
+                        <span
+                          nz-icon
+                          nzType="delete"
+                          nzTheme="twotone"
+                          nz-tooltip
+                          nzTooltipTitle="Delete"
+                        >
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                nz-col
+                nz-col
+                nzXs="24"
+                nzSm="24"
+                nzMd="24"
+                nzLg="24"
+                nzXl="24"
+              >
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon
+                    >Upload Video</nz-form-label
+                  >
+                  <!-- <nz-form-control nzHasFeedback nzErrorTip="Upload Invoice Url"> -->
+                  <div
+                    [ngStyle]="{
+                      'text-align': drawerData.VIDEO_URL ? 'center' : 'left'
+                    }"
+                  >
+                    <div
+                      *ngIf="
+                        drawerData.VIDEO_URL == null ||
+                        drawerData.VIDEO_URL == undefined ||
+                        drawerData.VIDEO_URL == ''
+                      "
+                      style="color: blue"
+                    >
+                      <button
+                        nz-button
+                        style="
+                          height: 28px;
+                          padding: 0px 7px;
+                          font-size: 12px;
+                          width: 152px;
+                        "
+                        (click)="fileInput.click()"
+                      >
+                        <span
+                          style="width: 138px"
+                          nz-icon
+                          nzType="upload"
+                          nzTheme="outline"
+                        ></span>
+                        <input
+                          #fileInput
+                          name="invoice"
+                          accept=".mp4, .webm, .quicktime"
+                          (change)="onFileSelected($event)"
+                          type="file"
+                          style="display: none"
+                        />
+                      </button>
+                    </div>
+                    <span
+                      *ngIf="
+                        drawerData.VIDEO_URL !== null &&
+                        drawerData.VIDEO_URL !== undefined &&
+                        drawerData.VIDEO_URL !== ''
+                      "
+                    >
+                      <div
+                        *ngIf="
+                          progressBarProfilePhoto && percentProfilePhoto < 100
+                        "
+                      >
+                        <nz-progress
+                          [style.width]="percentProfilePhoto + '%'"
+                          [nzPercent]="percentProfilePhoto"
+                          >{{ percentProfilePhoto }}%</nz-progress
+                        >
+                      </div>
+                    </span>
+                    <br />
+
+                    <div
+                      *ngIf="
+                        drawerData.VIDEO_URL !== null &&
+                        drawerData.VIDEO_URL !== undefined &&
+                        drawerData.VIDEO_URL !== ''
+                      "
+                      style="
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                      "
+                    >
+                      <!-- First row -->
+                      <div style="display: flex; justify-content: center">
+                        <div
+                          *ngIf="
+                            drawerData.VIDEO_URL !== null &&
+                            drawerData.VIDEO_URL !== undefined &&
+                            drawerData.VIDEO_URL !== ''
+                          "
+                        >
+                          <!-- <img width="70%" nz-image style="    width: 246px;
+                        height: 140px;margin-left: 16px;margin-bottom: 10px;"
+                          src="{{ imgurl }}classWiseTask/{{ drawerData.VIDEO_URL }}" /> -->
+
+                          <!-- <span>{{taskurl}}</span> -->
+                          <!-- <img
+                            class="img"
+                            nz-image
+                            style="border-radius: 5px"
+                            width="100%"
+                            height="100%"
+                            [nzSrc]="taskurl"
+                            alt="No Image Found"
+                          /> -->
+                          <video
+                            *ngIf="taskurl"
+                            class="img"
+                            style="border-radius: 9px; width: 80%; height: 100%"
+                            controls
+                          >
+                            <source [src]="taskurl" type="video/mp4" />
+                            <source [src]="taskurl" type="video/webm" />
+                            <source [src]="taskurl" type="video/ogg" />
+                          </video>
+                        </div>
+                      </div>
+
+                      <!-- Second row -->
+                      <div
+                        style="
+                          display: flex;
+                          flex-direction: row;
+                          align-items: center;
+                        "
+                      >
+                        <div style="margin-top: 10px">
+                          <!-- Adjust margin-top as needed -->
+                          {{ drawerData.VIDEO_URL }}
+                        </div>
+                        <span
+                          style="
+                            cursor: pointer;
+                            margin-top: 12px;
+                            padding-left: 7px;
+                          "
+                          nz-popconfirm
+                          nzPopconfirmTitle="Are you sure want delete?"
+                          (nzOnConfirm)="deleteConfirm(drawerData)"
+                          (nzOnCancel)="deleteCancel()"
+                          (nzOnCancel)="deleteCancel()"
+                          nzPopconfirmPlacement="top"
+                        >
+                          <span
+                            nz-icon
+                            nzType="delete"
+                            nzTheme="twotone"
+                            nz-tooltip
+                            nzTooltipTitle="Delete"
+                          >
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </nz-form-item>
+              </div>
+            </div>
+          </nz-spin>
+        </form>
+
+        <div class="footer">
+          <button
+            type="button"
+            nz-button
+            (click)="close()"
+            class="ant-btn"
+            style="margin-right: 8px"
+          >
+            <span> Cancel </span>
+          </button>
+          <button
+            type="button"
+            class="ant-btn ant-btn-primary"
+            *ngIf="!drawerData.ID"
+            nz-button
+            nz-dropdown
+            [nzDropdownMenu]="menu"
+            [nzLoading]="isSpinning"
+            (click)="save(false, AnimationPage)"
+          >
+            <span> Save & Close</span>
+          </button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+              <li
+                nz-menu-item
+                class="menuc"
+                style="border-radius: 4px; background-color: #40a9ff"
+              >
+                <a style="color: white" (click)="save(true, AnimationPage)">
+                  Save & New</a
+                >
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+          <button
+            type="button"
+            class="ant-btn ant-btn-primary"
+            nz-button
+            [nzLoading]="isSpinning"
+            *ngIf="drawerData.ID"
+            (click)="save(false, AnimationPage)"
+          >
+            <span> Update & Close</span>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </nz-drawer>
+</div>
+
+<!-- Teacher Map -->
+
+<div *ngIf="AnimationDetailsdrawerVisible">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="1000"
+    [nzVisible]="AnimationDetailsdrawerVisible"
+    [nzTitle]="AnimationDetailsdrawerTitle"
+    (nzOnClose)="AnimationMapdrawerClose()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <app-animation-details
+        [drawerClose]="AnimationcloseCallback"
+        [drawerVisible]="AnimationDetailsdrawerVisible"
+        [AnimationDetailsDatalist]="AnimationDetailsDatalist"
+        [AnimationID]="AnimationID"
+        [VideoLength]="VideoLength"
+      ></app-animation-details>
+    </ng-container>
+  </nz-drawer>
+</div>

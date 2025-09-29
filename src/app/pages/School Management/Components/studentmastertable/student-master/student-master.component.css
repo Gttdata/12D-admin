@@ -1,0 +1,17 @@
+.custom-form-item nz-form-item{
+    
+    display: inline-block;
+    margin-bottom: 5px;
+    width: -webkit-fill-available;
+    padding: 0px 10px;
+ }
+
+ .asdfgh b{
+    color:#955454 !important;
+  }
+  .table-wrapper {
+   width: 100%; /* Set the width to 100% */
+   max-width: 100%; /* Ensure the width doesn't exceed the viewport */
+   overflow-x: auto; /* Enable horizontal scrolling */
+   overflow-y: auto; /* Enable vertical scrolling if needed */
+ }

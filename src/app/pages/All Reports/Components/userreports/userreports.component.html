@@ -1,0 +1,303 @@
+<div nz-row nzType="flex">
+  <div nz-col nzSpan="12" style="text-align: left">
+    <div class="formname">{{ formTitle }}</div>
+  </div>
+
+  <div nz-col nzXs="24" nzSm="24" nzMd="16" nzLg="12" nzXl="12">
+    <div style="display: flex; justify-content: flex-end; align-items: center">
+      <button
+        nz-button
+        nz-tooltip
+        nzTooltipTitle="Excel"
+        nzTooltipPlacement="top"
+        (click)="importInExcel()"
+        nzType="primary"
+        style="margin-right: 10px"
+      >
+        <i nz-icon nzType="file-excel" nzTheme="outline"></i>
+      </button>
+
+      <button
+        nz-button
+        nzTooltipTitle="Filter"
+        [nzType]="isFilterApplied"
+        nzTooltipPlacement="top"
+        nz-tooltip
+        (click)="showFilter()"
+      >
+        <i nz-icon nzType="filter"></i>
+      </button>
+
+      <form nz-form [nzLayout]="'inline'">
+        <nz-form-item class="Changeformitm">
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+            <input
+              type="text"
+              name="webbannersearch"
+              (keyup)="keyup($event)"
+              [(ngModel)]="searchText"
+              nz-input
+              placeholder="Search"
+            />
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <button nz-button nzType="primary" (click)="search()" nzSearch>
+              <i nz-icon nzType="search"></i>
+            </button>
+          </ng-template>
+        </nz-form-item>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <div class="filter {{ filterClass }}">
+      <div class="filter-box">
+        <form nz-form>
+          <div nz-row>
+            <!-- <div nz-col [nzSpan]="screenWidth > 1500 && roleId == 2 ? 6 : 6">
+              <nz-form-item>
+                <nz-form-label nzNoColon>Select App Version</nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    [(ngModel)]="appVersionid"
+                    name="appver"
+                    style="width: 100%"
+                    [nzLoading]="appVersionLoad"
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder="Select App Version"
+                  >
+                    <nz-option
+                      *ngFor="let ver of appverSionList"
+                      [nzValue]="ver.ID"
+                      [nzLabel]="ver.NAME"
+                    ></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="screenWidth > 1500 && roleId == 2 ? 6 : 6">
+              <nz-form-item>
+                <nz-form-label nzNoColon>Select Android Version</nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    [(ngModel)]="androidVersionid"
+                    name="andrver"
+                    style="width: 100%"
+                    [nzLoading]="androidVersionLoad"
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder="Select Android Version"
+                  >
+                    <nz-option
+                      *ngFor="let ver of androidVersionList"
+                      [nzValue]="ver.ID"
+                      [nzLabel]="ver.NAME"
+                    ></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div> -->
+            <div nz-col [nzSpan]="screenWidth > 1500 && roleId == 2 ? 8 : 8">
+              <nz-form-item>
+                <nz-form-label nzNoColon
+                  >Select Last Visit Datetime</nz-form-label
+                >
+                <nz-form-control>
+                  <!-- <nz-date-picker
+                    nz-input
+                    nzFormat="dd/MMM/yyyy"
+                    nzShowTime
+                    name="lastvisitdatetime"
+                    [(ngModel)]="lastVisitDatetime"
+                    nzAllowClear
+                    style="width: 100%"
+                    nzPlaceHolder="Select Last Visit Datetime"
+                  >
+                  </nz-date-picker> -->
+                  <nz-range-picker
+                    nz-input
+                    [nzShowTime]="{ nzFormat: 'HH:mm' }"
+                    nzFormat="dd/MMM/yyyy HH:mm"
+                    name="datetime"
+                    [(ngModel)]="lastVisitDatetime"
+                    (ngModelChange)="onChange($event)"
+                  ></nz-range-picker>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div
+              nz-col
+              [nzSpan]="screenWidth > 1300 && roleId == 2 ? 4 : 4"
+              style="display: flex; gap: 10px; margin-top: 31px"
+            >
+              <button
+                nz-button
+                [nzLoading]="isSpinning"
+                nzType="primary"
+                (click)="applyFilter()"
+              >
+                <i nz-icon nzType="filter"></i>
+              </button>
+              <button
+                nz-button
+                nzType="primary"
+                [nzLoading]="isSpinning"
+                (click)="clearFilter()"
+              >
+                <i nz-icon nzType="close"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div nz-row style="margin-top: 10px">
+  <div nz-col nzSpan="24">
+    <nz-table
+      class="my-scroll no-wrap1"
+      nzBordered
+      #table
+      nzShowSizeChanger
+      [nzFrontPagination]="false"
+      [nzData]="dataList"
+      [nzLoading]="loadingRecords"
+      [nzSize]="'small'"
+      [nzTotal]="totalRecords"
+      [nzScroll]="
+        screenWidth > 1300 && roleId == 2
+          ? { x: '1600px', y: '55vh' }
+          : { x: '1500px', y: '55vh' }
+      "
+      [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize"
+      (nzPageIndexChange)="search()"
+      (nzPageSizeChange)="search(true)"
+      (nzQueryParams)="sort($event)"
+    >
+      <thead>
+        <tr>
+          <th
+            nzLeft
+            nzWidth="120px"
+            style="text-align: center"
+            nzColumnKey="{{ 'NAME' }}"
+            [nzSortFn]="true"
+          >
+            <b>Name</b>
+          </th>
+          <th
+            nzWidth="80px"
+            style="text-align: center"
+            nzColumnKey="{{ 'MOBILE_NUMBER' }}"
+            [nzSortFn]="true"
+          >
+            <b>Mobile No.</b>
+          </th>
+          <th
+            nzWidth="120px"
+            style="text-align: center"
+            nzColumnKey="{{ 'EMAIL_ID' }}"
+            [nzSortFn]="true"
+          >
+            <b>Email</b>
+          </th>
+          <th
+            nzWidth="70px"
+            style="text-align: center"
+            nzColumnKey="{{ 'DOB' }}"
+            [nzSortFn]="true"
+          >
+            <b>Birth Date</b>
+          </th>
+          <th
+            nzWidth="60px"
+            style="text-align: center"
+            nzColumnKey="{{ 'DEVICE_NAME' }}"
+            [nzSortFn]="true"
+          >
+            <b>Device Name</b>
+          </th>
+          <th
+            nzWidth="70px"
+            style="text-align: center"
+            nzColumnKey="{{ 'ANDROID_VERSION' }}"
+            [nzSortFn]="true"
+          >
+            <b>Android Version</b>
+          </th>
+          <th
+            nzWidth="80px"
+            style="text-align: center"
+            nzColumnKey="{{ 'LAST_VISIT_DATETIME' }}"
+            [nzSortFn]="true"
+          >
+            <b>Last Visit Datetime</b>
+          </th>
+          <th
+            nzWidth="50px"
+            style="text-align: center"
+            nzColumnKey="{{ 'APP_VERSION' }}"
+            [nzSortFn]="true"
+          >
+            <b>App Version</b>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let data of table.data">
+          <td
+            nzLeft
+            nz-tooltip
+            [nzTooltipTitle]="data['NAME']"
+            style="
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              text-align: left;
+            "
+          >
+            {{ data.NAME }}
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{ data.MOBILE_NUMBER }}
+          </td>
+          <td
+            nz-tooltip
+            [nzTooltipTitle]="data['EMAIL_ID']"
+            style="
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              text-align: left;
+            "
+          >
+            {{ data.EMAIL_ID }}
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{ data.DOB | date:'dd/MMM/yyyy'}}
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{ data.DEVICE_NAME }}
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{ data.ANDROID_VERSION }}
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{ data.LAST_VISIT_DATETIME | date: 'dd/MMM/yyyy HH:mm'}}
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{ data.APP_VERSION }}
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>

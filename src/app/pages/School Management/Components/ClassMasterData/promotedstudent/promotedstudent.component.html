@@ -1,0 +1,252 @@
+<div>
+  <form nz-form #School="ngForm">
+    <nz-spin [nzSpinning]="promoteisSpinning">
+      <div nz-row class="custom-form-item">
+        <div
+          class="my-box"
+          nz-col
+          nzXs="12"
+          nzSm="24"
+          nzMd="12"
+          nzLg="6"
+          nzXl="11"
+        >
+          <h3 style="color: #1890ff; font-size: 16px; padding-left: 13px">
+            From
+          </h3>
+
+          <div nz-row class="custom-form-item">
+            <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="8" nzXl="8">
+              <nz-form-item>
+                <nz-form-label nzNoColon>Class </nz-form-label>
+                <nz-form-control>
+                  <input
+                    nz-input
+                    name="totalfees"
+                    style="width: 100%"
+                    disabled
+                    [(ngModel)]="data.NAME"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="8" nzXl="8">
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon>Division</nz-form-label>
+                <nz-form-control nzHasFeedback>
+                  <nz-select
+                    name="Division"
+                    nzShowSearch
+                    nzAllowClear
+                    style="width: 100%"
+                    nzPlaceHolder="Select Division"
+                    [(ngModel)]="promotedata.DIVISION_ID"
+                    (ngModelChange)="ChangeDivision($event)"
+                  >
+                    <nz-option
+                      *ngFor="let Div of Divisionlist"
+                      [nzValue]="Div.ID"
+                      [nzLabel]="Div.NAME"
+                    >
+                    </nz-option>
+                    <nz-option nzValue="0" [nzLabel]="'NA'"> </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="8" nzXl="8">
+              <nz-form-item>
+                <nz-form-label nzNoColon> Year </nz-form-label>
+                <nz-form-control nzHasFeedback>
+                  <nz-select
+                    nzShowArrow="true"
+                    nzShowSearch
+                    nzAllowClear
+                    name="year"
+                    [(ngModel)]="promotedata.YEAR"
+                    nzPlaceHolder="Select Year"
+                    (ngModelChange)="ChangedYear($event)"
+                  >
+                    <nz-option
+                      *ngFor="let year of yearlist"
+                      [nzValue]="year.ID"
+                      [nzLabel]="year.YEAR"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+        <div nz-col nzSpan="1"></div>
+        <div
+          class="my-box"
+          nz-col
+          nzXs="12"
+          nzSm="24"
+          nzMd="12"
+          nzLg="6"
+          nzXl="12"
+        >
+          <h3 style="color: #1890ff; font-size: 16px; padding-left: 13px">
+            To
+          </h3>
+
+          <div nz-row class="custom-form-item">
+            <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="8" nzXl="8">
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon> Year </nz-form-label>
+                <nz-form-control nzHasFeedback nzErrorTip=" Please Select Year">
+                  <nz-select
+                    nzShowArrow="true"
+                    nzShowSearch
+                    nzAllowClear
+                    name="promoteyear"
+                    [(ngModel)]="promotedata.YEAR_ID"
+                    nzPlaceHolder="Select  Year"
+                    required
+                  >
+                    <nz-option
+                      *ngFor="let year of yearlist"
+                      [nzValue]="year.ID"
+                      [nzLabel]="year.YEAR"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="8" nzXl="8">
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon> Class </nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip=" Please Select Valid Class"
+                >
+                  <nz-select
+                    nzShowArrow="true"
+                    nzShowSearch
+                    nzAllowClear
+                    name="class"
+                    [(ngModel)]="promotedata.CLASS_ID"
+                    nzPlaceHolder="Select Class"
+                    required
+                  >
+                    <nz-option
+                      *ngFor="let class of classlist"
+                      [nzValue]="class.ID"
+                      [nzLabel]="class.NAME"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="8" nzXl="8">
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon>Division</nz-form-label>
+                <nz-form-control nzHasFeedback>
+                  <nz-select
+                    name="Division1"
+                    nzShowSearch
+                    nzAllowClear
+                    style="width: 100%"
+                    nzPlaceHolder="Select Division"
+                    [(ngModel)]="tempdivison"
+                  >
+                    <nz-option
+                      *ngFor="let Div of Divisionlist"
+                      [nzValue]="Div.ID"
+                      [nzLabel]="Div.NAME"
+                    >
+                    </nz-option>
+                    <nz-option nzValue="0" [nzLabel]="'NA'"> </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div nz-row>
+        <div nz-col nzSpan="24">
+          <nz-table
+            class="my-scroll no-wrap1"
+            nzBordered
+            #promote
+            [nzData]="Promotestudent"
+            [nzFrontPagination]="false"
+            [nzLoading]="loadingRecords"
+            [nzSize]="'small'"
+            [nzScroll]="{ x: '800px', y: '55vh' }"
+          >
+            <thead>
+              <tr>
+                <th
+                  nzLeft
+                  nzWidth="30px"
+                  style="font-weight: bold; text-align: center"
+                  [(nzChecked)]="checked"
+                  (nzCheckedChange)="onAllChecked($event)"
+                >
+                  Select All
+                </th>
+                <th nzWidth="70px">Class Name</th>
+                <th nzWidth="100px">Student Name</th>
+                <th nzWidth="30px">Gender</th>
+                <th nzWidth="40px">Mobile No.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of promote.data">
+                <td
+                  nzLeft
+                  style="text-align: center"
+                  [nzChecked]="setOfCheckedId.has(data.ID)"
+                  (nzCheckedChange)="onItemChecked(data.ID, $event)"
+                ></td>
+                <td style="white-space: pre-line; text-align: left">
+                  {{ data["CLASS_NAME"] }}
+                </td>
+
+                <td style="text-align: left; white-space: pre-line">
+                  {{ data["STUDENT_NAME"] }}
+                </td>
+                <td style="text-align: left">
+                  <span *ngIf="data['GENDER'] == 'M'">Male</span>
+                  <span *ngIf="data['GENDER'] == 'F'">Female</span>
+                  <span *ngIf="data['GENDER'] == 'O'">Other</span>
+                </td>
+                <td style="text-align: center; white-space: pre-line">
+                  {{ data["MOBILE_NUMBER"] }}
+                </td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </div>
+      </div>
+    </nz-spin>
+  </form>
+
+  <div class="footer">
+    <button
+      type="button"
+      nz-button
+      (click)="close()"
+      class="ant-btn"
+      style="margin-right: 8px"
+    >
+      <span>Cancel</span>
+    </button>
+    <button
+      type="button"
+      class="ant-btn ant-btn-primary"
+      nz-button
+      nz-dropdown
+      (click)="save()"
+    >
+      <span>Promote & Close</span>
+    </button>
+  </div>
+</div>

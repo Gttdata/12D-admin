@@ -1,0 +1,41 @@
+(1) What is the capital city of Australia?
+(a) Sydney
+(b) Melbourne
+(c) Canberra
+*(d) Perth
+(e) Indonatia
+
+(2) Who wrote the famous novel "To Kill a Mockingbird"?
+(a) F. Scott Fitzgerald
+*(b) Harper Lee
+(c) Ernest Hemingway
+(d) J.K. Rowling
+(e) Steve 
+
+(3) What is the chemical symbol for gold?
+(a) Go
+*(b) Au
+(c) Ag
+(d) Gd
+(e) ol
+
+(4) Who was the first woman to win a Nobel Prize?
+(a) Marie Curie
+(b) Amelia Earhart
+(c) Rosa Parks
+*(d) Bertha von Suttner
+(e) Harmaine Scoot
+
+(5) What is the longest river in the world?
+(a) Nile River
+(b) Amazon River
+(c) Yangtze River
+*(d) Mississippi River
+(e) Ganga
+
+(6) Which planet is known as the "Red Planet"?
+(a) Venus
+(b) Jupiter
+*(c) Mars
+(d) Saturn
+(e) Sun

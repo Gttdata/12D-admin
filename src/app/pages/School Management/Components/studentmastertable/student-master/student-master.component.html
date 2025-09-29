@@ -1,0 +1,1624 @@
+<div nz-row nzType="flex">
+  <div nz-col nzXs="8" nzSm="8" nzMd="24" nzLg="12" nzXl="12">
+    <div nz-row>
+      <div nz-col nzSpan="2" style="margin-top: -5px">
+        <button
+          *ngIf="roleId == 2 && this.currentroute.trim() !== 'admindashboard'"
+          nz-button
+          nz-tooltip
+          nzTooltipTitle="Back To Dashboard"
+          nzType="primary"
+          nzShape="circle"
+          (click)="redirectToAdminDashboard()"
+        >
+          <i nz-icon nzType="arrow-left" nzTheme="outline"> </i>
+        </button>
+      </div>
+      <div nz-col nzSpan="21" style="margin-left: 10px">
+        <div class="formname">{{ formTitle }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    nz-col
+    nzXs="16"
+    nzSm="16"
+    nzMd="24"
+    nzLg="12"
+    nzXl="12"
+    style="display: flex; justify-content: flex-end"
+  >
+    <form nz-form [nzLayout]="'inline'">
+      <nz-form-item>
+        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+          <input
+            type="text"
+            name="search"
+            nz-input
+            placeholder="Search Records"
+            [(ngModel)]="searchText"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconButton>
+          <button nz-button nzType="primary" (click)="search(true)" nzSearch>
+            <i nz-icon nzType="search"></i>
+          </button>
+        </ng-template>
+      </nz-form-item>
+
+      <nz-form-item>
+        <button
+          nz-button
+          nzTooltipTitle="Import Students"
+          (click)="exceldraweropen()"
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            border-radius: 5px;
+          "
+          nzTooltipPlacement="top"
+          nz-tooltip
+          nzType="default"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 48 48"
+            width="25px"
+            height="25px"
+          >
+            <path
+              fill="#169154"
+              d="M29,6H15.744C14.781,6,14,6.781,14,7.744v7.259h15V6z"
+            />
+            <path
+              fill="#18482a"
+              d="M14,33.054v7.202C14,41.219,14.781,42,15.743,42H29v-8.946H14z"
+            />
+            <path fill="#0c8045" d="M14 15.003H29V24.005000000000003H14z" />
+            <path fill="#17472a" d="M14 24.005H29V33.055H14z" />
+            <g>
+              <path
+                fill="#29c27f"
+                d="M42.256,6H29v9.003h15V7.744C44,6.781,43.219,6,42.256,6z"
+              />
+              <path
+                fill="#27663f"
+                d="M29,33.054V42h13.257C43.219,42,44,41.219,44,40.257v-7.202H29z"
+              />
+              <path fill="#19ac65" d="M29 15.003H44V24.005000000000003H29z" />
+              <path fill="#129652" d="M29 24.005H44V33.055H29z" />
+            </g>
+            <path
+              fill="#0c7238"
+              d="M22.319,34H5.681C4.753,34,4,33.247,4,32.319V15.681C4,14.753,4.753,14,5.681,14h16.638 C23.247,14,24,14.753,24,15.681v16.638C24,33.247,23.247,34,22.319,34z"
+            />
+            <path
+              fill="#fff"
+              d="M9.807 19L12.193 19 14.129 22.754 16.175 19 18.404 19 15.333 24 18.474 29 16.123 29 14.013 25.07 11.912 29 9.526 29 12.719 23.982z"
+            />
+          </svg>
+        </button>
+      </nz-form-item>
+      <nz-form-item>
+        <button
+          nz-button
+          nzTooltipTitle="Filter"
+          [nzType]="isFilterApplied"
+          nzTooltipPlacement="top"
+          nz-tooltip
+          (click)="showFilter()"
+        >
+          <i nz-icon nzType="filter"></i>
+        </button>
+      </nz-form-item>
+
+      <nz-form-item>
+        <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+          <i nz-icon nzType="plus"></i>Add New Student
+        </button>
+      </nz-form-item>
+    </form>
+  </div>
+</div>
+<br />
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <div class="filter {{ filterClass }}">
+      <div class="filter-box">
+        <form nz-form>
+          <div nz-row class="custom-form-item">
+            <div nz-col [nzSpan]="screenwidth > 1500 && roleId == 2 ? 4 : 4">
+              <nz-form-item>
+                <nz-form-label nzNoColon>Select Class</nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    nzShowArrow="true"
+                    nzShowSearch
+                    nzAllowClear
+                    name="class"
+                    [(ngModel)]="ClassID"
+                    nzPlaceHolder="Select Class"
+                  >
+                    <nz-option
+                      *ngFor="let class of classlist"
+                      [nzValue]="class.ID"
+                      [nzLabel]="class.NAME"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div
+              nz-col
+              [nzSpan]="screenwidth > 1300 && roleId == 2 ? 4 : 4"
+              style="display: flex; gap: 10px; margin-top: 31px"
+            >
+              <button
+                nz-button
+                [nzLoading]="isSpinning"
+                nzType="primary"
+                (click)="applyFilterClass()"
+              >
+                <i nz-icon nzType="filter"></i>
+              </button>
+              <button
+                nz-button
+                nzType="primary"
+                [nzLoading]="isSpinning"
+                (click)="clearFilter()"
+              >
+                <i nz-icon nzType="close"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div nz-row>
+  <div nz-col nzSpan="2"></div>
+
+  <div nz-col nzSpan="4" style="padding: 5px; cursor: pointer">
+    <div style="text-align: center">
+      <div nz-row (click)="clickevent('ALL')">
+        <div
+          nz-col
+          nzSpan="6"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            border-radius: 5px 0 0 5px;
+            background-color: rgb(205, 205, 249);
+            font-size: 12px;
+          "
+        >
+          <span *ngIf="registercounts != undefined && registercounts != null">{{
+            registercounts
+          }}</span>
+        </div>
+        <div
+          nz-col
+          nzSpan="18"
+          [ngStyle]="
+            showcolor0 == 1
+              ? { background: 'rgb(158 158 209)' }
+              : { background: ' rgb(227, 227, 249)' }
+          "
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            margin-left: -1px;
+            border-radius: 0 5px 5px 0;
+            background-color: rgb(227, 227, 249);
+            font-size: 12px;
+          "
+        >
+          <!-- All -->
+          <span (ngModelChange)="clickevent('all')">All</span>
+          <!-- <button (ngModelChange)="clickevent('all')" name="APPROVAL_STATUS" [(ngModel)]="APPROVAL_STATUS" ></button>   -- -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div nz-col nzSpan="4" style="padding: 5px; cursor: pointer">
+    <div style="text-align: center">
+      <div nz-row (click)="clickevent('A')">
+        <div
+          nz-col
+          nzSpan="6"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            border-radius: 5px 0 0 5px;
+            background-color: rgb(205, 205, 249);
+            font-size: 12px;
+          "
+        >
+          <span *ngIf="approvedcounts != undefined && approvedcounts != null">{{
+            approvedcounts
+          }}</span>
+        </div>
+        <div
+          nz-col
+          nzSpan="18"
+          [ngStyle]="
+            showcolor1 == 1
+              ? { background: 'rgb(158 158 209)' }
+              : { background: ' rgb(227, 227, 249)' }
+          "
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            margin-left: -1px;
+            border-radius: 0 5px 5px 0;
+            background-color: rgb(227, 227, 249);
+            font-size: 12px;
+          "
+        >
+          Approved
+        </div>
+      </div>
+    </div>
+  </div>
+  <div nz-col nzSpan="4" style="padding: 5px; cursor: pointer">
+    <div style="text-align: center">
+      <div nz-row (click)="clickevent('R')">
+        <div
+          nz-col
+          nzSpan="6"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            border-radius: 5px 0 0 5px;
+            background-color: rgb(205, 205, 249);
+            font-size: 12px;
+          "
+        >
+          <span *ngIf="rejectscounts != undefined && rejectscounts != null">{{
+            rejectscounts
+          }}</span>
+        </div>
+        <div
+          [ngStyle]="
+            showcolor2 == 1
+              ? { background: 'rgb(158 158 209)' }
+              : { background: ' rgb(227, 227, 249)' }
+          "
+          nz-col
+          nzSpan="18"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            margin-left: -1px;
+            border-radius: 0 5px 5px 0;
+            background-color: rgb(227, 227, 249);
+            font-size: 12px;
+          "
+        >
+          Reject
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div nz-col nzSpan="4" style="padding: 5px; cursor: pointer">
+    <div style="text-align: center">
+      <div nz-row (click)="clickevent('P')">
+        <div
+          nz-col
+          nzSpan="6"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            border-radius: 5px 0 0 5px;
+            background-color: rgb(205, 205, 249);
+            font-size: 12px;
+          "
+        >
+          <span *ngIf="pendingscounts != undefined && pendingscounts != null">{{
+            pendingscounts
+          }}</span>
+        </div>
+        <div
+          [ngStyle]="
+            showcolor3 == 1
+              ? { background: 'rgb(158 158 209)' }
+              : { background: ' rgb(227, 227, 249)' }
+          "
+          nz-col
+          nzSpan="18"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            margin-left: -1px;
+            border-radius: 0 5px 5px 0;
+            background-color: rgb(227, 227, 249);
+            font-size: 12px;
+          "
+        >
+          Pending
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div nz-col nzSpan="4" style="padding: 5px; cursor: pointer">
+    <div style="text-align: center">
+      <div nz-row (click)="clickevent('B')">
+        <div
+          nz-col
+          nzSpan="6"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            border-radius: 5px 0 0 5px;
+            background-color: rgb(205, 205, 249);
+            font-size: 12px;
+          "
+        >
+          <span *ngIf="blockedcounts != undefined && blockedcounts != null">{{
+            blockedcounts
+          }}</span>
+        </div>
+        <div
+          [ngStyle]="
+            showcolor4 == 1
+              ? { background: 'rgb(158 158 209)' }
+              : { background: ' rgb(227, 227, 249)' }
+          "
+          nz-col
+          nzSpan="18"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            margin-left: -1px;
+            border-radius: 0 5px 5px 0;
+            background-color: rgb(227, 227, 249);
+            font-size: 12px;
+          "
+        >
+          Blocked
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div nz-col nzSpan="2"></div>
+</div>
+<div nz-row class="table-wrapper">
+  <div nz-col [nzSpan]="screenwidth > 1500 ? '24' : '24'">
+    <nz-table
+      class="my-scroll no-wrap1"
+      nzBordered
+      #employeeTable
+      nzShowSizeChanger
+      [nzFrontPagination]="false"
+      [nzData]="dataList"
+      [nzLoading]="loadingRecords"
+      nzSize="small"
+      [nzTotal]="totalRecords"
+      [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize"
+      (nzPageIndexChange)="search()"
+      (nzPageSizeChange)="search(true)"
+      (nzQueryParams)="sort($event)"
+      [nzScroll]="
+        screenwidth > 1250 && roleId == 2
+          ? { x: '280%', y: '55vh' }
+          : { x: '2760px', y: '55vh' }
+      "
+    >
+      <thead>
+        <tr>
+          <th
+            nzWidth="20px"
+            style="white-space: pre-line"
+            nzLeft
+            *ngIf="showcolor3 != 1"
+          >
+            Action
+          </th>
+
+          <th
+            nzWidth="25px"
+            style="white-space: pre-line"
+            nzLeft
+            *ngIf="showcolor3 == 1 || showcolor0 == 1"
+          >
+            Preview
+          </th>
+          <th nzWidth="20px" nzLeft>Delete</th>
+
+          <th
+            nzWidth="30px"
+            nzLeft
+            style="z-index: 4"
+            style="white-space: pre-line"
+            *ngIf="showcolor3 != 1"
+          >
+            Map Class
+          </th>
+          <th
+            nzWidth="40px"
+            nzLeft
+            [nzSortFn]="true"
+            nzColumnKey="APPROVAL_STATUS"
+            style="text-align: center; white-space: pre-line"
+            *ngIf="showcolor0 == 1"
+          >
+            Student Status
+          </th>
+          <!-- <th nzWidth="40px" [nzSortFn]="true" nzColumnKey="REJECT_BLOCKED_REMARK"
+            style="text-align: center;white-space: pre-line;" *ngIf="showcolor0 == 1">
+            Reject Remark
+          </th> -->
+          <!-- <th
+            [nzWidth]="70px"
+            nzLeft
+            style="z-index: 4"
+            style="text-align: center"
+          >
+            Fee Map
+          </th> -->
+          <th
+            nzWidth="100px"
+            [nzSortFn]="true"
+            nzColumnKey="NAME"
+            style="white-space: pre-line"
+          >
+            Student Name
+          </th>
+          <!--  -->
+          <th
+            nzWidth="40px"
+            [nzSortFn]="true"
+            nzColumnKey="CLASS_NAME"
+            style="white-space: pre-line"
+          >
+            Class Name
+          </th>
+          <th
+            nzWidth="40px"
+            [nzSortFn]="true"
+            nzColumnKey="DIVISION_NAME"
+            style="white-space: pre-line"
+          >
+            Division Name
+          </th>
+          <th
+            nzWidth="30px"
+            [nzSortFn]="true"
+            nzColumnKey="YEAR"
+            style="white-space: pre-line"
+          >
+            Year
+          </th>
+          <!--  -->
+
+          <th
+            nzWidth="100px"
+            [nzSortFn]="true"
+            nzColumnKey="EMAIL_ID"
+            style="white-space: pre-line"
+          >
+            Email Id
+          </th>
+          <th
+            nzWidth="60px"
+            [nzSortFn]="true"
+            nzColumnKey="MOBILE_NUMBER"
+            style="white-space: pre-line"
+          >
+            Mobile Number
+          </th>
+          <th
+            nzWidth="40px"
+            [nzSortFn]="true"
+            nzColumnKey="GENDER"
+            style="white-space: pre-line"
+          >
+            Gender
+          </th>
+          <th
+            nzWidth="40px"
+            [nzSortFn]="true"
+            nzColumnKey="DOB"
+            style="white-space: pre-line"
+          >
+            Birth Date
+          </th>
+
+          <th
+            nzWidth="60px"
+            [nzSortFn]="true"
+            nzColumnKey="IDENTITY_NUMBER"
+            style="white-space: pre-line"
+          >
+            Identity Number
+          </th>
+          <!-- <th nzWidth="40px" [nzSortFn]="true" nzColumnKey="PASSWORD" style="white-space: pre-line;">
+            Password
+          </th> -->
+
+          <th
+            nzWidth="130px"
+            [nzSortFn]="true"
+            nzColumnKey="ADDRESS"
+            style="white-space: pre-line"
+          >
+            Address
+          </th>
+          <th
+            nzWidth="40px"
+            [nzSortFn]="true"
+            nzColumnKey="DISTRICT_NAME"
+            style="white-space: pre-line"
+          >
+            District
+          </th>
+
+          <th
+            nzWidth="40px"
+            [nzSortFn]="true"
+            nzColumnKey="STATE_NAME"
+            style="white-space: pre-line"
+          >
+            State
+          </th>
+          <th
+            nzWidth="40px"
+            [nzSortFn]="true"
+            nzColumnKey="COUNTRY_NAME"
+            style="white-space: pre-line"
+          >
+            Country
+          </th>
+          <!-- <th nzWidth="30px" [nzSortFn]="true" nzColumnKey="STATUS">Status</th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of employeeTable.data">
+          <td nzLeft style="text-align: center" *ngIf="showcolor3 != 1">
+            <a (click)="edit(data)" nz-tooltip nzTooltipTitle="Edit">
+              <span
+                nz-icon
+                nzType="edit"
+                nzTheme="twotone"
+                style="font-size: 15px"
+              ></span>
+            </a>
+          </td>
+
+          <td
+            nzLeft
+            style="text-align: center"
+            *ngIf="showcolor3 == 1 || showcolor0 == 1"
+          >
+            <a
+              (click)="Preview(data)"
+              style="color: #1890ff"
+              nz-tooltip
+              nzTooltipTitle="Preview"
+            >
+              <span nz-icon nzType="eye" nzTheme="outline"></span>
+            </a>
+          </td>
+          <td nzLeft style="text-align: center">
+            <a nz-tooltip nzTooltipTitle="Delete">
+              <span
+                nz-icon
+                nz-popconfirm
+                nzPopconfirmTitle="Are you sure You Want to delete data?"
+                nzOkText="Ok"
+                nzCancelText="Cancel"
+                (nzOnConfirm)="OnConfirmDelete(data)"
+                nzType="delete"
+                style="cursor: pointer; color: red; margin-right: 5px"
+                nzTheme="outline"
+              ></span>
+            </a>
+          </td>
+          <td align="center" nzLeft *ngIf="showcolor3 != 1">
+            <nz-space>
+              <a
+                *nzSpaceItem
+                (click)="MapClass(data)"
+                nz-tooltip
+                nzTooltipTitle="Map Class"
+              >
+                <span
+                  nz-icon
+                  nzType="form"
+                  nzTheme="outline"
+                  style="font-size: 15px; color: #0d6efd; margin-left: 10px"
+                ></span>
+              </a>
+            </nz-space>
+          </td>
+          <td
+            nzLeft
+            style="text-align: center; white-space: pre-line"
+            *ngIf="showcolor0 == 1"
+          >
+            <span
+              *ngIf="data['APPROVAL_STATUS'] == 'P'"
+              style="color: orange; font-weight: bold"
+              >Pending</span
+            >
+            <span
+              *ngIf="data['APPROVAL_STATUS'] == 'A'"
+              style="color: green; font-weight: bold"
+              >Approved</span
+            >
+            <span
+              *ngIf="data['APPROVAL_STATUS'] == 'R'"
+              style="color: red; font-weight: bold"
+              >Reject</span
+            >
+            <span
+              *ngIf="data['APPROVAL_STATUS'] == 'B'"
+              style="color: gray; font-weight: bold"
+              >Blocked</span
+            >
+          </td>
+          <!-- <td style="white-space: pre-line; text-align: left" *ngIf="showcolor0 == 1">
+            {{ data["REJECT_BLOCKED_REMARK"] }}
+          </td> -->
+          <!-- <td align="center" nzLeft>
+            <nz-space>
+              <a
+                *nzSpaceItem
+                (click)="addFeeMap(data)"
+                nz-tooltip
+                nzTooltipTitle="Fee Map"
+              >
+                <span
+                  nz-icon
+                  nzType="form"
+                  nzTheme="outline"
+                  style="font-size: 15px; color: #0d6efd; margin-left: 10px"
+                ></span>
+              </a>
+            </nz-space>
+          </td> -->
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['NAME']"
+          >
+            {{ data["NAME"] }}
+          </td>
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['CLASS_NAME']"
+          >
+            {{ data["CLASS_NAME"] }}
+          </td>
+
+          <td style="white-space: pre-line; text-align: left">
+            {{ data["DIVISION_NAME"] }}
+          </td>
+
+          <td style="white-space: pre-line; text-align: center">
+            {{ data["YEAR"] }}
+          </td>
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['EMAIL_ID']"
+          >
+            {{ data["EMAIL_ID"] }}
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{ data["MOBILE_NUMBER"] }}
+          </td>
+          <td style="text-align: left">
+            <span *ngIf="data['GENDER'] == 'M'">Male</span>
+            <span *ngIf="data['GENDER'] == 'F'">Female</span>
+            <span *ngIf="data['GENDER'] == 'O'">Other</span>
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{ data["DOB"] | date : "dd/MMM/yyyy" }}
+          </td>
+
+          <td style="white-space: pre-line; text-align: left">
+            {{ data["IDENTITY_NUMBER"] }}
+          </td>
+          <!-- <td style="white-space: pre-line; text-align: left">
+            {{ data["PASSWORD"] }}
+          </td> -->
+
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['ADDRESS']"
+          >
+            {{ data["ADDRESS"] }}
+          </td>
+          <td style="white-space: pre-line; text-align: left">
+            {{ data["DISTRICT_NAME"] }}
+          </td>
+          <td style="white-space: pre-line; text-align: left">
+            {{ data["STATE_NAME"] }}
+          </td>
+          <td style="white-space: pre-line; text-align: left">
+            {{ data["COUNTRY_NAME"] }}
+          </td>
+          <!-- <td style="text-align: center">
+            <i nz-icon *ngIf="data['STATUS']" [nzType]="'check-circle'" [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#52c41a'"></i>
+            <i nz-icon *ngIf="!data['STATUS']" [nzType]="'close-circle'" [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#f50'"></i>
+          </td> -->
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+
+<div *ngIf="drawerVisible">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="920"
+    [nzVisible]="drawerVisible"
+    [nzTitle]="drawerTitle"
+    (nzOnClose)="drawerClose()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <app-student-form
+        [drawerClose]="closeCallback"
+        [data]="drawerData"
+        [drawerVisible]="drawerVisible"
+        [districts]="districts"
+        [showState]="showState"
+        [showDistrictByState]="showDistrictByState"
+        [stateload]="stateload"
+        [States]="States"
+        [countrys]="countrys"
+        [taskurl]="taskurl"
+        [isAdd]="isAdd"
+        [isShowBlocked]="isShowBlocked"
+      >
+      </app-student-form>
+    </ng-container>
+  </nz-drawer>
+</div>
+
+<nz-drawer
+  [nzBodyStyle]="{
+    height: 'calc(100% - 55px)',
+    overflow: 'auto',
+    'padding-bottom': '53px'
+  }"
+  [nzClosable]="true"
+  [nzMask]="true"
+  [nzMaskClosable]="false"
+  [nzWidth]="1100"
+  [nzVisible]="exceldrawervisible"
+  [nzTitle]="exceldrawerTitle"
+  (nzOnClose)="exceldrawerClose()"
+  (nzKeyboard)="(true)"
+>
+  <ng-container *nzDrawerContent>
+    <div>
+      <form nz-form #studentimport="ngForm">
+        <div
+          nz-row
+          class="custom-form-item"
+          style="display: flex; justify-content: center"
+        >
+          <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="6" nzXl="6">
+            <nz-form-item>
+              <nz-form-label nzRequired nzNoColon> Year </nz-form-label>
+              <nz-form-control
+                nzHasFeedback
+                nzErrorTip=" Please Select Valid Year"
+              >
+                <nz-select
+                  nzShowArrow="true"
+                  nzShowSearch
+                  nzAllowClear
+                  name="year"
+                  [(ngModel)]="dataMapping.YEAR_ID"
+                  nzPlaceHolder="Select Year"
+                  disabled
+                >
+                  <nz-option
+                    *ngFor="let year of yearlist"
+                    [nzValue]="year.ID"
+                    [nzLabel]="year.YEAR"
+                  >
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="6" nzXl="6">
+            <nz-form-item>
+              <nz-form-label nzRequired nzNoColon> Class </nz-form-label>
+              <nz-form-control
+                nzHasFeedback
+                nzErrorTip=" Please Select Valid Class"
+              >
+                <nz-select
+                  nzShowArrow="true"
+                  nzShowSearch
+                  nzAllowClear
+                  name="class"
+                  [(ngModel)]="dataMapping.CLASS_ID"
+                  nzPlaceHolder="Select Class"
+                >
+                  <nz-option
+                    *ngFor="let class of classlist"
+                    [nzValue]="class.ID"
+                    [nzLabel]="class.NAME"
+                  >
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="6" nzXl="6">
+            <nz-form-item>
+              <nz-form-label nzRequired nzNoColon> Division </nz-form-label>
+              <nz-form-control
+                nzHasFeedback
+                nzErrorTip="Please Select Division "
+              >
+                <nz-select
+                  [nzLoading]="divisionload"
+                  nzShowSearch
+                  nzAllowClear
+                  nzPlaceHolder="Select Division"
+                  name="division"
+                  [(ngModel)]="dataMapping.DIVISION_ID"
+                  required
+                >
+                  <nz-option [nzValue]="0" [nzLabel]="'NA'"></nz-option>
+                  <nz-option
+                    *ngFor="let cl of divisionlist"
+                    [nzValue]="cl.ID"
+                    [nzLabel]="cl.NAME"
+                  >
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="6" nzXl="6">
+            <nz-form-item>
+              <nz-form-label nzRequired nzNoColon>Medium</nz-form-label>
+              <nz-form-control nzHasFeedback>
+                <nz-select
+                  name="Medium"
+                  nzShowSearch
+                  nzAllowClear
+                  style="width: 100%"
+                  nzPlaceHolder="Select Medium"
+                  [(ngModel)]="dataMapping.MEDIUM_ID"
+                >
+                  <nz-option
+                    *ngFor="let Div of Mediumlist"
+                    [nzValue]="Div.ID"
+                    [nzLabel]="Div.NAME"
+                  >
+                  </nz-option>
+                  <nz-option [nzValue]="0" [nzLabel]="'NA'"> </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+
+        <div nz-row>
+          <div nz-col nzSpan="24">
+            <nz-spin [nzSpinning]="isSpinning">
+              <div
+                nz-row
+                style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  gap: 10px;
+                  padding-top: 10px;
+                "
+              >
+                <button nz-button style="border-radius: 5px" nzType="primary">
+                  <a href="assets/Studentimport.xlsx" download>
+                    <span nz-icon nzType="download" nzTheme="outline"></span
+                    >&nbsp;Download Sample Excel Sheet
+                  </a>
+                </button>
+
+                <button
+                  type="button"
+                  nz-button
+                  style="border-radius: 5px"
+                  nzType="primary"
+                  (click)="fileInput.click()"
+                  [disabled]="
+                    !dataMapping.YEAR_ID ||
+                    !dataMapping.CLASS_ID ||
+                    dataMapping.DIVISION_ID < 0 ||
+                    dataMapping.DIVISION_ID == undefined ||
+                    dataMapping.MEDIUM_ID < 0 ||
+                    dataMapping.MEDIUM_ID == undefined
+                  "
+                >
+                  <input
+                    #fileInput
+                    name="otherimage"
+                    accept=".xlsx, .xls"
+                    type="file"
+                    (change)="FileSelect($event)"
+                    style="display: none"
+                  />Select Excel Sheet
+                </button>
+
+                <button
+                  nz-popconfirm
+                  style="border-radius: 5px"
+                  nzType="primary"
+                  [disabled]="
+                    FILE_NAME == undefined ||
+                    FILE_NAME == null ||
+                    FILE_NAME == ''
+                  "
+                  nzPopconfirmTitle="Are you sure to upload this Student data?"
+                  (nzOnConfirm)="confirm()"
+                  (nzOnCancel)="cancel()"
+                  nzOkText="Yes"
+                  nzCancelText="No"
+                  nzPopconfirmPlacement="bottom"
+                  nz-button
+                >
+                  Upload Students Data
+                </button>
+
+                <button
+                  (click)="clear()"
+                  type="button"
+                  nz-button
+                  [disabled]="
+                    FILE_NAME == undefined ||
+                    FILE_NAME == null ||
+                    FILE_NAME == ''
+                  "
+                  style="border-radius: 5px"
+                  nzType="default"
+                >
+                  Clear
+                </button>
+              </div>
+            </nz-spin>
+          </div>
+        </div>
+      </form>
+
+      <div nz-row style="margin-top: 10px">
+        <div nz-col nzSpan="24">
+          <nz-table
+            class="my-scroll no-wrap1 scrollbar"
+            nzBordered
+            *ngIf="FILE_NAME != null && FILE_NAME != undefined"
+            [nzFrontPagination]="false"
+            [nzData]="ExcelData"
+            [nzSize]="'small'"
+            [nzScroll]="{
+              x: arrayofheader.length > 9 ? '2000px' : '',
+              y: '390px'
+            }"
+            [nzLoading]="excelLoading"
+          >
+            <thead>
+              <tr>
+                <th
+                  nzWidth="100px"
+                  *ngFor="let data1 of arrayofheader"
+                  style="text-align: center; font-weight: bold"
+                >
+                  {{ data1 }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of ExcelData; let i = index">
+                <td
+                  *ngFor="let head of arrayofheader"
+                  style="white-space: pre-line; text-align: left"
+                >
+                  {{ data[head] }}
+                </td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </div>
+      </div>
+
+      <div class="footer">
+        <button
+          type="button"
+          nz-button
+          (click)="exceldrawerClose()"
+          class="ant-btn"
+          style="margin-right: 8px"
+        >
+          <span> Cancel </span>
+        </button>
+      </div>
+    </div>
+  </ng-container>
+</nz-drawer>
+
+<nz-modal
+  [(nzVisible)]="isVisible12"
+  nzTitle="Map Class"
+  (nzOnCancel)="handleCancel()"
+  [nzWidth]="'50%'"
+  [nzOkLoading]="nzOkLoading"
+>
+  <ng-container *nzModalContent>
+    <nz-spin [nzSpinning]="modelLoading">
+      <div nz-row class="custom-form-item">
+        <div
+          nz-col
+          nzXs="24"
+          nzSm="24"
+          nzMd="12"
+          nzLg="11"
+          nzXl="11"
+          class="my-box"
+        >
+          <div nz-row style="padding: 0px 10px">
+            <div nz-col nzSpan="24"><b>Previously Mapped Class Details</b></div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="6" nzXl="24">
+              <div nz-row>
+                <div nz-col nzSpan="10">
+                  <b style="color: #333">Year</b>
+                </div>
+
+                <div nz-col nzSpan="1">
+                  <b>:</b>
+                </div>
+                <div nz-col nzSpan="13">
+                  <span *ngIf="showData">{{ showData.YEAR }}</span>
+                </div>
+              </div>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="6" nzXl="24">
+              <div nz-row>
+                <div nz-col nzSpan="10">
+                  <b style="color: #333">Class Name</b>
+                </div>
+
+                <div nz-col nzSpan="1">
+                  <b>: </b>
+                </div>
+                <div nz-col nzSpan="13">
+                  <span *ngIf="showData">{{ showData.CLASS_NAME }}</span>
+                </div>
+              </div>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="6" nzXl="24">
+              <div nz-row>
+                <div nz-col nzSpan="10">
+                  <b style="color: #333">Division</b>
+                </div>
+
+                <div nz-col nzSpan="1">
+                  <b>:</b>
+                </div>
+                <div nz-col nzSpan="13">
+                  <span *ngIf="showData && showData.DIVISION_ID != 0">{{
+                    showData.DIVISION_NAME
+                  }}</span>
+                  <span *ngIf="showData && showData.DIVISION_ID == 0">NA</span>
+                </div>
+              </div>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="6" nzXl="24">
+              <div nz-row>
+                <div nz-col nzSpan="10">
+                  <b style="color: #333">Medium</b>
+                </div>
+
+                <div nz-col nzSpan="1">
+                  <b>:</b>
+                </div>
+                <div nz-col nzSpan="13">
+                  <span *ngIf="showData && showData.MEDIUM_ID != 0">{{
+                    showData.MEDIUM_NAME
+                  }}</span>
+                  <span *ngIf="showData && showData.MEDIUM_ID == 0">NA</span>
+                </div>
+              </div>
+            </div>
+            <div nz-col nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="6" nzXl="24">
+              <div nz-row>
+                <div nz-col nzSpan="10">
+                  <b style="color: #333">Roll Number</b>
+                </div>
+
+                <div nz-col nzSpan="1">
+                  <b>:</b>
+                </div>
+                <div nz-col nzSpan="13">
+                  <span *ngIf="showData">{{ showData.ROLL_NUMBER }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div nz-col nzSpan="1"></div>
+        <div
+          nz-col
+          nzXs="24"
+          nzSm="24"
+          nzMd="12"
+          nzLg="12"
+          nzXl="12"
+          class="my-box"
+        >
+          <div nz-col style="padding: 0px 10px" nzSpan="24">
+            <b>New Class Mapping</b>
+          </div>
+          <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="24" nzXl="24">
+            <nz-form-item>
+              <nz-form-label nzRequired nzNoColon> Year </nz-form-label>
+              <nz-form-control nzHasFeedback nzErrorTip=" Please Select Year">
+                <nz-select
+                  nzShowArrow="true"
+                  nzShowSearch
+                  nzAllowClear
+                  name="year"
+                  [(ngModel)]="dataMapping.YEAR_ID"
+                  nzPlaceHolder="Select Year"
+                  required
+                >
+                  <nz-option
+                    *ngFor="let year of yearlist"
+                    [nzValue]="year.ID"
+                    [nzLabel]="year.YEAR"
+                  >
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="24" nzXl="24">
+            <nz-form-item>
+              <nz-form-label nzRequired nzNoColon> Class </nz-form-label>
+              <nz-form-control nzHasFeedback nzErrorTip=" Please Select Class">
+                <nz-select
+                  nzShowArrow="true"
+                  nzShowSearch
+                  nzAllowClear
+                  name="class"
+                  [(ngModel)]="dataMapping.CLASS_ID"
+                  nzPlaceHolder="Select Class"
+                  required
+                >
+                  <nz-option
+                    *ngFor="let class of classlist"
+                    [nzValue]="class.ID"
+                    [nzLabel]="class.NAME"
+                  >
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+              <nz-form-label nzRequired nzNoColon> Division </nz-form-label>
+              <nz-form-control
+                nzHasFeedback
+                nzErrorTip="Please Select Division "
+              >
+                <nz-select
+                  [nzLoading]="divisionload"
+                  nzShowSearch
+                  nzAllowClear
+                  nzPlaceHolder="Select Division"
+                  name="division"
+                  [(ngModel)]="dataMapping.DIVISION_ID"
+                  required
+                >
+                  <nz-option [nzValue]="0" [nzLabel]="'NA'"></nz-option>
+                  <nz-option
+                    *ngFor="let cl of divisionlist"
+                    [nzValue]="cl.ID"
+                    [nzLabel]="cl.NAME"
+                  >
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+              <nz-form-label nzRequired nzNoColon>Medium</nz-form-label>
+              <nz-form-control nzHasFeedback>
+                <nz-select
+                  name="Medium"
+                  nzShowSearch
+                  nzAllowClear
+                  style="width: 100%"
+                  nzPlaceHolder="Select Medium"
+                  [(ngModel)]="dataMapping.MEDIUM_ID"
+                >
+                  <nz-option
+                    *ngFor="let Div of Mediumlist"
+                    [nzValue]="Div.ID"
+                    [nzLabel]="Div.NAME"
+                  >
+                  </nz-option>
+                  <nz-option [nzValue]="0" [nzLabel]="'NA'"> </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+              <nz-form-label nzRequired nzNoColon>Roll Number</nz-form-label>
+
+              <nz-form-control nzErrorTip="Please Enter Valid Roll No">
+                <input
+                  nz-input
+                  autocomplete="off"
+                  name="idno"
+                  placeholder="Enter Roll No."
+                  (keypress)="commonFunction.omit($event)"
+                  [(ngModel)]="dataMapping.ROLL_NUMBER"
+                  required
+                  maxlength="7"
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </div>
+    </nz-spin>
+  </ng-container>
+  <div *nzModalFooter>
+    <button
+      nz-button
+      nzType="default"
+      [nzCondition]="switchValue"
+      (click)="handleCancel()"
+    >
+      Cancel
+    </button>
+    <button
+      nz-button
+      nzType="primary"
+      [nzCondition]="switchValue"
+      nz-popconfirm
+      nzPopconfirmTitle="Are You Sure You Want To Map Class?"
+      nzPopconfirmPlacement="top"
+      (nzOnConfirm)="finalconfirm()"
+      (click)="handleOk()"
+    >
+      Map Class
+    </button>
+  </div>
+</nz-modal>
+<div *ngIf="drawerVisibleMap">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="950"
+    [nzVisible]="drawerVisibleMap"
+    [nzTitle]="drawerTitleMap"
+    (nzOnClose)="drawerCloseMap()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <app-StudentWiseFeeMap
+        [drawerClose]="closeCallbackMap"
+        [drawerVisible]="drawerVisibleMap"
+        [classId]="classId"
+        [classNAME]="classNAME"
+      ></app-StudentWiseFeeMap>
+    </ng-container>
+  </nz-drawer>
+</div>
+<nz-modal
+  [(nzVisible)]="isVisible"
+  [nzTitle]="modalTitle"
+  [nzContent]="modalContent"
+  [nzFooter]="modalFooter"
+  (nzOnCancel)="handleCancel2()"
+  [nzWidth]="800"
+  nzMask="false"
+>
+  <ng-template #modalTitle>Student Details </ng-template>
+  <ng-template #modalContent>
+    <div id="print" style="height: 100%; padding: 5px">
+      <div class="asdfgh" nz-row>
+        <div
+          nz-col
+          nzSpan="6"
+          *ngIf="
+            STUDENT_DATALIST.PROFILE_PHOTO !== null &&
+            STUDENT_DATALIST.PROFILE_PHOTO !== undefined &&
+            STUDENT_DATALIST.PROFILE_PHOTO !== ''
+          "
+        >
+          <div
+            *ngIf="
+              STUDENT_DATALIST.PROFILE_PHOTO !== null &&
+              STUDENT_DATALIST.PROFILE_PHOTO !== undefined &&
+              STUDENT_DATALIST.PROFILE_PHOTO !== ''
+            "
+            style="display: flex; flex-direction: column; align-items: center"
+          >
+            <!-- First row -->
+            <div style="display: flex; justify-content: center">
+              <div>
+                <!-- <img width="70%" nz-image style="    width: 246px;
+            height: 140px;margin-left: 16px;margin-bottom: 10px;"
+              src="{{ imgurl }}classWiseTask/{{ STUDENT_DATALIST.PROFILE_PHOTO }}" /> -->
+
+                <img
+                  class="img"
+                  nz-image
+                  style="border-radius: 5px"
+                  width="100%"
+                  height="100%"
+                  [nzSrc]="taskurl"
+                  alt="No Image Found"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          nz-col
+          nzSpan="1"
+          *ngIf="
+            STUDENT_DATALIST.PROFILE_PHOTO !== null &&
+            STUDENT_DATALIST.PROFILE_PHOTO !== undefined &&
+            STUDENT_DATALIST.PROFILE_PHOTO !== ''
+          "
+        ></div>
+        <div nz-col nzSpan="12">
+          <div nz-row>
+            <div nz-col nzSpan="24">
+              <div nz-row>
+                <div nz-col nzSpan="8">
+                  <b>Student Name</b>
+                </div>
+
+                <div nz-col nzSpan="1">
+                  <b>:</b>
+                </div>
+                <div nz-col nzSpan="15">
+                  <span>{{ STUDENT_DATALIST.NAME }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div nz-row>
+            <div nz-col nzSpan="24">
+              <div nz-row>
+                <div nz-col nzSpan="8">
+                  <b>Email Id</b>
+                </div>
+
+                <div nz-col nzSpan="1">
+                  <b>:</b>
+                </div>
+                <div nz-col nzSpan="15">
+                  <span>{{ STUDENT_DATALIST.EMAIL_ID }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div nz-col nzSpan="24">
+              <div nz-row>
+                <div nz-col nzSpan="8">
+                  <b>Mobile Number</b>
+                </div>
+
+                <div nz-col nzSpan="1">
+                  <b>:</b>
+                </div>
+                <div nz-col nzSpan="15">
+                  <span>{{ STUDENT_DATALIST.MOBILE_NUMBER }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div nz-col nzSpan="24">
+              <div nz-row>
+                <div nz-col nzSpan="24">
+                  <div nz-row>
+                    <div nz-col nzSpan="8">
+                      <b>Identity No</b>
+                    </div>
+
+                    <div nz-col nzSpan="1">
+                      <b>:</b>
+                    </div>
+                    <div nz-col nzSpan="15">
+                      <span>{{ STUDENT_DATALIST.IDENTITY_NUMBER }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div nz-row>
+                <div nz-col nzSpan="24">
+                  <div nz-row>
+                    <div nz-col nzSpan="8">
+                      <b>Class </b>
+                    </div>
+
+                    <div nz-col nzSpan="1">
+                      <b>:</b>
+                    </div>
+                    <div nz-col nzSpan="15">
+                      <span>{{ STUDENT_DATALIST.CLASS_NAME }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div nz-col nzSpan="24">
+                  <div nz-row>
+                    <div nz-col nzSpan="8">
+                      <b>Division</b>
+                    </div>
+
+                    <div nz-col nzSpan="1">
+                      <b>:</b>
+                    </div>
+                    <div nz-col nzSpan="15">
+                      <span>{{ STUDENT_DATALIST.DIVISION_NAME }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div nz-row>
+                <div nz-col nzSpan="24">
+                  <!-- <div nz-row>
+                    <div nz-col nzSpan="8">
+                      <b>Medium</b>
+                    </div>
+
+                    <div nz-col nzSpan="1">
+                      <b>:</b>
+                    </div>
+                    <div nz-col nzSpan="15">
+                      <span>{{ STUDENT_DATALIST.TEMP_MEDIUM_NAME }}</span>
+                    </div>
+                  </div> -->
+                  <div nz-row>
+                    <div nz-col nzSpan="8">
+                      <b>Year</b>
+                    </div>
+
+                    <div nz-col nzSpan="1">
+                      <b>:</b>
+                    </div>
+                    <div nz-col nzSpan="15">
+                      <span>{{ STUDENT_DATALIST.YEAR }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="width: 100%">
+      <div nz-row *ngIf="StatusButton == 'P'">
+        <div nz-col nzSpan="24">
+          <nz-radio-group
+            name="availfor"
+            style="margin-top: 23px"
+            [(ngModel)]="STUDENT_DATALIST.APPROVAL_STATUS"
+            required
+          >
+            <label nz-radio [nzValue]="'A'">Approve </label>
+            <label nz-radio [nzValue]="'R'">Reject</label>
+          </nz-radio-group>
+        </div>
+        <div
+          nz-col
+          nzSpan="12"
+          *ngIf="STUDENT_DATALIST.APPROVAL_STATUS == 'R'"
+          class="custom-form-item"
+        >
+          <nz-form-item>
+            <nz-form-label nzRequired nzNoColon>
+              Enter
+              {{
+                STUDENT_DATALIST.APPROVAL_STATUS == "R" ? "Reject" : "Blocked"
+              }}
+              Remark
+            </nz-form-label>
+            <nz-form-control
+              nzHasFeedback
+              nzErrorTip="Please  Enter {{
+                STUDENT_DATALIST.APPROVAL_STATUS == 'R' ? 'Reject' : 'Blocked'
+              }} Remark"
+            >
+              <textarea
+                rows="2"
+                required
+                nz-input
+                maxlength="256"
+                minlength="2"
+                name="remark1"
+                placeholder="Enter Remark"
+                [(ngModel)]="STUDENT_DATALIST.REJECT_BLOCKED_REMARK"
+              ></textarea>
+              <span
+                style="color: red; font-size: 10px"
+                *ngIf="STUDENT_DATALIST.REJECT_BLOCKED_REMARK"
+                >{{ STUDENT_DATALIST.REJECT_BLOCKED_REMARK.length }}/256</span
+              >
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #modalFooter>
+    <button nz-button nzType="default" (click)="handleCancel2()">Cancel</button>
+    <button
+      *ngIf="StatusButton == 'P'"
+      nz-button
+      nzType="primary"
+      (click)="SubmitStatus()"
+    >
+      Submit Status
+    </button>
+  </ng-template>
+</nz-modal>

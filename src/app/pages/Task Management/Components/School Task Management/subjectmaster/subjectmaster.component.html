@@ -1,0 +1,413 @@
+<div nz-row nzType="flex">
+  <div nz-col nzXs="24" nzSm="24" nzMd="20" nzLg="20" nzXl="8">
+    <div nz-row>
+      <div nz-col nzSpan="2" style="margin-top: -5px">
+        <button
+          *ngIf="roleId == 2 && this.currentroute.trim() !== 'admindashboard'"
+          nz-button
+          nz-tooltip
+          nzTooltipTitle="Back To Dashboard"
+          nzType="primary"
+          nzShape="circle"
+          (click)="redirectToAdminDashboard()"
+        >
+          <i nz-icon nzType="arrow-left" nzTheme="outline"> </i>
+        </button>
+      </div>
+      <div nz-col nzSpan="21">
+        <div class="formname" style="margin-left: 10px">{{ formTitle }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    nz-col
+    nzXs="24"
+    nzSm="24"
+    nzMd="4"
+    nzLg="6"
+    nzXl="16"
+    style="display: flex; justify-content: flex-end"
+  >
+    <form nz-form [nzLayout]="'inline'">
+      <nz-form-item>
+        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+          <input
+            type="text"
+            name="aboutsearch"
+            (keyup)="keyup($event)"
+            [(ngModel)]="searchText"
+            nz-input
+            placeholder=" Search Record"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconButton>
+          <button nz-button nzType="primary" (click)="search(true)" nzSearch>
+            <i nz-icon nzType="search"></i>
+          </button>
+        </ng-template>
+      </nz-form-item>
+      <nz-form-item>
+        <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+          <i nz-icon nzType="plus"></i>Add New Subject
+        </button>
+      </nz-form-item>
+    </form>
+  </div>
+</div>
+<br />
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <nz-table
+      class="my-scroll no-wrap1"
+      nzBordered
+      #subjectmaster
+      nzShowSizeChanger
+      [nzFrontPagination]="false"
+      [nzData]="dataList"
+      [nzLoading]="loadingRecords"
+      [nzSize]="'small'"
+      [nzScroll]="{ x: '900px', y: '55vh' }"
+      [nzTotal]="totalRecords"
+      [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize"
+      (nzPageIndexChange)="search()"
+      (nzPageSizeChange)="search(true)"
+      (nzQueryParams)="sort($event)"
+    >
+      <thead>
+        <tr>
+          <th nzWidth="17px" style="text-align: center">Action</th>
+          <th nzWidth="17px" nzLeft>Delete</th>
+          <th
+            nzColumnKey="{{ 'CLASS_NAME' }}"
+            [nzSortFn]="true"
+            nzWidth="40px"
+            style="text-align: center"
+          >
+            Class Name
+          </th>
+
+          <th
+            nzColumnKey="{{ 'NAME' }}"
+            [nzSortFn]="true"
+            nzWidth="90px"
+            style="text-align: center"
+          >
+            Subject Name
+          </th>
+          <th
+            nzColumnKey="{{ 'DIVISION_NAME' }}"
+            [nzSortFn]="true"
+            nzWidth="30px"
+            style="text-align: center"
+          >
+            Division Name
+          </th>
+          <!-- <th
+            nzColumnKey="{{ 'SEQ_NO' }}"
+            [nzSortFn]="true"
+            nzWidth="19px"
+            style="text-align: center"
+          >
+            Seq. No.
+          </th> -->
+          <!-- <th
+            nzColumnKey="{{ 'STATUS' }}"
+            [nzSortFn]="true"
+            nzWidth="16px"
+            style="text-align: center"
+          >
+            Status
+          </th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of subjectmaster.data">
+          <td style="text-align: center">
+            <i
+              nz-icon
+              nzType="edit"
+              nz-tooltip
+              nzTooltipTitle="Edit"
+              nzTheme="twotone"
+              (click)="edit(data)"
+            ></i>
+          </td>
+          <td nzLeft style="text-align: center">
+            <a nz-tooltip nzTooltipTitle="Delete">
+              <span
+                nz-icon
+                nz-popconfirm
+                nzPopconfirmTitle="Are you sure You Want to delete data?"
+                nzOkText="Ok"
+                nzCancelText="Cancel"
+                (nzOnConfirm)="OnConfirmDelete(data)"
+                nzType="delete"
+                style="cursor: pointer; color: red; margin-right: 5px"
+                nzTheme="outline"
+              ></span>
+            </a>
+          </td>
+          <td style="white-space: pre-line; text-align: left">
+            {{ data["CLASS_NAME"] }}
+          </td>
+          <td style="white-space: pre-line; text-align: left">
+            {{ data["NAME"] }}
+          </td>
+          <td style="white-space: pre-line; text-align: left">
+            {{ data["DIVISION_NAME"] }}
+          </td>
+          <!-- <td style="text-align: center">{{ data["SEQ_NO"] }}</td> -->
+
+          <!-- <td style="text-align: center">
+            <i
+              nz-icon
+              *ngIf="data['STATUS']"
+              [nzType]="'check-circle'"
+              [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#52c41a'"
+            ></i>
+            <i
+              nz-icon
+              *ngIf="!data['STATUS']"
+              [nzType]="'close-circle'"
+              [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#f50'"
+            ></i>
+          </td> -->
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+<div *ngIf="drawerVisible">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="500"
+    [nzVisible]="drawerVisible"
+    [nzTitle]="drawerTitle"
+    (nzOnClose)="drawerClose()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <div>
+        <form nz-form #websitebannerPage="ngForm">
+          <nz-spin [nzSpinning]="isSpinning">
+            <div nz-row class="custom-form-item">
+              <div
+                nz-col
+                nz-col
+                nzXs="24"
+                nzSm="24"
+                nzMd="24"
+                nzLg="24"
+                nzXl="12"
+              >
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon> Class </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip="Please Select Class "
+                  >
+                    <nz-select
+                      [nzLoading]="classesload"
+                      nzShowSearch
+                      nzAllowClear
+                      require
+                      nzPlaceHolder="Select Class"
+                      name="classnm"
+                      [(ngModel)]="drawerData.CLASS_ID"
+                      [nzDisabled]="roleId == 3 ? true : false"
+                      (ngModelChange)="classidchange($event)"
+                      required
+                    >
+                      <nz-option
+                        *ngFor="let report of classes"
+                        [nzValue]="report.ID"
+                        [nzLabel]="report.NAME"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>Division</nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Select Division"
+                  >
+                    <nz-select
+                      name="Division"
+                      nzShowSearch
+                      nzAllowClear
+                      style="width: 100%"
+                      nzPlaceHolder="Select Division"
+                      [(ngModel)]="drawerData.DIVISION_ID"
+                      required
+                    >
+                      <nz-option
+                        *ngFor="let Div of Divisionlist"
+                        [nzValue]="Div.ID"
+                        [nzLabel]="Div.NAME"
+                      >
+                      </nz-option>
+                      <nz-option [nzValue]="0" [nzLabel]="'NA'"> </nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Subject Name
+                  </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Enter Correct Subject Name "
+                  >
+                    <input
+                      nz-input
+                      name="subnm"
+                      autocomplete="off"
+                      placeholder="Enter Subject Name"
+                      [(ngModel)]="drawerData.NAME"
+                      minlength="2"
+                      maxlength="128"
+                      required
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="15">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Question Subject
+                  </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Select Question Subject"
+                  >
+                    <nz-select
+                      nz-input
+                      name="QuestionSubject"
+                      nzShowSearch
+                      nzAllowClear
+                      style="width: 100%"
+                      nzPlaceHolder="Question Subject"
+                      [(ngModel)]="drawerData.QUESTION_SUBJECT_ID"
+                      [nzLoading]="questionSubjectLoad"
+                      required
+                    >
+                      <nz-option [nzValue]="0" nzLabel="NA"></nz-option>
+                      <nz-option
+                        *ngFor="let quest of questionsubjectList"
+                        [nzValue]="quest.ID"
+                        [nzLabel]="quest.NAME"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="9">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Sequence No.
+                  </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Enter Correct Sequence Number "
+                  >
+                    <input
+                      nz-input
+                      placeholder="Sequence No."
+                      name="unitseq"
+                      style="width: 100%"
+                      minlength="1"
+                      [(ngModel)]="drawerData.SEQ_NO"
+                      (keypress)="commonFunction.omit($event)"
+                      maxlength="5"
+                      required
+                      disabled
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <!-- <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzNoColon> Status </nz-form-label>
+                  <nz-form-control>
+                    <nz-switch
+                      name="unitstatus"
+                      [(ngModel)]="drawerData.STATUS"
+                      nzCheckedChildren="Yes"
+                      nzUnCheckedChildren="No"
+                    ></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div> -->
+            </div>
+          </nz-spin>
+        </form>
+
+        <div class="footer">
+          <button
+            type="button"
+            nz-button
+            (click)="close()"
+            class="ant-btn"
+            style="margin-right: 8px"
+          >
+            <span> Cancel </span>
+          </button>
+          <button
+            type="button"
+            class="ant-btn ant-btn-primary"
+            *ngIf="!drawerData.ID"
+            nz-button
+            nz-dropdown
+            [nzDropdownMenu]="menu"
+            [nzLoading]="isSpinning"
+            (click)="save(false, websitebannerPage)"
+          >
+            <span> Save & Close</span>
+          </button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+              <li
+                nz-menu-item
+                class="menuc"
+                style="border-radius: 4px; background-color: #40a9ff"
+              >
+                <a style="color: white" (click)="save(true, websitebannerPage)">
+                  Save & New</a
+                >
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+          <button
+            type="button"
+            class="ant-btn ant-btn-primary"
+            nz-button
+            [nzLoading]="isSpinning"
+            *ngIf="drawerData.ID"
+            (click)="save(false, websitebannerPage)"
+          >
+            <span> Update & Close</span>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </nz-drawer>
+</div>

@@ -1,0 +1,686 @@
+<!-- Header Row -->
+<div nz-row nzType="flex">
+  <!-- Left side of the header -->
+  <div nz-col nzXs="8" nzSm="8" nzMd="24" nzLg="6" nzXl="8">
+    <div nz-row>
+      <div nz-col nzSpan="2" style="margin-top: -5px">
+        <button
+          *ngIf="roleId == 2 && this.currentroute.trim() !== 'admindashboard'"
+          nz-button
+          nz-tooltip
+          nzTooltipTitle="Back To Dashboard"
+          nzType="primary"
+          nzShape="circle"
+          (click)="redirectToAdminDashboard()"
+        >
+          <i nz-icon nzType="arrow-left" nzTheme="outline"> </i>
+        </button>
+      </div>
+      <div nz-col nzSpan="21" style="margin-left: 10px">
+        <div class="formname">{{ formTitle }}</div>
+      </div>
+    </div>
+
+    <!-- Display the form title -->
+  </div>
+
+  <!-- Right side of the header with search and add button -->
+  <div
+    nz-col
+    nzXs="16"
+    nzSm="16"
+    nzMd="24"
+    nzLg="18"
+    nzXl="16"
+    style="display: flex; justify-content: flex-end"
+  >
+    <form nz-form [nzLayout]="'inline'">
+      <!-- Search Input -->
+      <nz-form-item>
+        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+          <input
+            type="text"
+            name="search"
+            nz-input
+            placeholder="Search Records"
+            [(ngModel)]="searchText"
+          />
+        </nz-input-group>
+        <!-- Search Button -->
+        <ng-template #suffixIconButton>
+          <button nz-button nzType="primary" (click)="search()" nzSearch>
+            <i nz-icon nzType="search"></i>
+          </button>
+        </ng-template>
+      </nz-form-item>
+
+      <!-- Add New User Button -->
+      <nz-form-item>
+        <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+          <i nz-icon nzType="plus"></i>Add New Teacher
+        </button>
+      </nz-form-item>
+    </form>
+  </div>
+</div>
+
+<br />
+
+<div nz-row>
+  <div nz-col nzSpan="2"></div>
+
+  <div nz-col nzSpan="4" style="padding: 5px; cursor: pointer">
+    <div style="text-align: center">
+      <div nz-row (click)="clickevent('ALL')">
+        <div
+          nz-col
+          nzSpan="6"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            border-radius: 5px 0 0 5px;
+            background-color: rgb(205, 205, 249);
+            font-size: 12px;
+          "
+        >
+          <span *ngIf="registercounts != undefined && registercounts != null">{{
+            registercounts
+          }}</span>
+        </div>
+        <div
+          nz-col
+          nzSpan="18"
+          [ngStyle]="
+            showcolor0 == 1
+              ? { background: 'rgb(158 158 209)' }
+              : { background: ' rgb(227, 227, 249)' }
+          "
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            margin-left: -1px;
+            border-radius: 0 5px 5px 0;
+            background-color: rgb(227, 227, 249);
+            font-size: 12px;
+          "
+        >
+          <!-- All -->
+          <span (ngModelChange)="clickevent('all')">All</span>
+          <!-- <button (ngModelChange)="clickevent('all')" name="APPROVAL_STATUS" [(ngModel)]="APPROVAL_STATUS" ></button>   -- -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div nz-col nzSpan="4" style="padding: 5px; cursor: pointer">
+    <div style="text-align: center">
+      <div nz-row (click)="clickevent('A')">
+        <div
+          nz-col
+          nzSpan="6"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            border-radius: 5px 0 0 5px;
+            background-color: rgb(205, 205, 249);
+            font-size: 12px;
+          "
+        >
+          <span *ngIf="approvedcounts != undefined && approvedcounts != null">{{
+            approvedcounts
+          }}</span>
+        </div>
+        <div
+          nz-col
+          nzSpan="18"
+          [ngStyle]="
+            showcolor1 == 1
+              ? { background: 'rgb(158 158 209)' }
+              : { background: ' rgb(227, 227, 249)' }
+          "
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            margin-left: -1px;
+            border-radius: 0 5px 5px 0;
+            background-color: rgb(227, 227, 249);
+            font-size: 12px;
+          "
+        >
+          Approved
+        </div>
+      </div>
+    </div>
+  </div>
+  <div nz-col nzSpan="4" style="padding: 5px; cursor: pointer">
+    <div style="text-align: center">
+      <div nz-row (click)="clickevent('R')">
+        <div
+          nz-col
+          nzSpan="6"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            border-radius: 5px 0 0 5px;
+            background-color: rgb(205, 205, 249);
+            font-size: 12px;
+          "
+        >
+          <span *ngIf="rejectscounts != undefined && rejectscounts != null">{{
+            rejectscounts
+          }}</span>
+        </div>
+        <div
+          [ngStyle]="
+            showcolor2 == 1
+              ? { background: 'rgb(158 158 209)' }
+              : { background: ' rgb(227, 227, 249)' }
+          "
+          nz-col
+          nzSpan="18"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            margin-left: -1px;
+            border-radius: 0 5px 5px 0;
+            background-color: rgb(227, 227, 249);
+            font-size: 12px;
+          "
+        >
+          Reject
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div nz-col nzSpan="4" style="padding: 5px; cursor: pointer">
+    <div style="text-align: center">
+      <div nz-row (click)="clickevent('P')">
+        <div
+          nz-col
+          nzSpan="6"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            border-radius: 5px 0 0 5px;
+            background-color: rgb(205, 205, 249);
+            font-size: 12px;
+          "
+        >
+          <span *ngIf="pendingscounts != undefined && pendingscounts != null">{{
+            pendingscounts
+          }}</span>
+        </div>
+        <div
+          [ngStyle]="
+            showcolor3 == 1
+              ? { background: 'rgb(158 158 209)' }
+              : { background: ' rgb(227, 227, 249)' }
+          "
+          nz-col
+          nzSpan="18"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            margin-left: -1px;
+            border-radius: 0 5px 5px 0;
+            background-color: rgb(227, 227, 249);
+            font-size: 12px;
+          "
+        >
+          Pending
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div nz-col nzSpan="4" style="padding: 5px; cursor: pointer">
+    <div style="text-align: center">
+      <div nz-row (click)="clickevent('B')">
+        <div
+          nz-col
+          nzSpan="6"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            border-radius: 5px 0 0 5px;
+            background-color: rgb(205, 205, 249);
+            font-size: 12px;
+          "
+        >
+          <span *ngIf="blockedcounts != undefined && blockedcounts != null">{{
+            blockedcounts
+          }}</span>
+        </div>
+        <div
+          [ngStyle]="
+            showcolor4 == 1
+              ? { background: 'rgb(158 158 209)' }
+              : { background: ' rgb(227, 227, 249)' }
+          "
+          nz-col
+          nzSpan="18"
+          style="
+            border: 1px solid blue;
+            padding: 5px;
+            margin-left: -1px;
+            border-radius: 0 5px 5px 0;
+            background-color: rgb(227, 227, 249);
+            font-size: 12px;
+          "
+        >
+          Blocked
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div nz-col nzSpan="2"></div>
+</div>
+
+<!-- Table Row -->
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <!-- User Table -->
+    <nz-table
+      class="my-scroll no-wrap1"
+      nzBordered
+      #teachertable
+      nzShowSizeChanger
+      [nzFrontPagination]="false"
+      [nzData]="dataList"
+      [nzLoading]="loadingRecords"
+      [nzTotal]="totalRecords"
+      nzSize="small"
+      [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize"
+      (nzPageIndexChange)="search()"
+      (nzQueryParams)="sort($event)"
+      (nzPageSizeChange)="search(true)"
+      [nzScroll]="
+        screenwidth > 1250
+          ? { x: '120%', y: '55vh' }
+          : { x: '1600px', y: '55vh' }
+      "
+    >
+      <!-- Table Header -->
+      <thead class="headerbg">
+        <tr>
+          <th nzWidth="40px" *ngIf="showcolor3 != 1" nzLeft>Action</th>
+
+          <th nzWidth="45px" nzLeft *ngIf="showcolor3 == 1 || showcolor0 == 1">
+            Preview
+          </th>
+          <th nzWidth="40px" nzLeft>Delete</th>
+          <th
+            nzWidth="100px"
+            nzLeft
+            *ngIf="showcolor0 == 1"
+            [nzSortFn]="true"
+            nzColumnKey="APPROVAL_STATUS"
+          >
+            Teacher Status
+          </th>
+          <th nzWidth="200px" [nzSortFn]="true" nzColumnKey="NAME">
+            Teacher Name
+          </th>
+          <th nzWidth="180px" [nzSortFn]="true" nzColumnKey=" EMAIL_ID">
+            Email Id
+          </th>
+          <th nzWidth="100px" [nzSortFn]="true" nzColumnKey="MOBILE_NUMBER">
+            Mobile Number
+          </th>
+
+          <th nzWidth="80px" [nzSortFn]="true" nzColumnKey="GENDER">Gender</th>
+
+          <th nzWidth="80px" [nzSortFn]="true" nzColumnKey="DOB">Birth Date</th>
+
+          <!-- <th nzWidth="160px" [nzSortFn]="true" nzColumnKey="CLASS_NAME">
+                        Class Name
+                    </th> -->
+
+          <!-- <th nzColumnKey="{{ 'SEQ_NO' }}" [nzSortFn]="true" nzWidth="70px">
+                        Seq. No.
+                    </th> -->
+
+          <!-- <th nzWidth="70px" [nzSortFn]="true" nzColumnKey="STATUS">Status</th> -->
+        </tr>
+      </thead>
+      <!-- Table Body -->
+      <tbody>
+        <tr *ngFor="let data of teachertable.data">
+          <td nzLeft style="text-align: center" *ngIf="showcolor3 != 1">
+            <a (click)="edit(data)" nz-tooltip nzTooltipTitle="Edit">
+              <span
+                nz-icon
+                nzType="edit"
+                nzTheme="twotone"
+                style="font-size: 15px"
+              ></span>
+            </a>
+          </td>
+          <td
+            nzLeft
+            style="text-align: center"
+            *ngIf="showcolor3 == 1 || showcolor0 == 1"
+          >
+            <a (click)="Preview(data)" nz-tooltip nzTooltipTitle="Preview">
+              <span
+                nz-icon
+                nzType="eye"
+                style="cursor: pointer; color: blue; margin-right: 5px"
+                nzTheme="outline"
+              ></span>
+            </a>
+          </td>
+          <td nzLeft style="text-align: center">
+            <a nz-tooltip nzTooltipTitle="Delete">
+              <span
+                nz-icon
+                nz-popconfirm
+                nzPopconfirmTitle="Are you sure You Want to delete data?"
+                nzOkText="Ok"
+                nzCancelText="Cancel"
+                (nzOnConfirm)="OnConfirmDelete(data)"
+                nzType="delete"
+                style="cursor: pointer; color: red; margin-right: 5px"
+                nzTheme="outline"
+              ></span>
+            </a>
+          </td>
+          <td nzLeft style="text-align: center" *ngIf="showcolor0 == 1">
+            <span
+              *ngIf="data['APPROVAL_STATUS'] == 'P'"
+              style="color: orange; font-weight: bold"
+              >Pending</span
+            >
+            <span
+              *ngIf="data['APPROVAL_STATUS'] == 'A'"
+              style="color: green; font-weight: bold"
+              >Approved</span
+            >
+            <span
+              *ngIf="data['APPROVAL_STATUS'] == 'R'"
+              style="color: red; font-weight: bold"
+              >Reject</span
+            >
+            <span
+              *ngIf="data['APPROVAL_STATUS'] == 'B'"
+              style="color: gray; font-weight: bold"
+              >Blocked</span
+            >
+          </td>
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['NAME']"
+          >
+            {{ data.NAME }}
+          </td>
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['EMAIL_ID']"
+          >
+            {{ data.EMAIL_ID }}
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{ data["MOBILE_NUMBER"] }}
+          </td>
+          <td style="text-align: left">
+            <span *ngIf="data['GENDER'] == 'M'">Male</span>
+            <span *ngIf="data['GENDER'] == 'F'">Female</span>
+            <span *ngIf="data['GENDER'] == 'O'">Other</span>
+          </td>
+
+          <td style="white-space: pre-line; text-align: center">
+            {{ data["DOB"] | date : "dd/MMM/yyyy" }}
+          </td>
+          <!-- <td style="white-space: pre-line;text-align: left;">{{ data.CLASS_NAME }}</td> -->
+          <!-- <td style="text-align: center;white-space: pre-line;">{{ data["SEQ_NO"] }}</td> -->
+          <!-- <td style="white-space: pre-line; text-align: center">
+            <ng-container *ngIf="data.STATUS; else inactiveStatus">
+              <span
+                nz-icon
+                nzType="check-circle"
+                style="color: #52c41a"
+                nzTheme="outline"
+              ></span>
+            </ng-container>
+            <ng-template #inactiveStatus>
+              <span
+                nz-icon
+                nzType="close-circle"
+                style="color: red"
+                nzTheme="outline"
+              ></span>
+            </ng-template>
+          </td> -->
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+
+<!-- Drawer Component for User Details -->
+<div *ngIf="drawerVisible">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="600"
+    [nzVisible]="drawerVisible"
+    [nzTitle]="drawerTitle"
+    (nzOnClose)="drawerClose()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <app-add-teacher-master
+        [isShowBlocked]="isShowBlocked"
+        [drawerClose]="closeCallback"
+        [drawerVisible]="drawerVisible"
+        [data]="drawerData"
+      ></app-add-teacher-master>
+    </ng-container>
+  </nz-drawer>
+</div>
+
+<nz-modal
+  [(nzVisible)]="isVisible"
+  [nzTitle]="modalTitle"
+  [nzContent]="modalContent"
+  [nzFooter]="modalFooter"
+  (nzOnCancel)="handleCancel()"
+  [nzWidth]="500"
+  nzMask="false"
+>
+  <ng-template #modalTitle>Teacher Details </ng-template>
+  <ng-template #modalContent>
+    <div id="print" class="classCss">
+      <div nz-row>
+        <div nz-col nzSpan="24">
+          <div nz-row>
+            <div nz-col nzSpan="24">
+              <div nz-row>
+                <div nz-col nzSpan="8">
+                  <b style="color: #333">School Name</b>
+                </div>
+
+                <div nz-col nzSpan="1">
+                  <b>:</b>
+                </div>
+                <div nz-col nzSpan="15">
+                  <span>{{ TEACHER_DATALIST.SCHOOL_NAME }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div nz-col nzSpan="24">
+              <div nz-row>
+                <div nz-col nzSpan="8">
+                  <b style="color: #333">Teacher Name</b>
+                </div>
+
+                <div nz-col nzSpan="1">
+                  <b>:</b>
+                </div>
+                <div nz-col nzSpan="15">
+                  <span>{{ TEACHER_DATALIST.NAME }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div nz-row>
+            <div nz-col nzSpan="24">
+              <div nz-row>
+                <div nz-col nzSpan="8">
+                  <b style="color: #333">Email Id</b>
+                </div>
+
+                <div nz-col nzSpan="1">
+                  <b>:</b>
+                </div>
+                <div nz-col nzSpan="15">
+                  <span>{{ TEACHER_DATALIST.EMAIL_ID }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div nz-col nzSpan="24">
+              <div nz-row>
+                <div nz-col nzSpan="8">
+                  <b style="color: #333">Mobile Number</b>
+                </div>
+
+                <div nz-col nzSpan="1">
+                  <b>:</b>
+                </div>
+                <div nz-col nzSpan="15">
+                  <span>{{ TEACHER_DATALIST.MOBILE_NUMBER }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div nz-row>
+            <div nz-col nzSpan="24">
+              <div nz-row>
+                <div nz-col nzSpan="8">
+                  <b style="color: #333"> DOB</b>
+                </div>
+
+                <div nz-col nzSpan="1">
+                  <b>:</b>
+                </div>
+                <div nz-col nzSpan="15">
+                  <span>{{ TEACHER_DATALIST.DOB | date : "dd/MMM/yyyy" }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div nz-col nzSpan="24">
+              <div nz-row>
+                <div nz-col nzSpan="8">
+                  <b style="color: #333">Gender</b>
+                </div>
+
+                <div nz-col nzSpan="1">
+                  <b>:</b>
+                </div>
+                <div nz-col nzSpan="15">
+                  <span>
+                    <span *ngIf="TEACHER_DATALIST['GENDER'] == 'M'">Male</span>
+                    <span *ngIf="TEACHER_DATALIST['GENDER'] == 'F'"
+                      >Female</span
+                    >
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="classCss">
+      <div nz-row *ngIf="StatusButton == 'P'">
+        <div nz-col nzSpan="24">
+          <nz-radio-group
+            name="availfor"
+            style="margin-top: 23px"
+            [(ngModel)]="TEACHER_DATALIST.APPROVAL_STATUS"
+            required
+          >
+            <label nz-radio [nzValue]="'A'">Approve </label>
+            <label nz-radio [nzValue]="'R'">Reject</label>
+          </nz-radio-group>
+        </div>
+        <div
+          nz-col
+          nzSpan="24"
+          *ngIf="TEACHER_DATALIST.APPROVAL_STATUS == 'R'"
+          class="custom-css-form-item"
+        >
+          <nz-form-item>
+            <nz-form-label nzRequired nzNoColon>
+              Enter
+              {{
+                TEACHER_DATALIST.APPROVAL_STATUS == "R" ? "Reject" : "Blocked"
+              }}
+              Remark
+            </nz-form-label>
+            <nz-form-control
+              nzHasFeedback
+              nzErrorTip="Please  Enter {{
+                TEACHER_DATALIST.APPROVAL_STATUS == 'R' ? 'Reject' : 'Blocked'
+              }} Remark"
+            >
+              <textarea
+                rows="2"
+                required
+                nz-input
+                maxlength="256"
+                minlength="2"
+                name="remark1"
+                placeholder="Enter Remark"
+                [(ngModel)]="TEACHER_DATALIST.REJECT_BLOCKED_REMARK"
+              ></textarea>
+              <span
+                style="color: red; font-size: 10px"
+                *ngIf="TEACHER_DATALIST.REJECT_BLOCKED_REMARK"
+                >{{ TEACHER_DATALIST.REJECT_BLOCKED_REMARK.length }}/256</span
+              >
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #modalFooter>
+    <button nz-button nzType="default" (click)="handleCancel()">Cancel</button>
+    <button
+      *ngIf="StatusButton == 'P'"
+      nz-button
+      nzType="primary"
+      (click)="SubmitStatus()"
+    >
+      Submit Status
+    </button>
+  </ng-template>
+</nz-modal>

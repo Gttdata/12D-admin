@@ -1,0 +1,587 @@
+<div nz-row nzType="flex">
+  <div nz-col nzXs="24" nzSm="24" nzMd="20" nzLg="20" nzXl="8">
+    <div class="formname">
+      <b> {{ formTitle }} </b>
+    </div>
+  </div>
+
+  <div
+    nz-col
+    nzXs="24"
+    nzSm="24"
+    nzMd="4"
+    nzLg="6"
+    nzXl="16"
+    style="display: flex; justify-content: flex-end"
+  >
+    <form nz-form [nzLayout]="'inline'">
+      <nz-form-item>
+        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+          <input
+            type="text"
+            name="aboutsearch"
+            [(ngModel)]="searchText"
+            nz-input
+            placeholder=" Search Record"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconButton>
+          <button nz-button nzType="primary" (click)="search(true)" nzSearch>
+            <i nz-icon nzType="search"></i>
+          </button>
+        </ng-template>
+      </nz-form-item>
+      <nz-form-item>
+        <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+          <i nz-icon nzType="plus"></i>Add New Subscription
+        </button>
+      </nz-form-item>
+    </form>
+  </div>
+</div>
+<br />
+<div nz-row>
+  <div
+    nz-col
+    nzSpan="24"
+    style="display: flex; justify-content: center; gap: 10px"
+  >
+    <button
+      nz-button
+      [nzType]="type == 'active' ? 'primary' : 'default'"
+      (click)="onChangeFilter(1)"
+    >
+      <span
+        nz-icon
+        [nzType]="'check-circle'"
+        [nzTheme]="'twotone'"
+        nzTwotoneColor="#52c41a"
+      ></span>
+      Active
+    </button>
+    <button
+      nz-button
+      [nzType]="type == 'inactive' ? 'primary' : 'default'"
+      (click)="onChangeFilter(0)"
+    >
+      <span
+        nz-icon
+        [nzType]="'close-circle'"
+        [nzTheme]="'twotone'"
+        nzTwotoneColor="#f50"
+      ></span
+      >Inactive
+    </button>
+  </div>
+  <div nz-col nzSpan="24">
+    <nz-table
+      class="my-scroll no-wrap1"
+      nzBordered
+      #agemasterdata
+      nzShowSizeChanger
+      [nzFrontPagination]="false"
+      [nzData]="dataList"
+      [nzLoading]="loadingRecords"
+      [nzSize]="'small'"
+      [nzScroll]="{ x: '1500px', y: '55vh' }"
+      [nzTotal]="totalRecords"
+      [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize"
+      (nzPageIndexChange)="search()"
+      (nzPageSizeChange)="search(true)"
+      (nzQueryParams)="sort($event)"
+    >
+      <thead>
+        <tr>
+          <th nzWidth="25px" nzLeft style="text-align: center">Action</th>
+
+          <th
+            nzColumnKey="{{ 'LABEL' }}"
+            [nzSortFn]="true"
+            nzWidth="100px"
+            style="text-align: center"
+          >
+            Plan Name
+          </th>
+          <th
+            nzColumnKey="{{ 'DIAMENTION_NAME' }}"
+            [nzSortFn]="true"
+            nzWidth="100px"
+            style="text-align: center"
+          >
+            Dimension Name
+          </th>
+          <th
+            nzColumnKey="{{ 'AGE_GROUP_LABLE' }}"
+            [nzSortFn]="true"
+            nzWidth="40px"
+            style="text-align: center"
+          >
+            Age Group
+          </th>
+          <th
+            nzColumnKey="{{ 'DAYS' }}"
+            [nzSortFn]="true"
+            nzWidth="35px"
+            style="text-align: center"
+          >
+            Days
+          </th>
+          <th
+            nzColumnKey="{{ 'PRICE' }}"
+            [nzSortFn]="true"
+            nzWidth="45px"
+            style="text-align: center"
+          >
+            Price (₹)
+          </th>
+          <th
+            nzColumnKey="{{ 'DISCOUNT' }}"
+            [nzSortFn]="true"
+            nzWidth="45px"
+            style="text-align: center"
+          >
+            Discount (₹)
+          </th>
+          <th
+            nzColumnKey="{{ 'TYPE' }}"
+            [nzSortFn]="true"
+            nzWidth="45px"
+            style="text-align: center"
+          >
+            Type
+          </th>
+
+          <th
+            nzColumnKey="{{ 'DESCRIPTION' }}"
+            [nzSortFn]="true"
+            nzWidth="110px"
+            style="text-align: center"
+          >
+            Description
+          </th>
+
+          <th
+            nzColumnKey="{{ 'STATUS' }}"
+            [nzSortFn]="true"
+            nzWidth="30px"
+            style="text-align: center"
+          >
+            Status
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of agemasterdata.data">
+          <td style="text-align: center" nzLeft>
+            <i
+              nz-icon
+              nzType="edit"
+              nz-tooltip
+              nzTooltipTitle="Edit"
+              nzTheme="twotone"
+              (click)="edit(data)"
+            ></i>
+          </td>
+          <td nz-tooltip [nzTooltipTitle]="data['LABEL']" class="Elipsis">
+            {{ data["LABEL"] }}
+          </td>
+          <td
+            nz-tooltip
+            [nzTooltipTitle]="data['DIAMENTION_NAME']"
+            class="Elipsis"
+          >
+            {{ data["DIAMENTION_NAME"] }}
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{ data["AGE_GROUP_LABLE"] }}
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{ data["DAYS"] }}
+          </td>
+          <td style="white-space: pre-line; text-align: right">
+            {{ data["PRICE"] }}
+          </td>
+          <td style="white-space: pre-line; text-align: right">
+            {{ data["DISCOUNT"] }}
+          </td>
+          <td style="white-space: pre-line; text-align: left">
+            <!-- {{ data["TYPE"] }} -->
+            <span *ngIf="data['TYPE'] == 'M'">Monthly</span>
+            <span *ngIf="data['TYPE'] == 'Y'">Yearly</span>
+          </td>
+          <td nz-tooltip [nzTooltipTitle]="data['DESCRIPTION']" class="Elipsis">
+            {{
+              data["DESCRIPTION"]
+                ? convertHtmlToPlainText(data["DESCRIPTION"])
+                : "-"
+            }}
+          </td>
+          <td style="text-align: center">
+            <i
+              nz-icon
+              *ngIf="data['STATUS']"
+              [nzType]="'check-circle'"
+              [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#52c41a'"
+            ></i>
+            <i
+              nz-icon
+              *ngIf="!data['STATUS']"
+              [nzType]="'close-circle'"
+              [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#f50'"
+            ></i>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+<div *ngIf="drawerVisible">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="500"
+    [nzVisible]="drawerVisible"
+    [nzTitle]="drawerTitle"
+    (nzOnClose)="drawerClose()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <div>
+        <form nz-form #subscriptionmaster="ngForm">
+          <nz-spin [nzSpinning]="isSpinning">
+            <div nz-row class="custom-form-item">
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>Plan Name </nz-form-label>
+                  <nz-form-control nzErrorTip="Please Enter Valid Plan Name">
+                    <input
+                      nz-input
+                      autocomplete="off"
+                      [(ngModel)]="drawerData.LABEL"
+                      name="planname"
+                      type="text"
+                      maxlength="128"
+                      placeHolder="Enter Plan Name"
+                      required
+                      width="100%"
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>Days</nz-form-label>
+                  <nz-form-control nzErrorTip="Please Enter Valid Days">
+                    <nz-input-group style="width: 100%" nzAddOnAfter="Days">
+                      <input
+                        nz-input
+                        autocomplete="off"
+                        (keypress)="commonFunction.omit($event)"
+                        [(ngModel)]="drawerData.DAYS"
+                        name="duration"
+                        type="text"
+                        maxlength="5"
+                        placeHolder="Enter Days"
+                        required
+                      />
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>Price</nz-form-label>
+
+                  <nz-form-control nzErrorTip="Please Enter Valid Price">
+                    <nz-input-group [nzAddOnBefore]="'₹'">
+                      <input
+                        nz-input
+                        name="Price"
+                        style="text-align: left"
+                        maxlength="8"
+                        autocomplete="off"
+                        (keypress)="commonFunction.onlynumdot($event)"
+                        [(ngModel)]="drawerData.PRICE"
+                        placeholder="Enter Price"
+                        required
+                      />
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                <nz-form-item>
+                  <nz-form-label nzNoColon>Discount</nz-form-label>
+
+                  <nz-form-control nzErrorTip="Please Enter Valid Discount">
+                    <nz-input-group [nzAddOnBefore]="'₹'">
+                      <input
+                        nz-input
+                        name="discount"
+                        style="text-align: left"
+                        maxlength="8"
+                        autocomplete="off"
+                        (keypress)="commonFunction.onlynumdot($event)"
+                        [(ngModel)]="drawerData.DISCOUNT"
+                        placeholder="Enter Discount"
+                      />
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <!-- <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>Type</nz-form-label>
+                  <nz-form-control nzErrorTip="Please Select Type">
+                    <nz-input-group nzCompact>
+                      <nz-select
+                        name="types"
+                        nzPlaceHolder="Select Type"
+                        [(ngModel)]="drawerData.TYPE"
+                        style="width: 100%"
+                        required
+                      >
+                        <nz-option
+                          [nzLabel]="'Monthly'"
+                          [nzValue]="'M'"
+                        ></nz-option>
+                        <nz-option
+                          [nzLabel]="'Yearly'"
+                          [nzValue]="'Y'"
+                        ></nz-option>
+                      </nz-select>
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div> -->
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>Type</nz-form-label>
+                  <nz-form-control nzErrorTip="Please Select Type">
+                    <nz-radio-group
+                      nzCompact
+                      name="type"
+                      [(ngModel)]="drawerData.TYPE"
+                    >
+                      <label nz-radio nzValue="M">Monthly</label>
+                      <label nz-radio nzValue="Y">Yearly</label>
+                    </nz-radio-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                  <nz-form-label nzNoColon nzRequired>Dimension</nz-form-label>
+                  <nz-form-control>
+                    <nz-select
+                      name="dimensions"
+                      nzAllowClear
+                      nzShowSearch
+                      [(ngModel)]="drawerData.DIAMENTION_ID"
+                      nzPlaceHolder="Select Dimensions"
+                      [nzLoading]="loadDimensions"
+                      required
+                    >
+                      <nz-option
+                        *ngFor="let option of dimensions"
+                        [nzValue]="option.ID"
+                        [nzLabel]="option.NAME"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                  <nz-form-label nzNoColon nzRequired>Age Group</nz-form-label>
+                  <nz-form-control>
+                    <nz-select
+                      name="agegrp"
+                      nzAllowClear
+                      nzShowSearch
+                      [(ngModel)]="drawerData.AGE_GROUP"
+                      nzPlaceHolder="Select Age group"
+                      [nzLoading]="isAgeloading"
+                      required
+                    >
+                      <nz-option
+                        *ngFor="let option of ageCategories"
+                        [nzValue]="option.ID"
+                        [nzLabel]="option.LABEL"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                  <nz-form-label nzNoColon>Description</nz-form-label>
+                  <nz-form-control>
+                    <!-- <nz-input-group nzCompact> -->
+                    <angular-editor
+                      [config]="editorConfig1"
+                      id="editor1"
+                      name="description"
+                      [(ngModel)]="drawerData.DESCRIPTION"
+                      (ngModelChange)="onDescriptionChange($event)"
+                      maxlength="1000"
+                      style="white-space: pre-line; width: 100%"
+                      required
+                    >
+                    </angular-editor>
+
+                    <span
+                      style="color: red; font-size: 10px"
+                      *ngIf="drawerData.DESCRIPTION"
+                      >{{ drawerData.DESCRIPTION.length }}/1000</span
+                    >
+                    <!-- </nz-input-group> -->
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzNoColon
+                    >Is TrackBook Available?
+                  </nz-form-label>
+                  <nz-form-control>
+                    <nz-switch
+                      name="trackbookavailable"
+                      [(ngModel)]="drawerData.IS_TRACKBOOK_AVAILABLE"
+                      nzCheckedChildren="Yes"
+                      nzUnCheckedChildren="No"
+                    ></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzNoColon>
+                    Is Question Paper Available?
+                  </nz-form-label>
+                  <nz-form-control>
+                    <nz-switch
+                      name="questionpaper"
+                      [(ngModel)]="drawerData.IS_QUESTION_PAPER_AVAILABLE"
+                      nzCheckedChildren="Yes"
+                      nzUnCheckedChildren="No"
+                    ></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzNoColon> Is ERP Available? </nz-form-label>
+                  <nz-form-control>
+                    <nz-switch
+                      name="erpavailable"
+                      [(ngModel)]="drawerData.IS_ERP_AVAILBALE"
+                      nzCheckedChildren="Yes"
+                      nzUnCheckedChildren="No"
+                    ></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzNoColon> Status </nz-form-label>
+                  <nz-form-control>
+                    <nz-switch
+                      name="unitstatus"
+                      [(ngModel)]="drawerData.STATUS"
+                      nzCheckedChildren="Active"
+                      nzUnCheckedChildren="InActive"
+                    ></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Sequence No.
+                  </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Enter Correct Sequence Number "
+                  >
+                    <input
+                      nz-input
+                      placeholder="Sequence No."
+                      name="unitseq"
+                      style="width: 100%"
+                      minlength="1"
+                      [(ngModel)]="drawerData.SEQ_NO"
+                      (keypress)="commonFunction.omit($event)"
+                      maxlength="5"
+                      required
+                      disabled
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </nz-spin>
+        </form>
+
+        <div class="footer">
+          <button
+            type="button"
+            nz-button
+            (click)="close()"
+            class="ant-btn"
+            style="margin-right: 8px"
+          >
+            <span> Cancel </span>
+          </button>
+          <button
+            type="button"
+            class="ant-btn ant-btn-primary"
+            *ngIf="!drawerData.ID"
+            nz-button
+            nz-dropdown
+            [nzDropdownMenu]="menu"
+            (click)="save(false, subscriptionmaster)"
+          >
+            <span> Save & Close</span>
+          </button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+              <li
+                nz-menu-item
+                class="menuc"
+                style="border-radius: 4px; background-color: #40a9ff"
+              >
+                <a
+                  style="color: white"
+                  (click)="save(true, subscriptionmaster)"
+                >
+                  Save & New</a
+                >
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+          <button
+            type="button"
+            class="ant-btn ant-btn-primary"
+            nz-button
+            [nzLoading]="isSpinning"
+            *ngIf="drawerData.ID"
+            (click)="save(false, subscriptionmaster)"
+          >
+            <span> Update & Close</span>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </nz-drawer>
+</div>

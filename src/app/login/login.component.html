@@ -1,0 +1,171 @@
+<div>
+  <div class="limiter">
+    <div class="container-login100">
+      <div class="wrap-login100">
+        <!-- <div
+          class="col-12"
+          style="align-self: center; margin-top: 0px; margin-bottom: 5px"
+        >
+          <div class="tab-wrap">
+            <input
+              autocomplete="off"
+              aria-autocomplete="none"
+              autofill="off"
+              type="radio"
+              style="cursor: pointer !important"
+              id="tab1"
+              name="tabGroup1"
+              class="tab"
+              checked
+            />
+            <label
+              [ngStyle]="{
+                'border-bottom': loginasadmin
+                  ? '2px solid #2043f0'
+                  : '2px solid transparent',
+                color: loginasadmin ? '#2043f0' : 'black',
+                cursor: 'pointer !important',
+                width: '50%'
+              }"
+              for="tab1"
+              (click)="handleLoginClick()"
+              >Admin Login</label
+            >
+            <input
+              autocomplete="off"
+              aria-autocomplete="none"
+              autofill="off"
+              type="radio"
+              id="tab2"
+              name="tabGroup1"
+              class="tab"
+            />
+            <label
+              [ngStyle]="{
+                'border-bottom': loginasteacher
+                  ? '2px solid #2043f0'
+                  : '2px solid transparent',
+                color: loginasteacher ? '#2043f0' : 'black',
+                cursor: 'pointer !important',
+                width: '50%'
+              }"
+              for="tab2"
+              (click)="handleTeacherLoginClick()"
+              >Teacher Login</label
+            >
+          </div>
+        </div> -->
+
+        <h3
+          style="
+            text-align: center;
+            font-size: 15px;
+            margin-bottom: 2px;
+            font-weight: bold;
+          "
+        >
+          Welcome
+        </h3>
+
+        <h3
+          style="
+            text-align: center;
+            font-size: 15px;
+            margin-bottom: 2px;
+            font-weight: bold;
+          "
+        >
+          To
+        </h3>
+
+        <div style="text-align: center; margin-bottom: 31px">
+          <img
+            src="assets/Logo.png"
+            width="175px"
+            height="175px"
+            alt="logo"
+          />
+        </div>
+
+        <!-- <div class="nav">
+          <ul class="links">
+            <li class="signin-active"><a style="color: black;font-size: 12px !important;"  (click)="handleLoginClick()" class="btn">Admin Login</a></li>
+            <li class="signup-inactive"><a style="color: black;font-size: 12px !important" (click)="handleTeacherLoginClick()" class="btn">Teacher Login </a></li>
+          </ul>
+        </div> -->
+
+        <form nz-form class="login-form">
+          <nz-form-item>
+            <nz-form-control nzRequired nzErrorTip="Please Enter Valid Email">
+              <nz-input-group nzPrefixIcon="user">
+                <input
+                  nz-input
+                  type="email"
+                  name="email_id"
+                  [(ngModel)]="EMAIL_ID"
+                  placeholder="Email"
+                  required
+                />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-control nzRequired nzErrorTip="Input is required">
+              <nz-input-group nzPrefixIcon="lock" [nzSuffix]="suffixTemplate">
+                <input
+                  nz-input
+                  [type]="passwordVisible ? 'text' : 'password'"
+                  name="password"
+                  [(ngModel)]="PASSWORD"
+                  placeholder="Password"
+                  required
+                />
+              </nz-input-group>
+
+              <ng-template #suffixTemplate>
+                <i
+                  nz-icon
+                  [nzType]="passwordVisible ? 'eye' : 'eye-invisible'"
+                  (click)="passwordVisible = !passwordVisible"
+                ></i>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+
+          <!-- <nz-form-item>
+            <nz-form-control>
+              <div nz-row>
+                <!-- <div nz-col nzSpan="12">
+                <label nz-checkbox>
+                  <span>Remember Me</span>
+                </label>
+              </div> --
+                
+              </div>
+            </nz-form-control>
+          </nz-form-item> -->
+          <!-- <div nz-col nzSpan="24">
+            <a (click)="loginchange()" *ngIf="loginasadmin">Login As Teacher</a>
+            <a (click)="loginchange()" *ngIf="loginasteacher">Login As Admin</a>
+          </div> -->
+          <nz-form-item>
+            <nz-form-control>
+              <div style="text-align: center; padding-top: 20px">
+                <button
+                  style="border-radius: 50px; width: 60%"
+                  nz-button
+                  (click)="login()"
+                  [nzLoading]="isloginSpinning"
+                  [nzType]="'primary'"
+                >
+                  Log in
+                </button>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

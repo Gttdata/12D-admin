@@ -1,0 +1,402 @@
+<div>
+  <form nz-form #formData="ngForm">
+    <div class="my-box">
+      <div nz-row class="custom-form-item">
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label nzNoColon>Student Name</nz-form-label>
+            <nz-form-control nzHasFeedback nzErrorTip="Enter Student Name">
+              <input
+                nz-input
+                name="student"
+                style="width: 100%"
+                autocomplete="off"
+                [(ngModel)]="MapData.STUDENT_NAME"
+                placeholder=" Enter Student Name"
+                disabled="true"
+                required
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label nzNoColon>Class Name </nz-form-label>
+            <nz-form-control nzHasFeedback nzErrorTip="Enter Class Name">
+              <input
+                nz-input
+                name="Class"
+                style="width: 100%"
+                autocomplete="off"
+                [(ngModel)]="MapData.CLASS_NAME"
+                nzPlaceHolder="Enter Class"
+                disabled="true"
+                required
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label nzNoColon>Division</nz-form-label>
+            <nz-form-control nzHasFeedback nzErrorTip="Select Division Name">
+              <input
+                nz-input
+                name="Division"
+                style="width: 100%"
+                autocomplete="off"
+                [(ngModel)]="MapData.DIVISION_NAME"
+                nzPlaceHolder="Enter Division"
+                disabled="true"
+                required
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label nzNoColon>Year</nz-form-label>
+            <nz-form-control nzHasFeedback nzErrorTip="Select Year ">
+              <input
+                nz-input
+                name="Year"
+                style="width: 100%"
+                autocomplete="off"
+                [(ngModel)]="MapData.YEAR"
+                nzPlaceHolder="Enter Year"
+                disabled="true"
+                required
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col nzSpan="5">
+          <nz-form-item>
+            <nz-form-label nzNoColon>Total Fee</nz-form-label>
+
+            <nz-form-control nzErrorTip="Please Enter Total Fee">
+              <nz-input-group nzAddOnBefore="₹">
+                <input
+                  nz-input
+                  name="Total Fee"
+                  (keypress)="commonFunction.onlynumdot($event)"
+                  [(ngModel)]="MapData.TOTAL_FEE"
+                  maxlength="9"
+                  autocomplete="off"
+                  placeholder="Enter Total Fee"
+                  disabled="true"
+                />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col nzSpan="5">
+          <nz-form-item>
+            <nz-form-label nzNoColon>Paid Fee</nz-form-label>
+
+            <nz-form-control nzErrorTip="Please Enter Paid Fee">
+              <nz-input-group nzAddOnBefore="₹">
+                <input
+                  nz-input
+                  name="Paid Fee"
+                  (keypress)="commonFunction.onlynumdot($event)"
+                  [(ngModel)]="PAIDFEE"
+                  maxlength="9"
+                  autocomplete="off"
+                  placeholder="Paid Fee"
+                  disabled="true"
+                />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col nzSpan="5">
+          <nz-form-item>
+            <nz-form-label nzNoColon>Pending Fee</nz-form-label>
+
+            <nz-form-control nzErrorTip="Please Enter Pending Fee">
+              <nz-input-group nzAddOnBefore="₹">
+                <input
+                  nz-input
+                  name="Pending Fee"
+                  (keypress)="commonFunction.onlynumdot($event)"
+                  [(ngModel)]="MapData.PENDING_FEE"
+                  maxlength="9"
+                  autocomplete="off"
+                  placeholder="Enter Pending Fee"
+                  disabled="true"
+                />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="5">
+          <nz-form-item>
+            <nz-form-label nzRequired nzNoColon>Payable Fee</nz-form-label>
+
+            <nz-form-control nzErrorTip="Please Enter Payable Fee">
+              <nz-input-group nzAddOnBefore="₹">
+                <input
+                  nz-input
+                  name="Payable Fee"
+                  (keypress)="commonFunction.onlynumdot($event)"
+                  [(ngModel)]="MapData.PAID_FEE"
+                  maxlength="9"
+                  autocomplete="off"
+                  placeholder="Enter Payable Fee"
+                  (ngModelChange)="onPaidFeeChange($event)"
+                />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div
+          nz-col
+          nzSpan="4"
+          style="margin-top: 32px; text-align: left;"
+        >
+          <button nz-button nzType="primary" (click)="ShowPaidFee()">
+            Add Fee
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div nz-row>
+    <div nz-col nzSpan="24">
+      <nz-spin [nzSpinning]="isSpinning">
+        <nz-table
+          class="my-scroll no-wrap1"
+          nzBordered
+          [nzData]="['']"
+          [nzSize]="'small'"
+          [nzScroll]="{ y: '50vh' }"
+          [nzShowPagination]="false"
+          [nzLoading]="loadHeadData"
+        >
+          <thead>
+            <tr>
+              <th nzWidth="18px" style="text-align: center">Map</th>
+              <th nzWidth="70px " style="text-align: center">Head Name</th>
+              <th nzWidth="30px " style="text-align: center">Amount(₹)</th>
+              <th nzWidth="30px " style="text-align: center">Paid Fee(₹)</th>
+              <th nzWidth="30px " style="text-align: center">Pending Fee(₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of tableData; let i = index">
+              <td style="text-align: center">
+                <!-- <nz-switch
+                nzCheckedChildren="Yes"
+                nzUnCheckedChildren="No"
+                name="map"
+                [(ngModel)]="data.IS_MAPPED"
+                (ngModelChange)="onIsMappedChange($event, data)"
+              ></nz-switch> -->
+                <label
+                  (ngModelChange)="onIsMappedChange($event, data)"
+                  nz-checkbox
+                  name="map"
+                  [(ngModel)]="data.IS_MAPPED"
+                ></label>
+              </td>
+
+              <td style="white-space: pre-line; text-align: left">
+                {{ data["NAME"] }}
+              </td>
+              <td style="white-space: pre-line; text-align: center">
+                <input
+                  name="amt{{ i }}"
+                  nz-input
+                  style="text-align: right"
+                  type="text"
+                  [(ngModel)]="data.TOTAL_FEE"
+                  (keypress)="commonFunction.omit($event)"
+                  maxlength="7"
+                  class="plain-text-input"
+                  [disabled]="!data.IS_MAPPED"
+                  (ngModelChange)="onTotalAmountChange($event, data)"
+                />
+              </td>
+              <td style="white-space: pre-line; text-align: right">
+                {{ data["PAID_FEE"] }}
+              </td>
+              <td style="white-space: pre-line; text-align: right">
+                {{ data["PENDING_FEE"] }}
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </nz-spin>
+    </div>
+  </div>
+
+  <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="8">
+    <nz-form-item style="margin-top: 19px">
+      <nz-form-label nzNoColon>Is Discount Available ?</nz-form-label>
+      <nz-form-control>
+        <nz-switch
+          name="status1"
+          nzCheckedChildren="Yes"
+          nzUnCheckedChildren="No"
+          [(ngModel)]="MapData.IS_DISCOUNT_AVAILABLE"
+          (ngModelChange)="IsAvailable($event)"
+        ></nz-switch>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+  <div *ngIf="MapData.IS_DISCOUNT_AVAILABLE" class="my-box">
+    <div nz-row class="custom-form-item">
+      <div
+        nz-col
+        nzSpan="4"
+        style="display: flex; align-items: center; justify-content: left"
+      >
+        <div>Sub Total :</div>
+      </div>
+
+      <div
+        nz-col
+        nzSpan="4"
+        style="
+          display: flex;
+          align-items: center;
+          text-align: right;
+          font-weight: bold;
+        "
+      >
+        ₹ {{ MapData.SUB_TOTAL | number : "1.2-2" }}
+      </div>
+
+      <div
+        nz-col
+        nzSpan="4"
+        style="
+          display: flex;
+          padding: 5px;
+          align-items: center;
+          justify-content: left;
+        "
+      >
+        <div>(-) Discount :</div>
+      </div>
+
+      <div
+        nz-col
+        nzSpan="4"
+        style="
+          display: flex;
+          padding: 5px;
+          align-items: center;
+          text-align: right;
+        "
+      >
+        <nz-form-item>
+          <nz-form-control>
+            <nz-input-group [nzAddOnAfter]="addOnAfterTemplate4">
+              <input
+                type="text"
+                name="discountrate1"
+                autocomplete="off"
+                nz-input
+                (keypress)="commonFunction.numberWithDecimal($event)"
+                (ngModelChange)="onTotalDiscountChange($event)"
+                [(ngModel)]="MapData.DISCOUNT_VALUE"
+              />
+            </nz-input-group>
+
+            <ng-template #addOnAfterTemplate4>
+              <nz-select
+                name="discounttype1"
+                class="custom-select-width1"
+                [nzShowArrow]="false"
+                [nzDropdownStyle]="{
+                  'padding-left': '2px',
+                  'padding-right': '2px'
+                }"
+                style="width: 40px"
+                (ngModelChange)="onTotalDiscountTypeChange($event)"
+                [ngModel]="MapData.DISCOUNT_TYPE"
+              >
+                <nz-option nzLabel="%" nzValue="P"></nz-option>
+                <nz-option nzLabel="₹" nzValue="A"></nz-option>
+              </nz-select>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div
+        nz-col
+        nzSpan="5"
+        style="display: flex; align-items: center; justify-content: center"
+      >
+        <div>Discount Amount :</div>
+      </div>
+
+      <div
+        nz-col
+        nzSpan="3"
+        style="
+          display: flex;
+          align-items: center;
+          font-weight: bold;
+          text-align: right;
+        "
+      >
+        ₹ {{ MapData.DISCOUNT_AMOUNT | number : "1.2-2" }}
+      </div>
+
+      <div
+        nz-col
+        nzSpan="4"
+        style="display: flex; align-items: center; justify-content: left"
+      >
+        <div>Total :</div>
+      </div>
+
+      <div
+        nz-col
+        nzSpan="4"
+        style="
+          display: flex;
+          align-items: center;
+          text-align: right;
+          font-weight: bold;
+        "
+      >
+        ₹ {{ totalAmount | number : "1.2-2" }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <button
+    type="button"
+    nz-button
+    (click)="close()"
+    class="ant-btn"
+    style="margin-right: 8px"
+  >
+    <span>Cancel</span>
+  </button>
+  <button
+    type="button"
+    nz-button
+    [nzLoading]="isSpinning"
+    nzType="primary"
+    nz-popconfirm
+    style="margin-right: 12px"
+    nzPopconfirmTitle="Are You Sure You Want To Map Class?"
+    nzPopconfirmPlacement="top"
+    (nzOnConfirm)="save()"
+  >
+    <span>Map & Close</span>
+  </button>
+</div>

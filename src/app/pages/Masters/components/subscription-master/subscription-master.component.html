@@ -1,0 +1,471 @@
+<div nz-row nzType="flex">
+    <div nz-col nzXs="24" nzSm="24" nzMd="20" nzLg="20" nzXl="8">
+      <div class="formname">
+        <b> {{ formTitle }} </b>
+      </div>
+    </div>
+  
+    <div
+      nz-col
+      nzXs="24"
+      nzSm="24"
+      nzMd="4"
+      nzLg="6"
+      nzXl="16"
+      style="display: flex; justify-content: flex-end"
+    >
+      <form nz-form [nzLayout]="'inline'">
+        <nz-form-item>
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+            <input
+              type="text"
+              name="aboutsearch"
+              
+              [(ngModel)]="searchText"
+              nz-input
+              placeholder=" Search Record"
+            />
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <button nz-button nzType="primary" (click)="search(true)" nzSearch>
+              <i nz-icon nzType="search"></i>
+            </button>
+          </ng-template>
+        </nz-form-item>
+        <nz-form-item>
+          <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+            <i nz-icon nzType="plus"></i>Add New Subscription Details
+          </button>
+        </nz-form-item>
+      </form>
+    </div>
+  </div>
+  <br />
+  <div nz-row>
+    <div nz-col nzSpan="24">
+      <nz-table
+        class="my-scroll no-wrap1"
+        nzBordered
+        #agemasterdata
+        nzShowSizeChanger
+        [nzFrontPagination]="false"
+        [nzData]="dataList"
+        [nzLoading]="loadingRecords"
+        [nzSize]="'small'"
+        [nzScroll]="{ x: '1270px', y: '55vh' }"
+        [nzTotal]="totalRecords"
+        [(nzPageIndex)]="pageIndex"
+        [(nzPageSize)]="pageSize"
+        (nzPageIndexChange)="search()"
+        (nzPageSizeChange)="search(true)"
+        (nzQueryParams)="sort($event)"
+      >
+        <thead>
+          <tr>
+            <th nzWidth="20px" nzLeft style="text-align: center">Action</th>
+  
+            <th
+              nzColumnKey="{{ 'DAYS' }}"
+              [nzSortFn]="true"
+              nzWidth="40px"
+              style="text-align: center"
+            >
+            No. Of Days
+            </th>
+  
+            <th
+              nzColumnKey="{{ 'MONTHLY_FEE' }}"
+              [nzSortFn]="true"
+              nzWidth="50px"
+              style="text-align: center"
+            >
+              Monthly Fees (₹)
+            </th>
+            <th
+              nzColumnKey="{{ 'TAX_PERCENTAGE' }}"
+              [nzSortFn]="true"
+              nzWidth="50px"
+              style="text-align: center"
+            >
+              Tax Percentage (%)
+            </th>
+  
+            <th
+              nzColumnKey="{{ 'TOTAL' }}"
+              [nzSortFn]="true"
+              nzWidth="50px"
+              style="text-align: center"
+            >
+              Total (₹)
+            </th>
+            <th
+              nzColumnKey="{{ 'YEARLY_FEE' }}"
+              [nzSortFn]="true"
+              nzWidth="50px"
+              style="text-align: center"
+            >
+              Yearly Fees (₹)
+            </th>
+            <th
+              nzColumnKey="{{ 'MODULES' }}"
+              [nzSortFn]="true"
+              nzWidth="50px"
+              style="text-align: center"
+            >
+              Modules
+            </th>
+            <!-- <th
+              nzColumnKey="{{ 'SEQ_NO' }}"
+              [nzSortFn]="true"
+              nzWidth="40px"
+              style="text-align: center"
+            >
+            Sequence No.
+            </th> -->
+            <th
+              nzColumnKey="{{ 'STATUS' }}"
+              [nzSortFn]="true"
+              nzWidth="25px"
+              style="text-align: center"
+            >
+              Status
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of agemasterdata.data">
+            <td style="text-align: center" nzLeft>
+              <i
+                nz-icon
+                nzType="edit"
+                nz-tooltip
+                nzTooltipTitle="Edit"
+                nzTheme="twotone"
+                (click)="edit(data)"
+              ></i>
+            </td>
+            <td style="white-space: pre-line; text-align: center">
+              {{ data["DAYS"] }}
+            </td>
+  
+            <td style="white-space: pre-line; text-align: right">
+              {{ data["MONTHLY_FEE"] }}
+            </td>
+            <td style="white-space: pre-line; text-align: center">
+              {{ data["TAX_PERCENTAGE"] }}
+            </td>
+            <td style="white-space: pre-line; text-align: right">
+              {{ data["TOTAL"] }}
+            </td>
+            <td style="white-space: pre-line; text-align: right">
+              {{ data["YEARLY_FEE"] }}
+            </td>
+  
+            <td style="text-align: left">
+              <span *ngIf="data['MODULES'] == 'T'">Trackbook</span>
+              <span *ngIf="data['MODULES'] == 'P'">Paper creation</span>
+            </td>
+  
+            <!-- <td style="text-align: center">{{ data["SEQ_NO"] }}</td> -->
+  
+            <td style="text-align: center">
+              <i
+                nz-icon
+                *ngIf="data['STATUS']"
+                [nzType]="'check-circle'"
+                [nzTheme]="'twotone'"
+                [nzTwotoneColor]="'#52c41a'"
+              ></i>
+              <i
+                nz-icon
+                *ngIf="!data['STATUS']"
+                [nzType]="'close-circle'"
+                [nzTheme]="'twotone'"
+                [nzTwotoneColor]="'#f50'"
+              ></i>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+  <div *ngIf="drawerVisible">
+    <nz-drawer
+      [nzBodyStyle]="{
+        height: 'calc(100% - 55px)',
+        overflow: 'auto',
+        'padding-bottom': '53px'
+      }"
+      [nzClosable]="true"
+      [nzMask]="true"
+      [nzMaskClosable]="false"
+      [nzWidth]="460"
+      [nzVisible]="drawerVisible"
+      [nzTitle]="drawerTitle"
+      (nzOnClose)="drawerClose()"
+      (nzKeyboard)="(true)"
+    >
+      <ng-container *nzDrawerContent>
+        <div>
+          <form nz-form #subscriptionmaster="ngForm">
+            <nz-spin [nzSpinning]="isSpinning">
+              <div nz-row class="custom-form-item">
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired nzNoColon>No. Of Days </nz-form-label>
+                    <nz-form-control nzErrorTip="Please Enter Valid Days">
+                      <nz-input-group style="width: 100%" nzAddOnAfter="Days">
+                        <input
+                          nz-input
+                          autocomplete="off"
+                          (keypress)="commonFunction.omit($event)"
+                          [(ngModel)]="drawerData.DAYS"
+                          name="DAYS"
+                          type="text"
+                          maxlength="9"
+                          placeHolder="Enter Days"
+                          required
+                        />
+                      </nz-input-group>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired nzNoColon
+                      >Monthly Fees (₹)
+                    </nz-form-label>
+                    <nz-form-control
+                      nzErrorTip="Please Enter Valid Monthly Fees"
+                    >
+                      <nz-input-group style="width: 100%" nzAddOnBefore="₹">
+                        <input
+                          nz-input
+                          autocomplete="off"
+                          (keypress)="commonFunction.onlynumdot($event)"
+                          [(ngModel)]="drawerData.MONTHLY_FEE"
+                          name="MONTHLY_FEE"
+                          type="text"
+                          maxlength="6"
+                          placeHolder="Monthly Fees"
+                          style="text-align: right"
+                          required
+                        />
+                      </nz-input-group>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired nzNoColon>Tax Percentage (%)</nz-form-label>
+  
+                    <nz-form-control nzErrorTip="Please Enter Valid Tax">
+                      <nz-input-group [nzAddOnAfter]="'%'">
+                        <input
+                          nz-input
+                          name="Tax"
+                          style="text-align: right"
+                          maxlength="6"
+                          autocomplete="off"
+                          (keypress)="commonFunction.onlynumdot($event)"
+                          [(ngModel)]="drawerData.TAX_PERCENTAGE"
+                          placeholder="Enter Tax"
+                          required
+                        />
+                      </nz-input-group>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired nzNoColon>Total (₹)</nz-form-label>
+                    <nz-form-control
+                      nzErrorTip="Please Enter Valid Total Amount"
+                    >
+                      <nz-input-group style="width: 100%" nzAddOnBefore="₹">
+                        <input
+                          nz-input
+                          autocomplete="off"
+                          (keypress)="commonFunction.onlynumdot($event)"
+                          [(ngModel)]="drawerData.TOTAL"
+                          name="TOTAL"
+                          type="text"
+                          maxlength="6"
+                          placeHolder="Enter Total"
+                          style="text-align: right"
+                          required
+                        />
+                      </nz-input-group>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired nzNoColon>Yearly Fees (₹)</nz-form-label>
+                    <nz-form-control
+                      nzErrorTip="Please Enter Valid Yearly Fees"
+                    >
+                      <nz-input-group style="width: 100%" nzAddOnBefore="₹">
+                        <input
+                          nz-input
+                          autocomplete="off"
+                          (keypress)="commonFunction.onlynumdot($event)"
+                          [(ngModel)]="drawerData.YEARLY_FEE"
+                          name="YEARLY_FEE"
+                          type="text"
+                          maxlength="6"
+                          placeHolder="Enter Yearly Fees"
+                          style="text-align: right"
+                          required
+                        />
+                      </nz-input-group>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+  
+                <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired nzNoColon>Modules </nz-form-label>
+                    <nz-form-control nzErrorTip="Please Select Modules">
+                      <nz-input-group nzCompact>
+                        <nz-select
+                          name="Modules"
+                          nzPlaceHolder="Select Modules"
+                          [(ngModel)]="drawerData.MODULES"
+                          style="width: 100%"
+                          required
+                        >
+                          <nz-option
+                            [nzLabel]="'Trackbook'"
+                            [nzValue]="'T'"
+                          ></nz-option>
+                          <nz-option
+                            [nzLabel]="'Paper creation'"
+                            [nzValue]="'P'"
+                          ></nz-option>
+                        </nz-select>
+                      </nz-input-group>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+  
+                <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                  <nz-form-item>
+                    <nz-form-label nzNoColon> Benefits </nz-form-label>
+                    <nz-form-control
+                      nzErrorTip="Please Enter Valid  Benefits"
+                    >
+                      <textarea
+                        rows="2"
+                        nz-input
+                        maxlength="256"
+                        minlength="2"
+                        name="DESC"
+                        placeholder=" Enter  Benefits"
+                        [(ngModel)]="drawerData.BENIFITS"
+                        (keypress)="commonFunction.alphaOnly($event)"
+                      ></textarea>
+                      <span
+                        style="color: red; font-size: 10px"
+                        *ngIf="drawerData.BENIFITS"
+                        >{{ drawerData.BENIFITS.length }}/256</span
+                      >
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired nzNoColon>
+                      Sequence No.
+                    </nz-form-label>
+                    <nz-form-control
+                      nzErrorTip=" Please Enter Correct Sequence Number "
+                    >
+                      <input
+                        nz-input
+                        placeholder="Sequence No."
+                        name="unitseq"
+                        style="width: 100%"
+                        minlength="1"
+                        maxlength="3"
+                        [(ngModel)]="drawerData.SEQ_NO"
+                        (keypress)="commonFunction.omit($event)"
+                        maxlength="5"
+                        required
+                        disabled
+                      />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+  
+                <div nz-col nzSpan="8">
+                  <nz-form-item>
+                    <nz-form-label nzNoColon> Status </nz-form-label>
+                    <nz-form-control>
+                      <nz-switch
+                        name="unitstatus"
+                        [(ngModel)]="drawerData.STATUS"
+                        nzCheckedChildren="Yes"
+                        nzUnCheckedChildren="No"
+                      ></nz-switch>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </nz-spin>
+          </form>
+  
+          <div class="footer">
+            <button
+              type="button"
+              nz-button
+              (click)="close()"
+              class="ant-btn"
+              style="margin-right: 8px"
+            >
+              <span> Cancel </span>
+            </button>
+            <button
+              type="button"
+              class="ant-btn ant-btn-primary"
+              *ngIf="!drawerData.ID"
+              nz-button
+              nz-dropdown
+              [nzDropdownMenu]="menu"
+              [nzLoading]="isSpinning"
+              (click)="save(false, subscriptionmaster)"
+            >
+              <span> Save & Close</span>
+            </button>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu>
+                <li
+                  nz-menu-item
+                  class="menuc"
+                  style="border-radius: 4px; background-color: #40a9ff"
+                >
+                  <a
+                    style="color: white"
+                    (click)="save(true, subscriptionmaster)"
+                  >
+                    Save & New</a
+                  >
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+            <button
+              type="button"
+              class="ant-btn ant-btn-primary"
+              nz-button
+              [nzLoading]="isSpinning"
+              *ngIf="drawerData.ID"
+              (click)="save(false, subscriptionmaster)"
+            >
+              <span> Update & Close</span>
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </nz-drawer>
+  </div>
+  

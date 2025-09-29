@@ -1,0 +1,303 @@
+<div nz-row nzType="flex">
+    <div nz-col nzXs="24" nzSm="24" nzMd="20" nzLg="20" nzXl="8">
+        <div class="formname">
+            <b> {{ formTitle }} </b>
+        </div>
+    </div>
+
+    <div nz-col nzXs="24" nzSm="24" nzMd="4" nzLg="6" nzXl="16" style="display: flex; justify-content: flex-end">
+        <form nz-form [nzLayout]="'inline'">
+            <nz-form-item>
+                <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                    <input type="text" name="aboutsearch" (keyup)="keyup($event)" [(ngModel)]="searchText" nz-input
+                        placeholder=" Search Record" />
+                </nz-input-group>
+                <ng-template #suffixIconButton>
+                    <button nz-button nzType="primary" (click)="search(true)" nzSearch>
+                        <i nz-icon nzType="search"></i>
+                    </button>
+                </ng-template>
+            </nz-form-item>
+            <nz-form-item>
+                <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+                    <i nz-icon nzType="plus"></i>Add New Task
+                </button>
+            </nz-form-item>
+        </form>
+    </div>
+</div>
+<br />
+<div nz-row>
+    <div nz-col nzSpan="24">
+        <nz-table class="my-scroll no-wrap1" nzBordered #taskmaster nzShowSizeChanger [nzFrontPagination]="false"
+            [nzData]="dataList" [nzLoading]="loadingRecords" [nzSize]="'small'" [nzScroll]="{ x: '1000px',  y: '55vh' }"
+            [nzTotal]="totalRecords" [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize"
+            (nzPageIndexChange)="search()" (nzPageSizeChange)="search(true)" (nzQueryParams)="sort($event)">
+            <thead>
+                <tr>
+                    <th nzWidth="20px" style="text-align: center">Action</th>
+
+                    <th nzColumnKey="{{ 'TASK_NAME' }}" [nzSortFn]="true" nzWidth="40px" style="text-align: center">
+                        Task Name
+                    </th>
+                    <th nzColumnKey="{{ 'AGE_GROUP_NAME' }}" [nzSortFn]="true" nzWidth="40px" style="text-align: center">
+                        Age Group Name
+                    </th>
+                    <th nzColumnKey="{{ 'DUE_TIME' }}" [nzSortFn]="true" nzWidth="16px" style="text-align: center">
+                        Due Time
+                    </th>
+                    <th nzColumnKey="{{ 'DESCRIPTION' }}" [nzSortFn]="true" nzWidth="40px" style="text-align: center">
+                        Description
+                    </th>
+                    <th nzColumnKey="{{ 'IS_FOR_AGE_RESTRICTION' }}" [nzSortFn]="true" nzWidth="16px"
+                        style="text-align: center">
+                        Status
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of taskmaster.data">
+                    <td style="text-align: center">
+                        <i nz-icon nzType="edit" nz-tooltip nzTooltipTitle="Edit" nzTheme="twotone"
+                            (click)="edit(data)"></i>
+                    </td>
+                    <td style="white-space: pre-line; text-align: left">
+                        {{ data["TASK_NAME"] }}
+                    </td>
+                    <td style="white-space: pre-line; text-align: left">
+                        {{ data["AGE_GROUP_NAME"] }}
+                    </td>
+                    <td style="white-space: pre-line; text-align: center">
+                        {{ data["DUE_TIME"] }}
+                    </td>
+                    <td style="white-space: pre-line; text-align: left">
+                        {{ data["DESCRIPTION"] }}
+                    </td>
+
+
+                    <td style="text-align: center">
+                        <i nz-icon *ngIf="data['IS_FOR_AGE_RESTRICTION']" [nzType]="'check-circle'"
+                            [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"></i>
+                        <i nz-icon *ngIf="!data['IS_FOR_AGE_RESTRICTION']" [nzType]="'close-circle'"
+                            [nzTheme]="'twotone'" [nzTwotoneColor]="'#f50'"></i>
+                    </td>
+
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+</div>
+<div *ngIf="drawerVisible">
+    <nz-drawer [nzBodyStyle]="{
+          height: 'calc(100% - 55px)',
+          overflow: 'auto',
+          'padding-bottom': '53px'
+        }" [nzClosable]="true" [nzMask]="true" [nzMaskClosable]="false" [nzWidth]="420" [nzVisible]="drawerVisible"
+        [nzTitle]="drawerTitle" (nzOnClose)="drawerClose()" (nzKeyboard)="(true)">
+        <ng-container *nzDrawerContent>
+            <div>
+                <form nz-form #websitebannerPage="ngForm">
+                    <nz-spin [nzSpinning]="isSpinning">
+                        <div nz-row class="custom-form-item">
+                            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired nzNoColon> Select Task Type </nz-form-label>
+                                    <nz-form-control nzHasFeedback nzErrorTip="Please Select Task Type ">
+                                        <nz-select [nzLoading]="tasksload" nzShowSearch nzAllowClear
+                                            nzPlaceHolder="Select Task Type" name="tasktype"
+                                            [(ngModel)]="drawerData.TYPE_ID" required>
+                                            <nz-option nzValue="ClassA" nzLabel="Class A"></nz-option>
+                                            <nz-option nzValue="ClassB" nzLabel="Class B"></nz-option>
+
+                                            <!-- <nz-option *ngFor="let report of tasks" [nzValue]="report.ID"
+                                [nzLabel]="report.NAME">
+                            </nz-option> -->
+                                        </nz-select>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+
+                            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired nzNoColon> Select Age Group </nz-form-label>
+                                    <nz-form-control nzHasFeedback nzErrorTip="Please Select Age Group ">
+                                        <nz-select [nzLoading]="ageloads" nzShowSearch nzAllowClear
+                                            nzPlaceHolder="Select Age Group" name="agegroup"
+                                            [(ngModel)]="drawerData.AGE_ID" required>
+                                            <nz-option [nzValue]="1" [nzLabel]="1" nzCustomContent>
+                                                <div>
+                                                    <div nz-row>
+
+
+                                                        <div nz-col nzSpan="11" style="text-align: center;">
+                                                            12
+                                                        </div>
+                                                        <div nz-col nzSpan="2" style="text-align: center;">
+                                                            -
+                                                        </div>
+
+                                                        <div nz-col nzSpan="11" style="text-align: center;">
+                                                            15
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </nz-option>
+
+
+
+                                            <!-- <nz-option *ngFor="let report of Classes" [nzValue]="report.ID"
+                                [nzLabel]="report.NAME">
+                            </nz-option> -->
+                                        </nz-select>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired nzNoColon>Due Time </nz-form-label>
+                                    <nz-form-control nzHasFeedback nzErrorTip="Please Select Due Time">
+                                        <nz-time-picker [(ngModel)]="drawerData.DUE_TIME" name="DUE_TIME"
+                                            nzFormat="HH:mm:ss" style="width: 100%" required>
+                                        </nz-time-picker>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+
+                            <div nz-col nzSpan="8">
+                                <nz-form-item>
+                                    <nz-form-label nzNoColon> Age Restriction </nz-form-label>
+                                    <nz-form-control>
+                                        <nz-switch name="unitstatus" [(ngModel)]="drawerData.IS_FOR_AGE_RESTRICTION"
+                                            nzCheckedChildren="Yes" nzUnCheckedChildren="No"></nz-switch>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+
+                            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24"
+                                *ngIf="drawerData.IS_FOR_AGE_RESTRICTION ">
+                                <nz-form-item>
+                                    <nz-form-label nzNoColon> Description </nz-form-label>
+                                    <nz-form-control nzHasFeedback nzErrorTip="Please Enter Valid  description">
+                                        <textarea rows="2" nz-input maxlength="256" minlength="2" name="DESCRIPTION"
+                                            placeholder=" Enter  Description"
+                                            [(ngModel)]="drawerData.DESCRIPTION"></textarea>
+                                        <span style="color: red; font-size: 10px" *ngIf="drawerData.DESCRIPTION">{{
+                                            drawerData.DESCRIPTION.length
+                                            }}/256</span>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+
+                            <div nz-col nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12"
+                                *ngIf="drawerData.IS_FOR_AGE_RESTRICTION ">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired nzNoColon>Attachment</nz-form-label>
+                                    <!-- <nz-form-control nzHasFeedback nzErrorTip="Upload Invoice Url"> -->
+                                    <div style="text-align: left">
+                                        <div *ngIf="
+                          drawerData.ATTACMENT == null ||
+                          drawerData.ATTACMENT == undefined ||
+                          drawerData.ATTACMENT == ''
+                        " style="color: blue">
+                                            <button nz-button style="
+                            height: 28px;
+                            padding: 0px 7px;
+                            font-size: 12px;
+                            width: 152px;
+                          " (click)="fileInput.click()">
+                                                <span style="width: 138px" nz-icon nzType="upload"
+                                                    nzTheme="outline"></span>
+                                                <input #fileInput name="invoice" accept=".jpg, .jpeg, .png, .pdf"
+                                                    (change)="onFileSelected($event)" type="file"
+                                                    style="display: none" />
+                                            </button>
+                                        </div>
+                                        <span *ngIf="
+                          drawerData.ATTACMENT !== null &&
+                          drawerData.ATTACMENT !== undefined &&
+                          drawerData.ATTACMENT !== ''
+                        ">
+                                            <div *ngIf="progressBarProfilePhoto">
+                                                <nz-progress [style.width]="percentProfilePhoto + '%'"
+                                                    [nzPercent]="percentProfilePhoto">{{ percentProfilePhoto
+                                                    }}%</nz-progress>
+                                            </div>
+                                            {{ drawerData.ATTACMENT }}
+                                        </span>
+                                        <br />
+
+                                        <div *ngIf="
+                          drawerData.ATTACMENT !== null &&
+                          drawerData.ATTACMENT !== undefined &&
+                          drawerData.ATTACMENT !== ''
+                        " style="display: flex; justify-content: center">
+                                            <a style="color: blue; margin-right: 9px"
+                                                (click)="ViewAdvertise(drawerData.ATTACMENT)" nz-tooltip
+                                                nzTooltipTitle="Click Here To View Uploaded Document">
+                                                <span nz-icon nzType="eye" nzTheme="outline"></span>
+                                            </a>
+
+                                            <span style="cursor: pointer" nz-popconfirm
+                                                nzPopconfirmTitle="Are you sure want delete?"
+                                                (nzOnConfirm)="deleteConfirm(drawerData)" (nzOnCancel)="deleteCancel()"
+                                                (nzOnCancel)="deleteCancel()" nzPopconfirmPlacement="top">
+                                                <span nz-icon nzType="delete" nzTheme="twotone" nz-tooltip
+                                                    nzTooltipTitle="Delete">
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </nz-form-item>
+                            </div>
+
+                        </div>
+                    </nz-spin>
+                </form>
+
+                <div class="footer">
+                    <button type="button" nz-button (click)="close()" class="ant-btn" style="margin-right: 8px">
+                        <span> Cancel </span>
+                    </button>
+                    <button type="button" class="ant-btn ant-btn-primary" *ngIf="!drawerData.ID" nz-button nz-dropdown
+                        [nzDropdownMenu]="menu" (click)="save(false, websitebannerPage)">
+                        <span> Save & Close</span>
+                    </button>
+                    <nz-dropdown-menu #menu="nzDropdownMenu">
+                        <ul nz-menu>
+                            <li nz-menu-item class="menuc" style="border-radius: 4px; background-color: #40a9ff">
+                                <a style="color: white" (click)="save(true, websitebannerPage)">
+                                    Save & New</a>
+                            </li>
+                        </ul>
+                    </nz-dropdown-menu>
+                    <button type="button" class="ant-btn ant-btn-primary" nz-button [nzLoading]="isSpinning"
+                        *ngIf="drawerData.ID" (click)="save(false, websitebannerPage)">
+                        <span> Update & Close</span>
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+    </nz-drawer>
+</div>
+
+
+<!-- Image  URL -->
+
+<nz-modal [nzWidth]="900" [(nzVisible)]="printOrderModalVisible" nzMaskClosable="false" nzClosable="false"
+    [nzContent]="printOrderModalContent1" [nzTitle]="'Preview'" (nzOnCancel)="ViewModalCancel()"
+    [nzFooter]="printOrderModalFooter1">
+    <ng-template #printOrderModalContent1>
+        <nz-spin [nzSpinning]="isSpinning">
+            <div *ngIf="imageshow != undefined && imageshow != null && imageshow != ''" class="ss"
+                style="height: 600px; overflow: auto">
+                <iframe [src]="imageshow" style="width: 832px; height: 596px" frameborder="0"></iframe>
+            </div>
+        </nz-spin>
+    </ng-template>
+    <ng-template #printOrderModalFooter1>
+        <button nz-button nzType="default" (click)="ViewModalCancel()">
+            Close
+        </button>
+    </ng-template>
+</nz-modal>

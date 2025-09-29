@@ -1,0 +1,413 @@
+<div nz-row nzType="flex">
+  <div nz-col nzXs="24" nzSm="24" nzMd="20" nzLg="20" nzXl="12">
+    <div class="formname">
+      <b> {{ formTitle }} </b>
+    </div>
+  </div>
+
+  <div
+    nz-col
+    nzXs="24"
+    nzSm="24"
+    nzMd="4"
+    nzLg="6"
+    nzXl="12"
+    style="display: flex; justify-content: flex-end"
+  >
+    <form nz-form [nzLayout]="'inline'">
+      <nz-form-item>
+        <button nz-button [nzType]="isFilterApplied" (click)="showFilter()">
+          <i nz-icon nzType="filter"></i>
+        </button>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+          <input
+            type="text"
+            name="search"
+            [(ngModel)]="searchText"
+            (keydown.enter)="onKeypressEvent($event)"
+            nz-input
+            placeholder="Search"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconButton>
+          <button nz-button nzType="primary" (click)="search(true)" nzSearch>
+            <i nz-icon nzType="search"></i>
+          </button>
+        </ng-template>
+      </nz-form-item>
+      <nz-form-item>
+        <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+          <i nz-icon nzType="plus"></i>Add New Question
+        </button>
+      </nz-form-item>
+    </form>
+  </div>
+</div>
+<br />
+<div nz-row style="margin-bottom: 14px">
+  <div class="rowQuestion" nz-col nzSpan="24">
+    <div class="filter {{ filterClass }}">
+      <div class="filter-box">
+        <form nz-form>
+          <div nz-row nzGutter="8" class="custom-form-item">
+            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="6">
+              <nz-form-item>
+                <nz-form-label><b>Select Question Type </b></nz-form-label>
+
+                <nz-form-control nzErrorTip="Please Select Question Type">
+                  <nz-input-group nzCompact>
+                    <nz-select
+                      name="qtype"
+                      nzPlaceHolder="Select Question Type"
+                      [(ngModel)]="filterdata.QUESTION_TYPE"
+                      style="width: 100%"
+                      nzShowSearch
+                      nzAllowClear
+                      [nzLoading]="typeLoad"
+                    >
+                      <nz-option
+                        *ngFor="let type of questionTypeList"
+                        [nzValue]="type.ID"
+                        [nzLabel]="type.LABEL"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzSpan="6">
+              <nz-form-item>
+                <nz-form-label><b>Class Name </b></nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    style="width: 100%"
+                    nzShowArrow="true"
+                    [nzLoading]="classload"
+                    nzShowSearch
+                    nzAllowClear
+                    name="className"
+                    [(ngModel)]="filterdata.CLASS_ID"
+                    nzPlaceHolder="Select Class"
+                  >
+                    <nz-option
+                      *ngFor="let class of classlist"
+                      [nzValue]="class.ID"
+                      [nzLabel]="class.NAME"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="6">
+              <nz-form-item>
+                <nz-form-label><b>Select Subject</b></nz-form-label>
+
+                <nz-form-control nzErrorTip="Please Select Subject ">
+                  <nz-select
+                    style="width: 100%"
+                    [nzLoading]="subjectsload"
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder="Select Subject"
+                    name="subject"
+                    [(ngModel)]="filterdata.SUBJECT_ID"
+                  >
+                    <nz-option
+                      *ngFor="let report of subjects"
+                      [nzValue]="report.ID"
+                      [nzLabel]="report.NAME"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="6">
+              <nz-form-item>
+                <nz-form-label><b>Select Chapter </b></nz-form-label>
+                <nz-form-control nzErrorTip="Please Select Chapter Name">
+                  <nz-input-group nzCompact>
+                    <nz-select
+                      name="chapterName"
+                      nzPlaceHolder="Select Chapter Name"
+                      [(ngModel)]="filterdata.CHAPTER_ID"
+                      style="width: 100%"
+                      nzAllowClear
+                      nzShowSearch
+                      [nzLoading]="chapterLoad1"
+                    >
+                      <nz-option
+                        *ngFor="let chapter of chapterList1"
+                        [nzValue]="chapter.ID"
+                        [nzLabel]="chapter.NAME"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="8">
+              <nz-form-item
+                style="margin-top: 20px; margin-left: 10px; padding-top: 13px"
+              >
+                <button
+                  style="margin-right: 10px"
+                  nz-button
+                  [nzLoading]="loadingRecords"
+                  nzType="primary"
+                  (click)="applyFilter()"
+                  nzJustify="end"
+                  [nzLoading]="isSpinning"
+                >
+                  <i nz-icon nzType="filter"></i>Apply Filter
+                </button>
+
+                <button nz-button nzType="primary" (click)="clearFilter()">
+                  <i nz-icon nzType="filter"></i>Clear Filter
+                </button>
+              </nz-form-item>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <nz-table
+      class="my-scroll no-wrap1"
+      nzBordered
+      #postTable
+      nzShowSizeChanger
+      [nzFrontPagination]="false"
+      [nzData]="dataList"
+      [nzLoading]="loadingRecords"
+      [nzSize]="'small'"
+      [nzTotal]="totalRecords"
+      [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize"
+      (nzPageIndexChange)="search()"
+      (nzPageSizeChange)="search(true)"
+      (nzQueryParams)="sort($event)"
+      [nzScroll]="{ x: '1700px', y: '55vh' }"
+    >
+      <thead>
+        <tr>
+          <th nzWidth="40px" nzLeft style="text-align: center">
+            <b>Action</b>
+          </th>
+
+          <th
+            nzWidth="140px"
+            nzColumnKey="{{ 'CLASS_NAME' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Class Name </b>
+          </th>
+          <th
+            nzWidth="140px"
+            nzColumnKey="{{ 'SUBJECT_NAME' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Subject Name </b>
+          </th>
+
+          <th
+            nzWidth="140px"
+            nzColumnKey="{{ 'CHAPTER_NAME' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Chapter Name </b>
+          </th>
+          <th
+            nzWidth="120px"
+            nzColumnKey="{{ 'QUESTION_TYPE_NAME' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Question Type </b>
+          </th>
+          <th
+            nzWidth="220px"
+            nzColumnKey="{{ 'QUESTION' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Question</b>
+          </th>
+          <th
+            nzWidth="70px"
+            nzColumnKey="{{ 'MARKS' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Marks</b>
+          </th>
+          <!-- <th
+            nzWidth="80px"
+            nzColumnKey="{{ 'SEQ_NO' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Sequence No</b>
+          </th> -->
+          <th
+            nzWidth="50px"
+            nzColumnKey="{{ 'STATUS' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b>Status</b>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let data of postTable.data" style="text-align: center">
+          <td align="center" nzLeft>
+            <nz-space>
+              <a
+                *nzSpaceItem
+                (click)="edit(data)"
+                nz-tooltip
+                nzTooltipTitle="Edit"
+              >
+                <span
+                  nz-icon
+                  nzType="edit"
+                  nzTheme="twotone"
+                  style="font-size: 15px"
+                ></span>
+              </a>
+            </nz-space>
+          </td>
+
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['CLASS_NAME']"
+          >
+            {{ data["CLASS_NAME"] }}
+          </td>
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['SUBJECT_NAME']"
+          >
+            {{ data["SUBJECT_NAME"] }}
+          </td>
+
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['CHAPTER_NAME']"
+          >
+            {{ data["CHAPTER_NAME"] }}
+          </td>
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['QUESTION_TYPE_NAME']"
+          >
+            {{ data["QUESTION_TYPE_NAME"] }}
+          </td>
+
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['QUESTION']"
+          >
+            {{ data["QUESTION"] }}
+          </td>
+          <td style="white-space: pre-line">{{ data["MARKS"] }}</td>
+          <!-- <td style="white-space: pre-line">{{ data["SEQ_NO"] }}</td> -->
+
+          <td>
+            <i
+              nz-icon
+              *ngIf="data['STATUS']"
+              [nzType]="'check-circle'"
+              [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#52c41a'"
+            ></i>
+            <i
+              nz-icon
+              *ngIf="!data['STATUS']"
+              [nzType]="'close-circle'"
+              [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#f50'"
+            ></i>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+
+<div *ngIf="drawerVisible">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="1300"
+    [nzVisible]="drawerVisible"
+    [nzTitle]="drawerTitle"
+    (nzOnClose)="drawerClose()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <app-add-question-master
+        [drawerClose]="closeCallback"
+        [data]="drawerData"
+        [drawerVisible]="drawerVisible"
+        [OptionList]="OptionList"
+        [answerImageUrl]="answerImageUrl"
+        [questionImageUrl]="questionImageUrl"
+        [chapterList]="chapterList"
+        [QuePaperSubjectList]="QuePaperSubjectList"
+      >
+      </app-add-question-master>
+    </ng-container>
+  </nz-drawer>
+</div>

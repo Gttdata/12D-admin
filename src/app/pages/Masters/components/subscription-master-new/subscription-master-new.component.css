@@ -1,0 +1,27 @@
+
+.custom-form-item nz-form-item{
+     
+    display: inline-block;
+    margin-bottom: 5px;
+    width: -webkit-fill-available;
+    padding: 0px 10px;
+ }
+
+
+ .Elipsis{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+   }
+
+.active{
+   background-color: aqua;
+}
+.inactive{
+   background-color:white;
+}
+button.ant-btn>span.anticon{
+   vertical-align: 0;
+   font-size: 15px;
+}

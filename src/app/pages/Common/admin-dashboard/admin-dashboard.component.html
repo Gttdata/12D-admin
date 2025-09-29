@@ -1,0 +1,719 @@
+<nz-spin [nzSpinning]="loadingForms">
+  <div nz-row>
+    <div nz-col nzSpan="24" style="display: flex; justify-content: right">
+      <button
+        nz-button
+        nzTooltipTitle="Filter"
+        [nzType]="isFilterApplied"
+        nzTooltipPlacement="top"
+        nz-tooltip
+        (click)="showFilter()"
+      >
+        <i nz-icon nzType="filter"></i>
+      </button>
+    </div>
+    <div nz-col nzSpan="24">
+      <div class="filter {{ filterClass }}">
+        <div class="filter-box">
+          <form nz-form>
+            <div nz-row>
+              <div nz-col [nzSpan]="screenWidth > 1300 && roleId == 2 ? 4 : 4">
+                <nz-form-item class="custom-form-item">
+                  <nz-form-label nzNoColon>Select Year</nz-form-label>
+                  <nz-form-control>
+                    <nz-select
+                      [(ngModel)]="YEAR"
+                      name="class"
+                      style="width: 100%"
+                      nzShowSearch
+                      nzAllowClear
+                      nzPlaceHolder="Select Class"
+                    >
+                      <nz-option
+                        *ngFor="let year of yearlist"
+                        [nzValue]="year.ID"
+                        [nzLabel]="year.YEAR"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <!-- <div nz-col [nzSpan]="screenWidth > 1500 && roleId == 2 ? 4 : 4">
+                <nz-form-item>
+                  <nz-form-label nzNoColon>Select Year</nz-form-label>
+                  <nz-form-control>
+                    <nz-select
+                      [(ngModel)]="year"
+                      name="year"
+                      style="width: 100%"
+                      nzShowSearch
+                      nzAllowClear
+                      nzPlaceHolder="Select Year"
+                    >
+                      <nz-option
+                        *ngFor="let year of yearlist"
+                        [nzValue]="year.ID"
+                        [nzLabel]="year.NAME"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div> -->
+
+              <div
+                nz-col
+                [nzSpan]="screenWidth > 1300 && roleId == 2 ? 4 : 4"
+                style="display: flex; gap: 10px; margin-top: 31px"
+              >
+                <button
+                  nz-button
+                  [nzLoading]="isSpinning"
+                  nzType="primary"
+                  (click)="applyFilter()"
+                >
+                  <i nz-icon nzType="filter"></i>
+                </button>
+                <button
+                  nz-button
+                  nzType="primary"
+                  [nzLoading]="isSpinning"
+                  (click)="clearFilter()"
+                >
+                  <i nz-icon nzType="close"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div nz-row style="display: flex; justify-content: right">
+    <div
+      nz-col
+      nzXs="24"
+      nzSm="24"
+      nzMd="24"
+      nzLg="24"
+      nzXl="24"
+      style="text-align: right"
+      style="margin-bottom: 10px"
+    >
+      <br />
+      <div nz-row [nzGutter]="[8, 8]">
+        <div
+          nz-col
+          *ngFor="let form of formslist; let i = index"
+          nzXs="24"
+          nzSm="24"
+          nzMd="8"
+          nzLg="6"
+          nzXl="6"
+        >
+          <a [href]="form.link">
+            <div
+              class="inner-box"
+              style="
+                padding: 20px 20px 1px;
+                box-shadow: 1px 3px 10px 3px #e3e5ff;
+              "
+              [ngStyle]="{
+                background: backgroundarrays[i] ? backgroundarrays[i] : ''
+              }"
+            >
+              <div nz-row>
+                <div nz-col [nzSpan]="14">
+                  <h4 style="font-size: 12px; font-weight: bold">
+                    {{ form.title }}
+                  </h4>
+                  <h3
+                    *ngIf="form.link.toLowerCase().includes('student')"
+                    style="font-size: 24px; font-weight: 800; color: #048f2e"
+                  >
+                    {{ totalStudents }}
+                  </h3>
+                  <h3
+                    *ngIf="form.link.toLowerCase().includes('teacher')"
+                    style="font-size: 24px; font-weight: 800; color: #048f2e"
+                  >
+                    {{ totalTeachers }}
+                  </h3>
+                  <h3
+                    *ngIf="form.link.toLowerCase().includes('division')"
+                    style="font-size: 24px; font-weight: 800; color: #048f2e"
+                  >
+                    {{ totalDivisions }}
+                  </h3>
+                  <h3
+                    *ngIf="form.link.toLowerCase().includes('class')"
+                    style="font-size: 24px; font-weight: 800; color: #048f2e"
+                  >
+                    {{ totalClasses }}
+                  </h3>
+                  <h3
+                    *ngIf="form.link.toLowerCase().includes('head')"
+                    style="font-size: 24px; font-weight: 800; color: #048f2e"
+                  >
+                    {{ totalFeeHeads }}
+                  </h3>
+                  <h3
+                    *ngIf="form.link.toLowerCase().includes('subject')"
+                    style="font-size: 24px; font-weight: 800; color: #048f2e"
+                  >
+                    {{ totalSubjects }}
+                  </h3>
+                  <h3
+                    *ngIf="form.link.toLowerCase().includes('medium')"
+                    style="font-size: 24px; font-weight: 800; color: #048f2e"
+                  >
+                    {{ totalMediums }}
+                  </h3>
+                </div>
+
+                <div nz-col [nzSpan]="10" style="text-align: right">
+                  <img
+                    *ngIf="form.link.toLowerCase().includes('student')"
+                    src="assets/team.png"
+                    alt="student"
+                    style="width: 60px"
+                  />
+                  <img
+                    *ngIf="form.link.toLowerCase().includes('teacher')"
+                    src="assets/teacher.png"
+                    alt="teacher"
+                    style="width: 60px"
+                  />
+                  <img
+                    *ngIf="form.link.toLowerCase().includes('division')"
+                    src="assets/divide.png"
+                    alt="division"
+                    style="width: 60px"
+                  />
+                  <img
+                    *ngIf="form.link.toLowerCase().includes('class')"
+                    src="assets/iconclass.PNG"
+                    alt="class"
+                    style="width: 60px"
+                  />
+
+                  <img
+                    *ngIf="form.link.toLowerCase().includes('subject')"
+                    src="assets/text-books.png"
+                    alt="class"
+                    style="width: 60px"
+                  />
+                  <img
+                    *ngIf="form.link.toLowerCase().includes('head')"
+                    src="assets/charge.png"
+                    alt="class"
+                    style="width: 60px"
+                  />
+                  <img
+                    *ngIf="form.link.toLowerCase().includes('medium')"
+                    src="assets/languages.png"
+                    alt="class"
+                    style="width: 60px"
+                  />
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+        <!-- <div
+          class="gutter-row"
+          nz-col
+          nzXs="24"
+          nzSm="24"
+          nzMd="8"
+          nzLg="6"
+          nzXl="6"
+        >
+          <a href="/reports/viewreports" (click)="eraseSession()">
+            <div
+              class="inner-box"
+              style="
+                padding: 20px 20px 1px;
+                background: #6857575c;
+                box-shadow: 1px 3px 10px 3px #e3e5ff;
+              "
+            >
+              <div nz-row>
+                <div nz-col [nzSpan]="14">
+                  <h4 style="font-size: 12px; font-weight: bold">Reports</h4>
+                  <h3 style="font-size: 24px; font-weight: 800; color: #048f2e">
+                    {{ ReportsLength }}
+                  </h3>
+                </div>
+
+                <div nz-col [nzSpan]="10" style="text-align: right">
+                  <img
+                    src="assets/report.png"
+                    alt="student"
+                    style="width: 60px"
+                  />
+                </div>
+              </div>
+            </div>
+          </a>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</nz-spin>
+
+<div nz-row style="margin-top: 20px">
+  <div nz-col nzSpan="24">
+    <div nz-row [nzGutter]="[8, 8]">
+      <div
+        nz-col
+        nzXs="24"
+        nzSm="24"
+        nzMd="8"
+        nzLg="8"
+        nzXl="8"
+        id="chart"
+        class="report-box"
+      >
+        <div nz-row>
+          <div nz-col nzSpan="24">
+            <div nz-row>
+              <div nz-col nzSpan="19">
+                <h6 style="text-align: right; margin-top: 20px">
+                  <b>Classwise Weekly Attendance Report</b>
+                </h6>
+              </div>
+              <div
+                nz-col
+                nzSpan="5"
+                style="margin-top: 15px; text-align: right"
+              >
+                <button
+                  nz-button
+                  nzTooltipTitle="Filter"
+                  [nzType]="isFilterApplied2"
+                  nzTooltipPlacement="top"
+                  nz-tooltip
+                  (click)="showFilter2()"
+                >
+                  <i nz-icon nzType="filter"></i>
+                </button>
+              </div>
+            </div>
+
+            <br />
+            <div nz-row>
+              <div nz-col nzSpan="24">
+                <div class="filter {{ filterClass2 }}">
+                  <div class="filter-box">
+                    <form nz-form>
+                      <div nz-row>
+                        <div nz-col nzSpan="10">
+                          <nz-form-item class="custom-form-item">
+                            <nz-form-label nzNoColon
+                              >Select Class</nz-form-label
+                            >
+                            <nz-form-control>
+                              <nz-select
+                                [(ngModel)]="classid1"
+                                name="class1"
+                                style="width: 100%"
+                                nzShowSearch
+                                nzAllowClear
+                                nzPlaceHolder="Select Class"
+                              >
+                                <nz-option
+                                  *ngFor="let class of classlist"
+                                  [nzValue]="class.ID"
+                                  [nzLabel]="class.NAME"
+                                ></nz-option>
+                              </nz-select>
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
+
+                        <div nz-col nzSpan="10">
+                          <nz-form-item class="custom-form-item">
+                            <nz-form-label nzNoColon
+                              >Select Division</nz-form-label
+                            >
+                            <nz-form-control>
+                              <nz-select
+                                [(ngModel)]="divisionid1"
+                                name="div1"
+                                style="width: 100%"
+                                nzShowSearch
+                                nzAllowClear
+                                nzPlaceHolder="Select Division"
+                              >
+                                <nz-option
+                                  *ngFor="let div of divisionlist"
+                                  [nzValue]="div.ID"
+                                  [nzLabel]="div.NAME"
+                                ></nz-option>
+                              </nz-select>
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
+
+                        <div
+                          nz-col
+                          nzSpan="4"
+                          style="
+                            display: flex;
+                            gap: 10px;
+                            margin-top: 31px;
+                            padding-left: 4px;
+                          "
+                        >
+                          <button
+                            nz-button
+                            [nzLoading]="isChartSpinning"
+                            nzType="primary"
+                            (click)="applyFilter2()"
+                          >
+                            <i nz-icon nzType="filter"></i>
+                          </button>
+                          <button
+                            nz-button
+                            nzType="primary"
+                            [nzLoading]="isChartSpinning"
+                            (click)="clearFilter2()"
+                          >
+                            <i nz-icon nzType="close"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br />
+            <!-- <a
+              href="/all-reports/classwise-attendance-report"
+              style="color: black"
+            > -->
+            <nz-spin [nzSpinning]="isChartSpinning">
+              <apx-chart
+                *ngIf="!isChartSpinning"
+                [series]="chartOptions.series"
+                [chart]="chartOptions.chart"
+                [dataLabels]="chartOptions.dataLabels"
+                [plotOptions]="chartOptions.plotOptions"
+                [responsive]="chartOptions.responsive"
+                [xaxis]="chartOptions.xaxis"
+                [yaxis]="chartOptions.yaxis"
+                [legend]="chartOptions.legend"
+                [fill]="chartOptions.fill"
+                [colors]="chartOptions.colors"
+              ></apx-chart>
+            </nz-spin>
+            <!-- </a> -->
+          </div>
+        </div>
+      </div>
+      <div
+        nz-col
+        nzXs="24"
+        nzSm="24"
+        nzMd="8"
+        nzLg="7"
+        nzXl="7"
+        id="chart1"
+        class="report-box"
+        style="margin-left: 10px"
+      >
+        <div nz-row>
+          <div nz-col nzSpan="24">
+            <div nz-row>
+              <div nz-col nzSpan="19">
+                <h6 style="text-align: right; margin-top: 20px">
+                  <b>Classwise Task Details Report</b>
+                </h6>
+              </div>
+              <div
+                nz-col
+                nzSpan="5"
+                style="margin-top: 15px; text-align: right"
+              >
+                <button
+                  nz-button
+                  nzTooltipTitle="Filter"
+                  [nzType]="isFilterApplied3"
+                  nzTooltipPlacement="top"
+                  nz-tooltip
+                  (click)="showFilter3()"
+                >
+                  <i nz-icon nzType="filter"></i>
+                </button>
+              </div>
+            </div>
+
+            <br />
+            <div nz-row>
+              <div nz-col nzSpan="24">
+                <div class="filter {{ filterClass3 }}">
+                  <div class="filter-box">
+                    <form nz-form>
+                      <div nz-row>
+                        <div nz-col nzSpan="10">
+                          <nz-form-item class="custom-form-item">
+                            <nz-form-label nzNoColon
+                              >Select Class</nz-form-label
+                            >
+                            <nz-form-control>
+                              <nz-select
+                                [(ngModel)]="classid2"
+                                name="class3"
+                                style="width: 100%"
+                                nzShowSearch
+                                nzAllowClear
+                                nzPlaceHolder="Select Class"
+                              >
+                                <nz-option
+                                  *ngFor="let class of classlist"
+                                  [nzValue]="class.ID"
+                                  [nzLabel]="class.NAME"
+                                ></nz-option>
+                              </nz-select>
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
+
+                        <div nz-col nzSpan="10">
+                          <nz-form-item class="custom-form-item">
+                            <nz-form-label nzNoColon
+                              >Select Division</nz-form-label
+                            >
+                            <nz-form-control>
+                              <nz-select
+                                [(ngModel)]="divisionid2"
+                                name="div3"
+                                style="width: 100%"
+                                nzShowSearch
+                                nzAllowClear
+                                nzPlaceHolder="Select Division"
+                              >
+                                <nz-option
+                                  *ngFor="let div of divisionlist"
+                                  [nzValue]="div.ID"
+                                  [nzLabel]="div.NAME"
+                                ></nz-option>
+                              </nz-select>
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
+
+                        <div
+                          nz-col
+                          nzSpan="4"
+                          style="
+                            display: flex;
+                            gap: 10px;
+                            margin-top: 31px;
+                            padding-left: 4px;
+                          "
+                        >
+                          <button
+                            nz-button
+                            [nzLoading]="isChartSpinning1"
+                            nzType="primary"
+                            (click)="applyFilter3()"
+                          >
+                            <i nz-icon nzType="filter"></i>
+                          </button>
+                          <button
+                            nz-button
+                            nzType="primary"
+                            [nzLoading]="isChartSpinning1"
+                            (click)="clearFilter3()"
+                          >
+                            <i nz-icon nzType="close"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br />
+            <!-- <a
+              href="/all-reports/classwise-taskdetails-report"
+              style="color: black"
+            > -->
+            <nz-spin [nzSpinning]="isChartSpinning1">
+              <apx-chart
+                *ngIf="!isChartSpinning1"
+                [series]="chartOptions1.series"
+                [chart]="chartOptions1.chart"
+                [dataLabels]="chartOptions1.dataLabels"
+                [plotOptions]="chartOptions1.plotOptions"
+                [responsive]="chartOptions1.responsive"
+                [xaxis]="chartOptions1.xaxis"
+                [yaxis]="chartOptions1.yaxis"
+                [legend]="chartOptions1.legend"
+                [fill]="chartOptions1.fill"
+              ></apx-chart>
+            </nz-spin>
+            <!-- </a> -->
+          </div>
+        </div>
+      </div>
+      <div
+        nz-col
+        nzXs="24"
+        nzSm="24"
+        nzMd="8"
+        nzLg="8"
+        nzXl="8"
+        id="chart2"
+        class="report-box"
+        style="margin-left: 10px"
+      >
+        <div nz-row>
+          <div nz-col nzSpan="24">
+            <div nz-row>
+              <div nz-col nzSpan="19">
+                <h6 style="text-align: right; margin-top: 20px">
+                  <b>Classwise Fee Summary Report</b>
+                </h6>
+              </div>
+              <div
+                nz-col
+                nzSpan="5"
+                style="margin-top: 15px; text-align: right"
+              >
+                <button
+                  nz-button
+                  nzTooltipTitle="Filter"
+                  [nzType]="isFilterApplied4"
+                  nzTooltipPlacement="top"
+                  nz-tooltip
+                  (click)="showFilter4()"
+                >
+                  <i nz-icon nzType="filter"></i>
+                </button>
+              </div>
+            </div>
+
+            <div nz-row>
+              <!-- <div
+                nz-col
+                nzSpan="24"
+                style="display: flex; justify-content: right"
+              >
+              
+              </div> -->
+              <div nz-col nzSpan="24">
+                <div class="filter {{ filterClass4 }}">
+                  <div class="filter-box">
+                    <form nz-form>
+                      <div nz-row>
+                        <div nz-col nzSpan="10">
+                          <nz-form-item class="custom-form-item">
+                            <nz-form-label nzNoColon
+                              >Select Class</nz-form-label
+                            >
+                            <nz-form-control>
+                              <nz-select
+                                [(ngModel)]="classid3"
+                                name="class4"
+                                style="width: 100%"
+                                nzShowSearch
+                                nzAllowClear
+                                nzPlaceHolder="Select Class"
+                              >
+                                <nz-option
+                                  *ngFor="let class of classlist"
+                                  [nzValue]="class.ID"
+                                  [nzLabel]="class.NAME"
+                                ></nz-option>
+                              </nz-select>
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
+
+                        <div nz-col nzSpan="10">
+                          <nz-form-item class="custom-form-item">
+                            <nz-form-label nzNoColon
+                              >Select Division</nz-form-label
+                            >
+                            <nz-form-control>
+                              <nz-select
+                                [(ngModel)]="divisionid3"
+                                name="div5"
+                                style="width: 100%"
+                                nzShowSearch
+                                nzAllowClear
+                                nzPlaceHolder="Select Division"
+                              >
+                                <nz-option
+                                  *ngFor="let div of divisionlist"
+                                  [nzValue]="div.ID"
+                                  [nzLabel]="div.NAME"
+                                ></nz-option>
+                              </nz-select>
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
+
+                        <div
+                          nz-col
+                          nzSpan="4"
+                          style="
+                            display: flex;
+                            gap: 10px;
+                            margin-top: 31px;
+                            padding-left: 4px;
+                          "
+                        >
+                          <button
+                            nz-button
+                            [nzLoading]="isChartSpinning2"
+                            nzType="primary"
+                            (click)="applyFilter4()"
+                          >
+                            <i nz-icon nzType="filter"></i>
+                          </button>
+                          <button
+                            nz-button
+                            nzType="primary"
+                            [nzLoading]="isChartSpinning2"
+                            (click)="clearFilter4()"
+                          >
+                            <i nz-icon nzType="close"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br />
+            <!-- <a
+              href="/all-reports/classwise-fee-summary-report"
+              style="color: black"
+            > -->
+            <nz-spin [nzSpinning]="isChartSpinning2">
+              <apx-chart
+                style="display: flex; justify-content: center"
+                *ngIf="!isChartSpinning2"
+                [series]="chartOptions2.series"
+                [chart]="chartOptions2.chart"
+                [labels]="chartOptions2.labels"
+                [dataLabels]="chartOptions2.dataLabels"
+                [plotOptions]="chartOptions2.plotOptions"
+                [responsive]="chartOptions2.responsive"
+                [legend]="chartOptions2.legend"
+              ></apx-chart>
+            </nz-spin>
+            <!-- </a> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

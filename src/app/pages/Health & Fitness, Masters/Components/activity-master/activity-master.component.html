@@ -1,0 +1,1023 @@
+<div nz-row nzType="flex">
+  <div nz-col nzXs="24" nzSm="24" nzMd="20" nzLg="20" nzXl="8">
+    <div class="formname">
+      <b> {{ formTitle }} </b>
+    </div>
+  </div>
+
+  
+  <div
+    nz-col
+    nzXs="24"
+    nzSm="24"
+    nzMd="4"
+    nzLg="6"
+    nzXl="16"
+    style="display: flex; justify-content: flex-end"
+  >
+    <form nz-form [nzLayout]="'inline'">
+      <nz-form-item>
+        <button nz-button [nzType]="isFilterApplied" (click)="showFilter()">
+          <i nz-icon nzType="filter"></i>
+        </button>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+          <input
+            type="text"
+            name="search"
+            nz-input
+            placeholder="Search Records"
+            (keyup)="keyup($event)"
+            [(ngModel)]="searchText"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconButton>
+          <button nz-button nzType="primary" (click)="search(true)" nzSearch>
+            <i nz-icon nzType="search"></i>
+          </button>
+        </ng-template>
+      </nz-form-item>
+      <nz-form-item>
+        <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+          <i nz-icon nzType="plus"></i>Add New Activity
+        </button>
+      </nz-form-item>
+    </form>
+  </div>
+</div>
+<br />
+<div nz-row style="margin-bottom: 14px">
+  <div class="rowQuestion" nz-col nzSpan="24">
+    <div class="filter {{ filterClass }}">
+      <div class="filter-box">
+        <form nz-form>
+          <div nz-row nzGutter="8" class="custom-form-item">
+            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="7" nzXl="7">
+              <nz-form-item>
+                <nz-form-label><b> Activity Category</b></nz-form-label>
+
+                <nz-form-control nzErrorTip="Please Select Activity Category">
+                  <nz-input-group nzCompact>
+                    <nz-select
+                      name="activitycategory"
+                      nzPlaceHolder="Select Activity Category"
+                      [(ngModel)]="ACTIVITY_CATEGORY_ID"
+                      style="width: 100%"
+                      nzShowSearch
+                      nzAllowClear
+                      [nzLoading]="activitycategoryload"
+                    >
+                    <nz-option
+                        *ngFor="let option of activitycategorylist"
+                        [nzValue]="option.ID"
+                        [nzLabel]="option.CATEGORY_NAME"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzSpan="8">
+              <nz-form-item>
+                <nz-form-label><b>Activity Sub Category</b></nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    style="width: 100%"
+                    nzShowArrow="true"
+                    [nzLoading]="activitysubcategoryload2"
+                    nzShowSearch
+                    nzAllowClear
+                    name="subcategory"
+                    [(ngModel)]="ACTIVITY_SUB_CATEGORY_ID"
+                    nzPlaceHolder="Select Sub Category"
+                  >
+                    <nz-option
+                      *ngFor="let subcat of activitysubcategorylist2"
+                      [nzValue]="subcat.ID"
+                      [nzLabel]="subcat.SUB_CATEGORY_NAME"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <!-- <div nz-col nzSpan="8">
+              <nz-form-item>
+                <nz-form-label nzNoColon>
+                  Difficulty
+                </nz-form-label>
+                <nz-form-control
+                  
+                >
+                  <nz-select
+                    nz-input
+                    nzAllowClear
+                    nzShowSearch
+                    nzPlaceHolder="Select Difficulty"
+                    name="selDifficulty"
+                    [(ngModel)]="CATEGORY"
+                    required
+                  >
+                    <nz-option [nzValue]="'B'" nzLabel="Beginner"></nz-option>
+                    <nz-option
+                      [nzValue]="'I'"
+                      nzLabel="Intermediate"
+                    ></nz-option>
+                    <nz-option [nzValue]="'E'" nzLabel="Elite"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div> -->
+            <!-- <div nz-col nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="6">
+              <nz-form-item>
+                <nz-form-label><b>Select Subject</b></nz-form-label>
+
+                <nz-form-control nzErrorTip="Please Select Subject ">
+                  <nz-select
+                    style="width: 100%"
+                    [nzLoading]="subjectsload"
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder="Select Subject"
+                    name="subject"
+                    [(ngModel)]="filterdata.SUBJECT_ID"
+                  >
+                    <nz-option
+                      *ngFor="let report of subjects"
+                      [nzValue]="report.ID"
+                      [nzLabel]="report.NAME"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div> -->
+
+          
+
+            <div nz-col nzSpan="9">
+              <nz-form-item
+                style="margin-top: 20px; margin-left: 10px; padding-top: 13px"
+              >
+                <button
+                  style="margin-right: 10px"
+                  nz-button
+                  [nzLoading]="loadingRecords"
+                  nzType="primary"
+                  (click)="applyFilter()"
+                  nzJustify="end"
+                  [nzLoading]="isSpinning"
+                >
+                  <i nz-icon nzType="filter"></i>Apply Filter
+                </button>
+
+                <button nz-button nzType="primary" (click)="clearFilter()">
+                  <i nz-icon nzType="filter"></i>Clear Filter
+                </button>
+              </nz-form-item>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<br />
+
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <nz-table
+      class="my-scroll no-wrap1"
+      nzBordered
+      #activityhead
+      nzShowSizeChanger
+      [nzFrontPagination]="false"
+      [nzData]="dataList"
+      [nzLoading]="loadingRecords"
+      nzSize="small"
+      [nzTotal]="totalRecords"
+      [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize"
+      (nzPageIndexChange)="search()"
+      (nzPageSizeChange)="search(true)"
+      (nzQueryParams)="sort($event)"
+      [nzScroll]="{ x: '1500px', y: '55vh' }"
+    >
+      <thead>
+        <tr>
+          <th nzWidth="30px" nzLeft>Action</th>
+          <th
+            nzWidth="100px"
+            nzColumnKey="{{ 'CATEGORY_NAME' }}"
+            [nzSortFn]="true"
+          >
+            Activity Category
+          </th>
+          <th
+            nzWidth="100px"
+            nzColumnKey="{{ 'SUB_CATEGORY_NAME' }}"
+            [nzSortFn]="true"
+          >
+            Activity Sub Category
+          </th>
+          <!-- <th
+            nzColumnKey="{{ 'CATEGORY' }}"
+            [nzSortFn]="true"
+            nzWidth="60px"
+            style="text-align: center"
+          >
+            Difficulty
+          </th> -->
+          <th
+            nzColumnKey="{{ 'ACTIVITY_NAME' }}"
+            [nzSortFn]="true"
+            nzWidth="60px"
+            style="text-align: center"
+          >
+            Activity Name
+          </th>
+
+          <!-- <th nzColumnKey="{{ 'ACTIVITY_TYPE' }}" [nzSortFn]="true" nzWidth="60px" style="text-align: center">
+            Activity Type
+          </th>
+          <th nzColumnKey="{{ 'ACTIVITY_VALUE' }}" [nzSortFn]="true" nzWidth="65px" style="text-align: center">
+            Activity Timing
+          </th>
+       
+          <th nzWidth="60px" nzColumnKey="{{ 'ACTIVITY_VALUE' }}" [nzSortFn]="true">
+            Activity Set
+          </th>
+          <th nzColumnKey="{{ 'ACTIVITY_VALUE' }}" [nzSortFn]="true" nzWidth="65px" style="text-align: center">
+            Distance
+          </th> -->
+          <th
+            nzWidth="100px"
+            nzColumnKey="{{ 'DESCRIPTION' }}"
+            [nzSortFn]="true"
+          >
+            Description
+          </th>
+           <th nzWidth="30px" nzColumnKey="{{ 'STATUS' }}" [nzSortFn]="true">
+            Status
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of activityhead.data">
+          <td align="center" nzLeft>
+            <a (click)="edit(data)" nz-tooltip nzTooltipTitle="Edit">
+              <span
+                nz-icon
+                nzType="edit"
+                nzTheme="twotone"
+                style="font-size: 15px"
+              ></span>
+            </a>
+          </td>
+
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['CATEGORY_NAME']"
+          >
+            {{ data["CATEGORY_NAME"] }}
+          </td>
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['SUB_CATEGORY_NAME']"
+          >
+            {{ data["SUB_CATEGORY_NAME"] }}
+          </td>
+          <!-- <td style="text-align: left; white-space: pre-line; text-align: left">
+            <span *ngIf="data['CATEGORY'] == 'B'">Beginner</span>
+            <span *ngIf="data['CATEGORY'] == 'I'">Intermediate</span>
+            <span *ngIf="data['CATEGORY'] == 'E'">Elite</span>
+          </td> -->
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['ACTIVITY_NAME']"
+          >
+            {{ data["ACTIVITY_NAME"] }}
+          </td>
+
+          <!-- <td style="text-align: left; text-align: left; white-space: pre-line">
+            <span *ngIf="data['ACTIVITY_TYPE'] == 'T'">Activity Timing</span>
+            <span *ngIf="data['ACTIVITY_TYPE'] == 'S'">Activity Set</span>
+            <span *ngIf="data['ACTIVITY_TYPE'] == 'D'">Distance</span>
+
+          </td> -->
+          <!-- <td style="text-align: center;">
+            <span *ngIf="data['ACTIVITY_TYPE'] == 'T'; else activityValueSec">
+              {{ data["ACTIVITY_VALUE"] }} Sec
+            </span>
+            <ng-template #activityValueSec>
+              <span style="text-align: center;" >
+                -
+              </span>
+            </ng-template>
+          </td> -->
+
+          <!-- <td style="text-align: center;">
+
+            <span *ngIf="data['ACTIVITY_TYPE'] == 'S'; else activityValue">
+              {{ data["ACTIVITY_VALUE"] }}
+            </span>
+            <ng-template #activityValue>
+
+              <span style="text-align: center;" >
+                -
+              </span>
+            </ng-template>
+          </td> -->
+          <!-- <td style="text-align: center;">
+            <span *ngIf="data['ACTIVITY_TYPE'] == 'D'; else activityValueDis">
+              {{ data["ACTIVITY_VALUE"] }} Mtr
+            </span>
+            <ng-template #activityValueDis>
+              <span style="text-align: center;" >
+                -
+              </span>
+            </ng-template>
+          </td> -->
+
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['DESCRIPTION']"
+          >
+            {{ data["DESCRIPTION"] }}
+          </td>
+          <td align="center">
+            <i
+              nz-icon
+              *ngIf="data['STATUS']"
+              [nzType]="'check-circle'"
+              [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#52c41a'"
+            ></i>
+            <i
+              nz-icon
+              *ngIf="!data['STATUS']"
+              [nzType]="'close-circle'"
+              [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#f50'"
+            ></i>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+<div *ngIf="drawerVisible">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="500"
+    [nzVisible]="drawerVisible"
+    [nzTitle]="drawerTitle"
+    (nzOnClose)="drawerClose()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <div>
+        <form nz-form #activityform="ngForm">
+          <nz-spin [nzSpinning]="isSpinning">
+            <div nz-row class="custom-form-item">
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Activity Category
+                  </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Select Activity Category "
+                  >
+                    <nz-select
+                      *ngIf="!drawerData.ID"
+                      nz-input
+                      nzAllowClear
+                      nzShowSearch
+                      nzPlaceHolder="Select Activity Category"
+                      name="activitycategory"
+                      [nzLoading]="activitycategoryload"
+                      [(ngModel)]="drawerData.ACTIVITY_CATEGORY_ID"
+                      (ngModelChange)="ChangeSeqByHeadName($event)"
+                      (ngModelChange)="getActivitySubCategory($event)"
+                      required
+                    >
+                      <nz-option
+                        *ngFor="let option of activitycategorylist"
+                        [nzValue]="option.ID"
+                        [nzLabel]="option.CATEGORY_NAME"
+                      ></nz-option>
+                    </nz-select>
+                    <nz-select
+                      *ngIf="drawerData.ID"
+                      nz-input
+                      nzAllowClear
+                      nzShowSearch
+                      nzPlaceHolder="Select Activity Category"
+                      name="activitycategory"
+                      [nzLoading]="activitycategoryload"
+                      [(ngModel)]="drawerData.ACTIVITY_CATEGORY_ID"
+                      (ngModelChange)="getActivitySubCategory($event)"
+                      required
+                    >
+                      <nz-option
+                        *ngFor="let option of activitycategorylist"
+                        [nzValue]="option.ID"
+                        [nzLabel]="option.CATEGORY_NAME"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Activity Sub Category
+                  </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Select Sub Category"
+                  >
+                    <nz-select
+                      nz-input
+                      nzAllowClear
+                      nzShowSearch
+                      nzPlaceHolder="Select Subcategory"
+                      name="subcategory"
+                      [(ngModel)]="drawerData.ACTIVITY_SUB_CATEGORY_ID"
+                      required
+                    >
+                      <nz-option
+                        *ngFor="let option of activitysubcategorylist"
+                        [nzValue]="option.ID"
+                        [nzLabel]="option.SUB_CATEGORY_NAME"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <!-- <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Difficulty
+                  </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Select Difficulty"
+                  >
+                    <nz-select
+                      nz-input
+                      nzAllowClear
+                      nzShowSearch
+                      nzPlaceHolder="Select Difficulty"
+                      name="Difficulty"
+                      [(ngModel)]="drawerData.CATEGORY"
+                      required
+                    >
+                      <nz-option [nzValue]="'B'" nzLabel="Beginner"></nz-option>
+                      <nz-option
+                        [nzValue]="'I'"
+                        nzLabel="Intermediate"
+                      ></nz-option>
+                      <nz-option [nzValue]="'E'" nzLabel="Elite"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div> -->
+
+              <!-- <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Activity Type
+                  </nz-form-label>
+                  <nz-form-control nzHasFeedback nzErrorTip=" Please Select Activity Type ">
+                    <nz-select nz-input nzAllowClear nzShowSearch nzPlaceHolder="Select Activity Type"
+                      name="activitytype1" [(ngModel)]="drawerData.ACTIVITY_TYPE"
+                      (ngModelChange)="onTypeChange($event)">
+                      <nz-option [nzValue]="'T'" nzLabel="Timing"></nz-option>
+                      <nz-option [nzValue]="'S'" nzLabel="Set"></nz-option>
+                      <nz-option [nzValue]="'D'" nzLabel="Distance"></nz-option>
+
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12" *ngIf="drawerData.ACTIVITY_TYPE == 'T'">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Activity Timing
+                  </nz-form-label>
+                  <nz-form-control nzErrorTip="Please Enter Time">
+                    <nz-input-group [nzAddOnAfter]="addOnAfterTemplate4">
+                      <input type="number" name="activitytime" autocomplete="off" nz-input
+                        (input)="onActivityTimingChange()"                         maxlength="20"
+                        [(ngModel)]="drawerData.ACTIVITY_VALUE" />
+                    </nz-input-group>
+
+                    <ng-template #addOnAfterTemplate4>
+                      <nz-select name="timetype" class="custom-select-width1" [nzShowArrow]="false" [nzDropdownStyle]="{
+                          'padding-left': '2px',
+                          'padding-right': '2px'
+                        }" style="width: 63px" [(ngModel)]="TIMING_TYPE" (ngModelChange)="onTimeTypeChange($event)">
+                        <nz-option nzLabel="Sec" nzValue="Sec"></nz-option>
+                        <nz-option nzLabel="Min" nzValue="Min"></nz-option>
+                      </nz-select>
+                    </ng-template>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12" *ngIf="drawerData.ACTIVITY_TYPE == 'S'">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>Activity Set
+                  </nz-form-label>
+                  <nz-form-control nzHasFeedback nzErrorTip=" Please Select Activity Set ">
+                    <input nz-input name="activityset" [(ngModel)]="drawerData.ACTIVITY_VALUE" maxlength="128"
+                      placeholder="Enter Activity Set" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12" *ngIf="drawerData.ACTIVITY_TYPE == 'D'">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Distance
+                  </nz-form-label>
+                  <nz-form-control nzErrorTip="Please Enter Distance">
+                    <nz-input-group [nzAddOnAfter]="addOnAfterTemplate5">
+                      <input 
+                        type="number" 
+                        name="distance" 
+                        autocomplete="off" 
+                        maxlength="20"
+                        nz-input 
+                        [(ngModel)]="drawerData.ACTIVITY_VALUE" 
+                      />
+                    </nz-input-group>
+                    <ng-template #addOnAfterTemplate5>
+                      <nz-select 
+                        name="distancetype" 
+                        class="custom-select-width1" 
+                        [nzShowArrow]="false" 
+                        [nzDropdownStyle]="{ 'padding-left': '2px', 'padding-right': '2px' }" 
+                        style="width: 63px" 
+                        [(ngModel)]="DISTANCE_TYPE"
+                      >
+                        <nz-option nzLabel="Mtr" nzValue="mtr"></nz-option>
+                        <nz-option nzLabel="Km" nzValue="km"></nz-option>
+                      </nz-select>
+                    </ng-template>
+                  </nz-form-control>
+                </nz-form-item>
+              </div> -->
+             
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon
+                    >Activity Name</nz-form-label
+                  >
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Enter Activity Name "
+                  >
+                    <input
+                      nz-input
+                      name="activityname"
+                      [(ngModel)]="drawerData.ACTIVITY_NAME"
+                      maxlength="128"
+                      placeholder="Enter Activity Name"
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                  <nz-form-label nzNoColon> Description </nz-form-label>
+                  <nz-form-control>
+                    <textarea
+                      rows="2"
+                      nz-input
+                      name="DESC"
+                      placeholder=" Enter Description"
+                      [(ngModel)]="drawerData.DESCRIPTION"
+                    ></textarea>
+                    <!-- <span
+                      style="color: red; font-size: 10px"
+                      *ngIf="drawerData.DESCRIPTION"
+                      >{{ drawerData.DESCRIPTION.length }}</span
+                    > -->
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Sequence No.
+                  </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Enter Correct Sequence Number "
+                  >
+                    <input
+                      nz-input
+                      placeholder="Sequence No."
+                      name="unitseq"
+                      style="width: 100%"
+                      minlength="1"
+                      maxlength="3"
+                      disabled
+                      [(ngModel)]="drawerData.SEQ_NO"
+                      (keypress)="commonFunction.omit($event)"
+                      maxlength="5"
+                      required
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+                 <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzNoColon> Status </nz-form-label>
+                  <nz-form-control>
+                    <nz-switch
+                      name="unitstatus"
+                      [(ngModel)]="drawerData.STATUS"
+                      nzCheckedChildren="Active"
+                      nzUnCheckedChildren="Inactive"
+                    ></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="24">
+                <div nz-row>
+                  <div nz-col nzSpan="8">
+                    <nz-form-item>
+                      <nz-form-label nzRequired nzNoColon
+                        >Activity Gif</nz-form-label
+                      >
+                      <!-- <nz-form-control nzHasFeedback nzErrorTip="Upload Invoice Url"> -->
+                      <div style="color: blue">
+                        <button
+                          nz-button
+                          style="
+                            height: 28px;
+                            padding: 0px 7px;
+                            font-size: 12px;
+                            width: 152px;
+                          "
+                          (click)="fileInput.click()"
+                        >
+                          <span
+                            style="width: 138px"
+                            nz-icon
+                            nzType="upload"
+                            nzTheme="outline"
+                          ></span>
+                          <input
+                            #fileInput
+                            name="invoice"
+                            accept=".gif"
+                            (change)="onFileSelected($event)"
+                            type="file"
+                            style="display: none"
+                          />
+                        </button>
+                      </div>
+                    </nz-form-item>
+                  </div>
+                  <div
+                    nz-col
+                    [nzSpan]="
+                      progressBarProfilePhoto &&
+                      percentProfilePhoto < 100 &&
+                      percentProfilePhoto > 0
+                        ? 8
+                        : 0
+                    "
+                  >
+                    <span
+                      *ngIf="
+                        drawerData.ACTIVITY_GIF !== null &&
+                        drawerData.ACTIVITY_GIF !== undefined &&
+                        drawerData.ACTIVITY_GIF !== ''
+                      "
+                    >
+                      <div
+                        *ngIf="
+                          progressBarProfilePhoto &&
+                          percentProfilePhoto < 100 &&
+                          percentProfilePhoto > 0
+                        "
+                      >
+                        <nz-progress
+                          style="color: black"
+                          [style.width]="percentProfilePhoto + '%'"
+                          [nzPercent]="percentProfilePhoto"
+                          >{{ percentProfilePhoto }}%</nz-progress
+                        >
+                      </div>
+                    </span>
+                  </div>
+
+                  <div
+                    nz-col
+                    [nzSpan]="
+                      progressBarProfilePhoto && percentProfilePhoto < 100
+                        ? 8
+                        : 14
+                    "
+                    *ngIf="
+                      drawerData.ACTIVITY_GIF !== null &&
+                      drawerData.ACTIVITY_GIF !== undefined &&
+                      drawerData.ACTIVITY_GIF !== ''
+                    "
+                  >
+                    <!-- fisrt row -->
+                    <div style="margin: 37px 37px">
+                      <!-- Adjust margin-top as needed -->
+                      {{ drawerData.ACTIVITY_GIF }}
+                      <span
+                        style="
+                          cursor: pointer;
+                          margin-top: 12px;
+                          padding-left: 7px;
+                        "
+                        nz-popconfirm
+                        nzPopconfirmTitle="Are you sure want delete?"
+                        (nzOnConfirm)="deleteConfirm(drawerData)"
+                        (nzOnCancel)="deleteCancel()"
+                        (nzOnCancel)="deleteCancel()"
+                        nzPopconfirmPlacement="top"
+                      >
+                        <span
+                          nz-icon
+                          nzType="delete"
+                          nzTheme="twotone"
+                          nz-tooltip
+                          nzTooltipTitle="Delete"
+                        >
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                  <div nz-col nzSpan="24">
+                    <!-- First row -->
+                    <div
+                      style="display: flex; justify-content: center"
+                      [ngClass]="drawerData.ACTIVITY_GIF ? 'my-box' : ''"
+                    >
+                      <div
+                        *ngIf="
+                          drawerData.ACTIVITY_GIF !== null &&
+                          drawerData.ACTIVITY_GIF !== undefined &&
+                          drawerData.ACTIVITY_GIF !== ''
+                        "
+                      >
+                        <!-- <img width="70%" nz-image style="    width: 246px;
+                        height: 140px;margin-left: 16px;margin-bottom: 10px;"
+                          src="{{ imgurl }}classWiseTask/{{ ticketData.ACTIVITY_GIF }}" /> -->
+
+                        <img
+                          class="img"
+                          nz-image
+                          style="
+                            border-radius: 5px;
+                            max-height: 100%;
+                            max-width: 100%;
+                            aspect-ratio: 1;
+                          "
+                          [nzSrc]="taskurl"
+                          alt="No Image Found"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div nz-col nzSpan="24">
+                <div nz-row>
+                  <div nz-col nzSpan="12">
+                    <nz-form-item>
+                      <nz-form-label nzRequired nzNoColon
+                        >Activity Thumbnail Gif</nz-form-label
+                      >
+                      <!-- <nz-form-control nzHasFeedback nzErrorTip="Upload Invoice Url"> -->
+                      <div style="color: blue">
+                        <button
+                          nz-button
+                          style="
+                            height: 28px;
+                            padding: 0px 7px;
+                            font-size: 12px;
+                            width: 152px;
+                          "
+                          (click)="fileInput2.click()"
+                        >
+                          <span
+                            style="width: 138px"
+                            nz-icon
+                            nzType="upload"
+                            nzTheme="outline"
+                          ></span>
+                          <input
+                            #fileInput2
+                            name="invoice2"
+                            accept=".gif"
+                            (change)="onFileSelected2($event)"
+                            type="file"
+                            style="display: none"
+                          />
+                        </button>
+                      </div>
+                    </nz-form-item>
+                  </div>
+                  <div
+                    nz-col
+                    [nzSpan]="
+                      progressBarProfilePhoto1 &&
+                      percentProfilePhoto1 < 100 &&
+                      percentProfilePhoto1 > 0
+                        ? 6
+                        : 0
+                    "
+                  >
+                    <span
+                      *ngIf="
+                        drawerData.ACTIVITY_THUMBNAIL_GIF !== null &&
+                        drawerData.ACTIVITY_THUMBNAIL_GIF !== undefined &&
+                        drawerData.ACTIVITY_THUMBNAIL_GIF !== ''
+                      "
+                    >
+                      <div
+                        *ngIf="
+                          progressBarProfilePhoto1 &&
+                          percentProfilePhoto1 < 100 &&
+                          percentProfilePhoto1 > 0
+                        "
+                      >
+                        <nz-progress
+                          style="color: black"
+                          [style.width]="percentProfilePhoto1 + '%'"
+                          [nzPercent]="percentProfilePhoto1"
+                          >{{ percentProfilePhoto1 }}%</nz-progress
+                        >
+                      </div>
+                    </span>
+                  </div>
+
+                  <div
+                    nz-col
+                    [nzSpan]="
+                      progressBarProfilePhoto1 && percentProfilePhoto1 < 100
+                        ? 6
+                        : 12
+                    "
+                    *ngIf="
+                      drawerData.ACTIVITY_THUMBNAIL_GIF !== null &&
+                      drawerData.ACTIVITY_THUMBNAIL_GIF !== undefined &&
+                      drawerData.ACTIVITY_THUMBNAIL_GIF !== ''
+                    "
+                  >
+                    <!-- fisrt row -->
+                    <div style="margin: 37px 37px">
+                      <!-- Adjust margin-top as needed -->
+                      {{ drawerData.ACTIVITY_THUMBNAIL_GIF }}
+                      <span
+                        style="
+                          cursor: pointer;
+                          margin-top: 12px;
+                          padding-left: 7px;
+                        "
+                        nz-popconfirm
+                        nzPopconfirmTitle="Are you sure want delete?"
+                        (nzOnConfirm)="deleteConfirm2(drawerData)"
+                        (nzOnCancel)="deleteCancel()"
+                        (nzOnCancel)="deleteCancel()"
+                        nzPopconfirmPlacement="top"
+                      >
+                        <span
+                          nz-icon
+                          nzType="delete"
+                          nzTheme="twotone"
+                          nz-tooltip
+                          nzTooltipTitle="Delete"
+                        >
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                  <div nz-col nzSpan="24">
+                    <!-- First row -->
+                    <div
+                      style="display: flex; justify-content: center"
+                      [ngClass]="drawerData.ACTIVITY_THUMBNAIL_GIF ? 'my-box' : ''"
+                    >
+                      <div
+                        *ngIf="
+                          drawerData.ACTIVITY_THUMBNAIL_GIF !== null &&
+                          drawerData.ACTIVITY_THUMBNAIL_GIF !== undefined &&
+                          drawerData.ACTIVITY_THUMBNAIL_GIF !== ''
+                        "
+                      >
+                        <!-- <img width="70%" nz-image style="    width: 246px;
+                        height: 140px;margin-left: 16px;margin-bottom: 10px;"
+                          src="{{ imgurl }}classWiseTask/{{ ticketData.ACTIVITY_GIF }}" /> -->
+
+                        <img
+                          class="img"
+                          nz-image
+                          style="
+                            border-radius: 5px;
+                            max-height: 100%;
+                            max-width: 100%;
+                            aspect-ratio: 1;
+                          "
+                          [nzSrc]="taskurl1"
+                          alt="No Image Found"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nz-spin>
+          <br />
+        </form>
+
+        <div class="footer">
+          <button
+            type="button"
+            nz-button
+            (click)="close()"
+            class="ant-btn"
+            style="margin-right: 8px"
+          >
+            <span> Cancel </span>
+          </button>
+          <button
+            type="button"
+            class="ant-btn ant-btn-primary"
+            *ngIf="!drawerData.ID"
+            nz-button
+            nz-dropdown
+            [nzDropdownMenu]="menu"
+            [nzLoading]="isSpinning"
+            (click)="save(false, activityform)"
+          >
+            <span> Save & Close</span>
+          </button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+              <li
+                nz-menu-item
+                class="menuc"
+                style="border-radius: 4px; background-color: #40a9ff"
+              >
+                <a style="color: white" (click)="save(true, activityform)">
+                  Save & New</a
+                >
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+          <button
+            type="button"
+            class="ant-btn ant-btn-primary"
+            nz-button
+            [nzLoading]="isSpinning"
+            *ngIf="drawerData.ID"
+            (click)="save(false, activityform)"
+          >
+            <span> Update & Close</span>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </nz-drawer>
+</div>

@@ -1,0 +1,142 @@
+<div nz-row nzType="flex">
+  <div nz-col nzXs="24" nzSm="24" nzMd="20" nzLg="20" nzXl="12">
+    <div class="formname">{{ formTitle }}</div>
+  </div>
+
+  <div
+    nz-col
+    nzXs="24"
+    nzSm="24"
+    nzMd="4"
+    nzLg="6"
+    nzXl="12"
+    style="display: flex; justify-content: flex-end"
+  >
+    <form nz-form [nzLayout]="'inline'">
+      <nz-form-item>
+        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+          <input
+            type="text"
+            name="search"
+            nz-input
+            placeholder="Search Records"
+            [(ngModel)]="searchText"
+          />
+        </nz-input-group>
+
+        <ng-template #suffixIconButton>
+          <button nz-button nzType="primary" (click)="search()" nzSearch>
+            <i nz-icon nzType="search"></i>
+          </button>
+        </ng-template>
+      </nz-form-item>
+
+      <nz-form-item>
+        <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+          <i nz-icon nzType="plus"></i>Add New Role
+        </button>
+      </nz-form-item>
+    </form>
+  </div>
+</div>
+
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <nz-table
+      class="my-scroll no-wrap1"
+      nzBordered
+      #roleTable
+      nzShowSizeChanger
+      [nzFrontPagination]="false"
+      [nzData]="dataList"
+      [nzLoading]="loadingRecords"
+      [nzTotal]="totalRecords"
+      [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize"
+      (nzPageIndexChange)="search()"
+      (nzPageSizeChange)="search(true)"
+      (nzQueryParams)="sort($event)"
+    >
+      <thead>
+        <tr>
+          <th style="width: 70px">Action</th>
+          <th>Forms</th>
+          <th
+            *ngFor="let column of columns"
+            [nzSortFn]="true"
+            nzColumnKey="{{ column[0] }}"
+          >
+            {{ column[1] }}
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let data of roleTable.data">
+          <td align="center" nzLeft>
+            <nz-space>
+              <a *nzSpaceItem (click)="edit(data)" nz-tooltip nzTooltipTitle="Edit">
+                <span nz-icon nzType="edit" nzTheme="twotone" style="font-size: 15px"></span>
+              </a>
+            </nz-space>
+          </td>
+
+          <td >
+            <a style="color: #1890ff;" (click)="MapForms(data)">Forms</a>
+          </td>
+
+          <td *ngFor="let column of columns">{{ data[column[0]] }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+
+<div *ngIf="drawerVisible">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="320"
+    [nzVisible]="drawerVisible"
+    [nzTitle]="drawerTitle"
+    (nzOnClose)="drawerClose()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <app-role [drawerClose]="closeCallback" [data]="drawerData"></app-role>
+    </ng-container>
+  </nz-drawer>
+</div>
+
+<div *ngIf="drawerVisible1">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="800"
+    [nzVisible]="drawerVisible1"
+    [nzTitle]="drawerTitle1"
+    (nzOnClose)="drawerClose1()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <app-roledetails
+        [drawerClose]="closeCallback1"
+        [data]="drawerData1"
+        [roleDetailsData]="drawerData2"
+      >
+      </app-roledetails>
+    </ng-container>
+  </nz-drawer>
+</div>

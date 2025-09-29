@@ -1,0 +1,995 @@
+<!-- School Profile Change -->
+<div *ngIf="schoolprofileChangeVisible">
+  <nz-spin [nzSpinning]="isDrawerLoading">
+    <nz-drawer
+      [nzBodyStyle]="{
+        height: 'calc(100% - 55px)',
+        overflow: 'auto',
+        'padding-bottom': '53px'
+      }"
+      [nzClosable]="true"
+      [nzMask]="true"
+      [nzMaskClosable]="false"
+      [nzWidth]="1250"
+      [nzVisible]="schoolprofileChangeVisible"
+      [nzTitle]="profileDrawerTitle"
+      (nzOnClose)="profileDrawerClose()"
+      (nzKeyboard)="(true)"
+    >
+      <ng-container *nzDrawerContent>
+        <app-addschoolmaster
+          [drawerClose]="closeCallback"
+          [showState]="showState"
+          [showDistrictByState]="showDistrictByState"
+          [stateload]="stateload"
+          [States]="States"
+          [districts]="districts"
+          [drawerVisible]="schoolprofileChangeVisible"
+          [data]="drawerData"
+          [isShowBlocked]="isShowBlocked"
+          [isChangeable]="isChangeable"
+        ></app-addschoolmaster>
+      </ng-container>
+    </nz-drawer>
+  </nz-spin>
+</div>
+<!-- Change password modal -->
+<nz-modal
+  [(nzVisible)]="isVisible"
+  [nzWidth]="'350px'"
+  (nzOnCancel)="handleCancel()"
+  nzTitle="Change Password"
+>
+  <ng-container *nzModalContent>
+    <form nz-form #resetform *ngIf="showconfirm == false">
+      <div nz-row class="my-box">
+        <div nz-col nzSpan="24">
+          <nz-form-item>
+            <nz-form-label nzRequired nzNoColon>Current Password</nz-form-label>
+
+            <nz-form-control nzErrorTip="Please Enter Valid Current Password">
+              <input
+                nz-input
+                name="currpass"
+                placeholder="Enter your current password"
+                [(ngModel)]="PASSWORD"
+                required
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+
+    <form nz-form #resetform *ngIf="showconfirm == true">
+      <div nz-row class="my-box">
+        <div nz-col nzSpan="24">
+          <nz-form-item>
+            <nz-form-label nzRequired nzNoColon>New Password</nz-form-label>
+
+            <nz-form-control nzErrorTip="Please Enter Valid New Password">
+              <input
+                nz-input
+                name="newpass"
+                placeholder="Enter your New password"
+                [(ngModel)]="NEWPASSWORD"
+                required
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col nzSpan="24">
+          <nz-form-item>
+            <nz-form-label nzRequired nzNoColon>Confirm Password</nz-form-label>
+
+            <nz-form-control nzErrorTip="Please Enter Valid Confirm Password">
+              <input
+                nz-input
+                name="confpass"
+                placeholder="Enter your New password To Confirm"
+                [(ngModel)]="CONFPASSWORD"
+                required
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+  </ng-container>
+
+  <div *nzModalFooter>
+    <button
+      *ngIf="showconfirm == false"
+      nz-button
+      nzType="default"
+      (click)="checkpass()"
+    >
+      Check
+    </button>
+    <button
+      *ngIf="showconfirm == true"
+      nz-button
+      nzType="default"
+      (click)="confpass()"
+    >
+      Confirm Password
+    </button>
+  </div>
+</nz-modal>
+
+<!--  -->
+
+<nz-layout class="app-layout" *ngIf="isLogedIn">
+  <nz-sider
+    *ngIf="roleId != '2'"
+    [ngClass]="screenwidth > 768 ? 'menu-sidebar' : 'menu-sidebar2'"
+    nzCollapsible
+    nzWidth="256px"
+    nzBreakpoint="md"
+    [(nzCollapsed)]="isCollapsed"
+  >
+    <div class="sidebar-logo">
+      <i nz-icon nzType="user" nzTheme="outline"></i>
+      <h1>
+        <b>{{ isCollapsed ? "" : USERNAME }}</b>
+      </h1>
+    </div>
+    <div style="overflow: auto; height: 80vh">
+      <ul nz-menu nzMode="inline" nzTheme="dark">
+        <ng-container
+          *ngTemplateOutlet="menuTpl; context: { $implicit: menus }"
+        ></ng-container>
+        <ng-template #menuTpl let-menus>
+          <ng-container *ngFor="let menu of menus">
+            <li
+              *ngIf="!menu.children"
+              nz-menu-item
+              [nzPaddingLeft]="menu.level * 24"
+              [nzDisabled]="menu.disabled"
+              nzMatchRouter
+            >
+              <a [routerLink]="[menu.link]"
+                ><i nz-icon [nzType]="menu.icon" *ngIf="menu.icon"></i>
+                {{ isCollapsed ? "" : menu.title }}</a
+              >
+            </li>
+            <li
+              *ngIf="menu.children"
+              nz-submenu
+              [nzPaddingLeft]="menu.level * 24"
+              [nzOpen]="menu.open"
+              [nzTitle]="menu.title"
+              [nzIcon]="menu.icon"
+              [nzDisabled]="menu.disabled"
+            >
+              <ul>
+                <ng-container
+                  *ngTemplateOutlet="
+                    menuTpl;
+                    context: { $implicit: menu.children }
+                  "
+                ></ng-container>
+              </ul>
+            </li>
+          </ng-container>
+        </ng-template>
+      </ul>
+    </div>
+  </nz-sider>
+  <nz-layout>
+    <nz-header
+      [ngStyle]="{ position: !isCollapsed && roleId == 2 ? 'fixed' : '' }"
+    >
+      <div nz-row class="app-header">
+        <!-- <div
+          nz-col
+          nzXs="24"
+          nzSm="24"
+          nzMd="24"
+          nzLg="8"
+          nzXl="8"
+          style="text-align: left;margin-left: 53px;
+          "
+        >
+          <button
+            *ngIf="roleId == 2 && this.currentroute.trim()!=='admindashboard'"
+            nz-button
+            nz-tooltip
+            nzTooltipTitle="Home"
+            nzType="primary"
+            nzShape="circle"
+            (click)="redirectToAdminDashboard()"
+          >
+            <i  nz-icon nzType="home" nzTheme="outline">
+            </i>
+        </button>
+        </div> -->
+        <div
+          nz-col
+          nzXs="12"
+          nzSm="12"
+          nzMd="20"
+          nzLg="20"
+          nzXl="20"
+          style="text-align: left; padding-left: 10px"
+        >
+          <div nz-row *ngIf="roleId == 2">
+            <div nz-col [nzSpan]="instiutelogo ? 2 : 0">
+              <img
+                class="img"
+                style="border-radius: 5px"
+                width="50px"
+                height="40px"
+                [src]="institutelogourl"
+                [alt]="instiutelogo ? '' : 'No Image Found'"
+              />
+            </div>
+            <div
+              nz-col
+              [nzSpan]="instiutelogo ? 22 : 24"
+              style="white-space: pre-line; text-wrap: wrap"
+            >
+              <span
+                ><b style="white-space: pre-line; text-wrap: wrap">{{
+                  institutename
+                }}</b></span
+              >
+            </div>
+          </div>
+        </div>
+        <div
+          nz-col
+          nzXs="12"
+          nzSm="12"
+          nzMd="4"
+          nzLg="4"
+          nzXl="4"
+          style="text-align: right"
+        >
+          <button
+            *ngIf="roleId == 2"
+            nz-button
+            nz-tooltip
+            nzTooltipTitle="Masters"
+            nzTooltipPlacement="bottom"
+            nzType="primary"
+            nzShape="circle"
+            (click)="showFormList()"
+            style="
+              margin-right: 10px;
+              position: relative;
+              background-color: #0d6efdc7;
+              border: none;
+              padding: 5px;
+              border-radius: 50%;
+            "
+          >
+            <i nz-icon nzType="setting" nzTheme="outline"></i>
+          </button>
+          <button
+            *ngIf="roleId == 3"
+            nz-button
+            nzType="primary"
+            nzShape="circle"
+            nzTooltipPlacement="bottom"
+            nz-tooltip
+            nzTooltipTitle="Change Teacher"
+            style="
+              margin-right: 10px;
+              position: relative;
+              background-color: #0d6efdc7;
+              border: none;
+              padding: 5px;
+              border-radius: 50%;
+            "
+          >
+            <a class="vv" data-bs-toggle="modal" data-bs-target="#rolemapmod">
+              <svg
+                version="1.1"
+                id="Capa_1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                x="0px"
+                y="0px"
+                viewBox="0 0 500 500"
+                style="enable-background: new 0 0 489.38 489.38"
+                xml:space="preserve"
+              >
+                <g id="XMLID_129_">
+                  <path
+                    fill="#fff"
+                    id="XMLID_134_"
+                    d="M473.725,5.656H213.576c-8.655,0-15.655,7.022-15.655,15.664v110.484l11.319-13.234
+             c5.375-6.292,12.461-10.172,19.992-11.793V36.978h228.836v204.531H229.233v-34.238l-7.05,8.244
+             c-6.161,7.189-14.858,11.65-24.262,12.529v29.124c0,8.642,7,15.655,15.655,15.655h84.489L255.141,467.7
+             c-1.923,8.739,3.6,17.382,12.346,19.31c8.667,1.904,17.382-3.601,19.287-12.331l44.457-201.855h25.844l44.457,201.855
+             c1.666,7.557,8.369,12.714,15.803,12.705c1.154,0,2.334-0.117,3.502-0.374c8.746-1.928,14.268-10.57,12.328-19.31l-42.92-194.877
+             h83.481c8.647,0,15.655-7.013,15.655-15.655V21.32C489.38,12.678,482.372,5.656,473.725,5.656z"
+                  />
+                  <path
+                    fill="#fff"
+                    id="XMLID_132_"
+                    d="M349.368,97.116c-1.234-3.11-4.732-4.637-7.84-3.406l-92.234,32.555
+             c-8.465-6.554-20.678-5.383-27.737,2.827l-29.267,34.178l-25.951-22.245c0.171,1.837,0.56,3.622,0.56,5.507v48.291l14.438,12.371
+             c8.568,7.338,21.385,6.204,28.549-2.198l34.842-40.743l28.1-16.439l73.951-43.267C349.336,103.073,350.469,99.923,349.368,97.116z"
+                  />
+                  <path
+                    fill="#fff"
+                    id="XMLID_131_"
+                    d="M109.928,105.776H92.547c-13.308,0-25.01,6.468-32.448,16.327l-53.352,49.12
+             c-8.313,7.405-9.067,20.232-1.581,28.595l43.528,48.585c7.421,8.309,20.267,9.044,28.579,1.576
+             c8.334-7.469,9.038-20.262,1.57-28.586l-30.003-33.504l42.616-38.134l-24.82,33.721l24.279,27.107
+             c13.416,14.992,12.151,38.027-2.834,51.453c-10.231,9.172-24.193,11.324-36.297,7.094c0,0,0.188,93.659,0.188,193.962
+             c0,13.416,10.874,24.291,24.291,24.291c13.403,0,24.291-10.875,24.291-24.291c0-100.272,0-43.051,0-144.771h16.203
+             c0,101.646,0,44.468,0,144.771c0,7.004-1.953,13.49-5.067,19.231c4.076,3.135,9.148,5.06,14.676,5.06
+             c13.424,0,24.298-10.875,24.298-24.291c0-100.272,0.031-58.237,0.031-316.561C150.697,124.022,132.45,105.776,109.928,105.776z"
+                  />
+                  <path
+                    fill="#fff"
+                    id="XMLID_130_"
+                    d="M79.592,91.198c6.495,3.376,13.787,5.471,21.62,5.471c7.853,0,15.145-2.095,21.659-5.477
+             c15.204-7.877,25.684-23.559,25.684-41.862c0-26.146-21.196-47.335-47.344-47.335c-26.144,0-47.335,21.189-47.335,47.335
+             C53.877,67.643,64.368,83.331,79.592,91.198z"
+                  />
+                </g>
+              </svg>
+            </a>
+          </button>
+          <button
+            *ngIf="roleId == 3"
+            nz-button
+            nzType="primary"
+            nzShape="circle"
+            nzTooltipPlacement="bottom"
+            nz-tooltip
+            nzTooltipTitle="Change Class"
+            style="
+              margin-right: 10px;
+              position: relative;
+              background-color: #0d6efdc7;
+              border: none;
+              padding: 5px;
+              border-radius: 50%;
+            "
+          >
+            <a class="vv" data-bs-toggle="modal" data-bs-target="#rolemapmod1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 350 350"
+                xml:space="preserve"
+              >
+                <path
+                  fill="#fff"
+                  d="M314.103 144.513 178.582 91.369a5.826 5.826 0 0 0-4.213-.013L35.937 144.497a5.827 5.827 0 0 0-3.736 5.419 5.819 5.819 0 0 0 3.698 5.44l13.179 5.168v20.795c-3.873 2.084-6.535 6.13-6.535 10.836 0 3.415 1.384 6.507 3.622 8.741v31.229a8.736 8.736 0 0 0 8.735 8.737 8.733 8.733 0 0 0 8.735-8.737v-31.229a12.3 12.3 0 0 0 3.627-8.741c0-4.706-2.664-8.752-6.537-10.836V165.09l33.672 13.202c0 .078-.021.148-.021.224.06 44.397 36.227 80.515 80.625 80.515 44.456 0 80.628-36.167 80.628-80.624v-.449c0-.052-.015-.097-.015-.147l58.449-22.439a5.823 5.823 0 0 0 3.736-5.418 5.819 5.819 0 0 0-3.696-5.441zM175 247.384c-36.497 0-66.476-28.534-68.815-64.466l65.235 25.58a5.823 5.823 0 0 0 4.211.014l68.228-26.191c-2.035 36.218-32.136 65.063-68.859 65.063zm-1.434-50.555-116.395-45.64s-.002 0-.002-.002l-3.047-1.192 122.313-46.953 119.442 46.834-122.311 46.953z"
+                />
+              </svg>
+            </a>
+          </button>
+          <button
+            *ngIf="roleId == 2"
+            nz-button
+            nz-tooltip
+            nzTooltipTitle="Profile"
+            nzTooltipPlacement="bottom"
+            nzType="primary"
+            nzShape="circle"
+            (click)="profileDrawerOpen(false)"
+            style="
+              margin-right: 10px;
+              position: relative;
+              background-color: #0d6efdc7;
+              border: none;
+              padding: 5px;
+              border-radius: 50%;
+            "
+          >
+            <i nz-icon nzType="user" nzTheme="outline"></i>
+          </button>
+          <span>
+            <button
+              nz-tooltip
+              nzTooltipTitle="APK Details"
+              nzTooltipPlacement="bottom"
+              nz-button
+              nzType="primary"
+              nzShape="circle"
+              (click)="showApkVersionModal()"
+            >
+              <i
+                nz-icon
+                nzType="android"
+                nzTheme="outline"
+                style="font-size: 18px"
+              ></i></button
+            >&nbsp;
+          </span>
+          <!-- <button
+            nz-button
+            nz-tooltip
+            nzTooltipTitle="Change Password"
+            nzType="primary"
+            nzShape="circle"
+            (click)="changepass()"
+          >
+            <i nz-icon nzType="setting" nzTheme="outline"></i></button
+          >&nbsp; -->
+
+          <!-- <button
+            nz-button
+            nz-tooltip
+            *ngIf="roleId == 6"
+            nzTooltipTitle="App Configuration"
+            nzTooltipPlacement="bottom"
+            nzType="primary"
+            nzShape="circle"
+            (click)="DigitalDetox()"
+            style="
+              margin-right: 10px;
+              position: relative;
+              background-color: #0d6efdc7;
+              border: none;
+              padding: 5px;
+              border-radius: 50%;
+            "
+          >
+            <i nz-icon nzType="setting" nzTheme="outline"></i>
+          </button> -->
+
+          <button
+            nz-button
+            nz-tooltip
+            nzTooltipTitle="Logout"
+            nzType="primary"
+            nzShape="circle"
+            nzTooltipPlacement="bottom"
+            (click)="logout()"
+            style="
+              margin-right: 10px;
+              position: relative;
+              background-color: #0d6efdc7;
+              border: none;
+              padding: 5px;
+              border-radius: 50%;
+            "
+          >
+            <i nz-icon nzType="logout" nzTheme="outline"></i>
+          </button>
+        </div>
+      </div>
+    </nz-header>
+    <!-- <nz-content [ngClass]="screenwidth >768?'':'nzcontent'" style="height: 82vh !important; -->
+    <nz-content [ngClass]="screenwidth > 768 ? '' : 'nzcontent'">
+      <div
+        class="inner-content"
+        [ngStyle]="{
+          'margin-top': !isCollapsed && roleId == 2 ? '50px' : '',
+          background:
+            !isCollapsed && roleId == 2 && currentroute == 'admindashboard'
+              ? '#ebebebe3'
+              : ''
+        }"
+      >
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+    <!-- <nz-footer>Ant Design ©2020 Implement By Angular</nz-footer> -->
+  </nz-layout>
+</nz-layout>
+
+<app-login *ngIf="!isLogedIn"> </app-login>
+
+<div
+  class="modal fade"
+  id="rolemapmod"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="basicD"
+  aria-hidden="true"
+  (click)="closeModal()"
+>
+  <div class="modal-dialog" style="max-width: 700px !important">
+    <div class="modal-content">
+      <button
+        type="button"
+        style="display: none"
+        id="rolemapmodclosed"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+      ></button>
+      <div class="modal-body">
+        <div class="row" style="justify-content: center">
+          <div
+            class="col-12 col-sm-12 col-lg-12 col-xl-12 col-md-12"
+            style="text-align: center"
+          >
+            <h3
+              class="modal-title"
+              style="margin-bottom: 10px; color: #0c1538; font-size: 22px"
+            >
+              Please select Teacher
+            </h3>
+          </div>
+
+          <div class="section_our_solution">
+            <div class="row" style="justify-content: center">
+              <div
+                class="col-lg-4 col-md-4 col-sm-12"
+                *ngFor="let Teacher of TeacherData"
+              >
+                <div
+                  class="our_solution_category"
+                  (click)="changeTeacher(Teacher)"
+                  style="margin-bottom: 24px; cursor: pointer"
+                >
+                  <div class="solution_cards_box">
+                    <div class="solution_card">
+                      <div class="hover_color_bubble"></div>
+                      <div class="so_top_icon" style="text-align: center">
+                        <!-- <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path d="M115 110.272h-5v-49.5h5a1.75 1.75 0 0 0 1.567-2.529l-12-24.13a1.75 1.75 0 0 0-1.567-.97H70.509l-2.8-2.8a5.188 5.188 0 0 0-1.962-1.218v-3.178l10.792-3.075a1.749 1.749 0 0 0 0-3.365L65.75 16.43v-.453a1.75 1.75 0 1 0-3.5 0v13.15a5.188 5.188 0 0 0-1.962 1.218l-2.8 2.8H25a1.75 1.75 0 0 0-1.567.971l-12 24.13A1.75 1.75 0 0 0 13 60.772h5v49.5h-5a1.75 1.75 0 0 0 0 3.5h102a1.75 1.75 0 0 0 0-3.5zm-8.5 0H88.625V66.107l.913.913a5.233 5.233 0 0 0 8.285-6.247h8.677zm-34.167 0H55.667V88.061h16.666zm1.75-25.712H53.917a1.75 1.75 0 0 0-1.75 1.75v23.962h-9.292V62.607L64 41.482l21.125 21.125v47.666h-9.292V86.311a1.75 1.75 0 0 0-1.75-1.75zm27.833-47.918 10.259 20.63H94.639l-20.63-20.63zM69.677 21.188l-3.927 1.12v-2.239zM62.762 32.82a1.754 1.754 0 0 1 2.476 0l29.25 29.25a1.751 1.751 0 0 1 0 2.475 1.791 1.791 0 0 1-2.476 0L65.237 37.771a1.749 1.749 0 0 0-2.475 0L35.988 64.545a1.754 1.754 0 0 1-2.476 0 1.751 1.751 0 0 1 0-2.475zm-36.678 3.823h27.907l-20.63 20.63H15.825zM21.5 60.772h8.678a5.183 5.183 0 0 0 .86 6.247 5.256 5.256 0 0 0 7.425 0l.913-.913v44.166H21.5z"/><path d="M64 67.853a7 7 0 1 0-7-7 7.008 7.008 0 0 0 7 7zm0-10.5a3.5 3.5 0 1 1-3.5 3.5 3.5 3.5 0 0 1 3.5-3.5zM80.75 79.978v-6.893a1.75 1.75 0 0 0-1.75-1.75H49a1.75 1.75 0 0 0-1.75 1.75v6.893a1.75 1.75 0 0 0 1.75 1.75h30a1.75 1.75 0 0 0 1.75-1.75zm-3.5-1.75h-26.5v-3.393h26.5zM33.884 71.335h-6.893a1.75 1.75 0 0 0-1.75 1.75v6.893a1.75 1.75 0 0 0 1.75 1.75h6.893a1.75 1.75 0 0 0 1.75-1.75v-6.893a1.75 1.75 0 0 0-1.75-1.75zm-1.75 6.893h-3.393v-3.393h3.393zM33.884 84.561h-6.893a1.75 1.75 0 0 0-1.75 1.75V93.2a1.75 1.75 0 0 0 1.75 1.75h6.893a1.75 1.75 0 0 0 1.75-1.75v-6.889a1.75 1.75 0 0 0-1.75-1.75zm-1.75 6.893h-3.393v-3.393h3.393zM92.366 73.085v6.893a1.75 1.75 0 0 0 1.75 1.75h6.893a1.75 1.75 0 0 0 1.75-1.75v-6.893a1.75 1.75 0 0 0-1.75-1.75h-6.893a1.75 1.75 0 0 0-1.75 1.75zm3.5 1.75h3.393v3.393h-3.393zM101.009 84.561h-6.893a1.75 1.75 0 0 0-1.75 1.75V93.2a1.75 1.75 0 0 0 1.75 1.75h6.893a1.75 1.75 0 0 0 1.75-1.75v-6.889a1.75 1.75 0 0 0-1.75-1.75zm-1.75 6.893h-3.393v-3.393h3.393z"/></svg> -->
+                        <img
+                          src="assets/teacher.png"
+                          alt="Logo"
+                          style="
+                            width: 90px;
+                            border-radius: 10px;
+                            height: 300px;
+                            margin: 20px;
+                            box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+                          "
+                        />
+                      </div>
+                      <div
+                        style="
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        "
+                        class="solu_title"
+                      >
+                        <table>
+                          <tr>
+                            <td><strong>Teacher Name:</strong></td>
+                          </tr>
+                          <td style="text-align: center">
+                            {{ Teacher.NAME }}
+                          </td>
+                          <!-- <tr>
+                            <td><strong>Division:</strong></td>
+                            <td style="text-align: center">
+                              {{ class.DIVISION_NAME }}
+                            </td>
+                          </tr> -->
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="rolemapmod1"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="basicD"
+  aria-hidden="true"
+  (click)="closeModal1()"
+>
+  <div class="modal-dialog" style="max-width: 700px !important">
+    <div class="modal-content">
+      <button
+        type="button"
+        style="display: none"
+        id="rolemapmodclosed1"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+      ></button>
+      <div class="modal-body">
+        <div class="row" style="justify-content: center">
+          <div
+            class="col-12 col-sm-12 col-lg-12 col-xl-12 col-md-12"
+            style="text-align: center"
+          >
+            <h3
+              class="modal-title"
+              style="margin-bottom: 10px; color: #0c1538; font-size: 22px"
+            >
+              Please select class
+            </h3>
+          </div>
+
+          <div class="section_our_solution">
+            <div class="row" style="justify-content: center">
+              <div
+                class="col-lg-4 col-md-4 col-sm-12"
+                *ngFor="let class of classData"
+              >
+                <div
+                  class="our_solution_category"
+                  (click)="changeClass(class)"
+                  style="margin-bottom: 24px; cursor: pointer"
+                >
+                  <div class="solution_cards_box">
+                    <div class="solution_card">
+                      <div class="hover_color_bubble"></div>
+                      <div class="so_top_icon" style="text-align: center">
+                        <!-- <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path d="M115 110.272h-5v-49.5h5a1.75 1.75 0 0 0 1.567-2.529l-12-24.13a1.75 1.75 0 0 0-1.567-.97H70.509l-2.8-2.8a5.188 5.188 0 0 0-1.962-1.218v-3.178l10.792-3.075a1.749 1.749 0 0 0 0-3.365L65.75 16.43v-.453a1.75 1.75 0 1 0-3.5 0v13.15a5.188 5.188 0 0 0-1.962 1.218l-2.8 2.8H25a1.75 1.75 0 0 0-1.567.971l-12 24.13A1.75 1.75 0 0 0 13 60.772h5v49.5h-5a1.75 1.75 0 0 0 0 3.5h102a1.75 1.75 0 0 0 0-3.5zm-8.5 0H88.625V66.107l.913.913a5.233 5.233 0 0 0 8.285-6.247h8.677zm-34.167 0H55.667V88.061h16.666zm1.75-25.712H53.917a1.75 1.75 0 0 0-1.75 1.75v23.962h-9.292V62.607L64 41.482l21.125 21.125v47.666h-9.292V86.311a1.75 1.75 0 0 0-1.75-1.75zm27.833-47.918 10.259 20.63H94.639l-20.63-20.63zM69.677 21.188l-3.927 1.12v-2.239zM62.762 32.82a1.754 1.754 0 0 1 2.476 0l29.25 29.25a1.751 1.751 0 0 1 0 2.475 1.791 1.791 0 0 1-2.476 0L65.237 37.771a1.749 1.749 0 0 0-2.475 0L35.988 64.545a1.754 1.754 0 0 1-2.476 0 1.751 1.751 0 0 1 0-2.475zm-36.678 3.823h27.907l-20.63 20.63H15.825zM21.5 60.772h8.678a5.183 5.183 0 0 0 .86 6.247 5.256 5.256 0 0 0 7.425 0l.913-.913v44.166H21.5z"/><path d="M64 67.853a7 7 0 1 0-7-7 7.008 7.008 0 0 0 7 7zm0-10.5a3.5 3.5 0 1 1-3.5 3.5 3.5 3.5 0 0 1 3.5-3.5zM80.75 79.978v-6.893a1.75 1.75 0 0 0-1.75-1.75H49a1.75 1.75 0 0 0-1.75 1.75v6.893a1.75 1.75 0 0 0 1.75 1.75h30a1.75 1.75 0 0 0 1.75-1.75zm-3.5-1.75h-26.5v-3.393h26.5zM33.884 71.335h-6.893a1.75 1.75 0 0 0-1.75 1.75v6.893a1.75 1.75 0 0 0 1.75 1.75h6.893a1.75 1.75 0 0 0 1.75-1.75v-6.893a1.75 1.75 0 0 0-1.75-1.75zm-1.75 6.893h-3.393v-3.393h3.393zM33.884 84.561h-6.893a1.75 1.75 0 0 0-1.75 1.75V93.2a1.75 1.75 0 0 0 1.75 1.75h6.893a1.75 1.75 0 0 0 1.75-1.75v-6.889a1.75 1.75 0 0 0-1.75-1.75zm-1.75 6.893h-3.393v-3.393h3.393zM92.366 73.085v6.893a1.75 1.75 0 0 0 1.75 1.75h6.893a1.75 1.75 0 0 0 1.75-1.75v-6.893a1.75 1.75 0 0 0-1.75-1.75h-6.893a1.75 1.75 0 0 0-1.75 1.75zm3.5 1.75h3.393v3.393h-3.393zM101.009 84.561h-6.893a1.75 1.75 0 0 0-1.75 1.75V93.2a1.75 1.75 0 0 0 1.75 1.75h6.893a1.75 1.75 0 0 0 1.75-1.75v-6.889a1.75 1.75 0 0 0-1.75-1.75zm-1.75 6.893h-3.393v-3.393h3.393z"/></svg> -->
+                        <img
+                          src="assets/Classroom 2 (2).svg"
+                          alt="Logo"
+                          style="
+                            width: 161px;
+                            border-radius: 10px;
+                            height: 300px;
+                            margin: 20px;
+                            box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+                          "
+                        />
+                      </div>
+                      <div
+                        style="
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        "
+                        class="solu_title"
+                      >
+                        <table>
+                          <tr>
+                            <td><strong>Class:</strong></td>
+                            <td style="text-align: center">
+                              {{ class?.CLASS_NAME }}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td><strong>Division:</strong></td>
+                            <td style="text-align: center">
+                              {{ class?.DIVISION_NAME }}
+                            </td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <button class="btn btn-primary">Click me</button> -->
+<nz-modal
+  [nzVisible]="isFormListVisible"
+  nzWidth="800px"
+  nzTitle="Master List"
+  [nzFooter]="null"
+  (nzOnCancel)="drawerClose2()"
+  (nzOnOk)="drawerClose2()"
+>
+  <ng-container *nzModalContent>
+    <div nz-row [nzGutter]="[8, 8]">
+      <div
+        nz-col
+        *ngFor="let form of seperateMasters; let i = index"
+        class="gutter-row"
+        [nzSpan]="12"
+      >
+        <a [href]="form.link">
+          <div
+            class="inner-box"
+            style="padding: 20px 20px 1px; box-shadow: 1px 3px 10px 3px #e3e5ff"
+            [ngStyle]="{ background: colorarray[i] ? colorarray[i] : '' }"
+          >
+            <div nz-row>
+              <div nz-col [nzSpan]="14">
+                <h4 style="font-size: 12px; font-weight: bold">
+                  {{ form.title }}
+                </h4>
+              </div>
+
+              <div nz-col [nzSpan]="10" style="text-align: right">
+                <img
+                  *ngIf="form.link.toLowerCase().includes('fee')"
+                  src="assets/fee.png"
+                  alt="class"
+                  style="width: 60px"
+                />
+                <img
+                  *ngIf="form.link.toLowerCase().includes('holiday')"
+                  src="assets/holiday.png"
+                  alt="class"
+                  style="width: 60px"
+                />
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </ng-container>
+</nz-modal>
+
+<!-- nzTitle="Master List" -->
+<!-- Detox Setup -->
+<nz-modal
+  [nzVisible]="DigitalDetoxVisible"
+  nzWidth="600px"
+  (nzOnCancel)="DigitalDetoxClose()"
+  (nzOnOk)="drawerClose2()"
+  nzTitle="App Configuration"
+  [nzOkLoading]="nzOkLoading"
+>
+  <ng-container *nzModalContent>
+    <div nz-row>
+      <div
+        nz-col
+        nzXs="24"
+        nzSm="24"
+        nzMd="24"
+        nzLg="24"
+        nzXl="24"
+        class="my-box"
+      >
+        <div nz-col nzSpan="12">
+          <div nz-row>
+            <div nz-col nzSpan="9">
+              <!-- <b>App Version</b> -->
+
+              <nz-form-label nzRequired nzNoColon>App Version </nz-form-label>
+            </div>
+
+            <div nz-col nzSpan="1"></div>
+            <div nz-col nzSpan="14">
+              <nz-form-item>
+                <nz-form-control nzErrorTip="Please Enter App Version ">
+                  <input
+                    nz-input
+                    autocomplete="off"
+                    name="versn"
+                    placeholder="App Version"
+                    required
+                    maxlength="10"
+                    [(ngModel)]="data.MIN_VERSION"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div nz-col nzSpan="12"><b>Digital Detox Setup</b></div>
+    <div nz-col nzSpan="12"></div>
+    <div nz-row class="my-box">
+      <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+        <nz-form-item>
+          <nz-form-label nzRequired nzNoColon>App Max Usage Time</nz-form-label>
+          <nz-form-control nzErrorTip="Please Enter Valid App Max Usage Time">
+            <nz-input-group style="width: 100%" nzAddOnAfter="Min">
+              <input
+                nz-input
+                autocomplete="off"
+                (keypress)="commonFunction.numberWithDecimal($event)"
+                name="duration"
+                type="text"
+                maxlength="10"
+                placeHolder="Enter App Max Usage Time"
+                required
+                [(ngModel)]="data.DETOX_TIME"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+        <nz-form-item>
+          <nz-form-label nzRequired nzNoColon
+            >Average App Block Time</nz-form-label
+          >
+          <nz-form-control
+            nzErrorTip="Please Enter Valid Average App Block Time"
+          >
+            <nz-input-group style="width: 100%" nzAddOnAfter="Min">
+              <input
+                nz-input
+                autocomplete="off"
+                (keypress)="commonFunction.numberWithDecimal($event)"
+                name="duration2"
+                type="text"
+                maxlength="10"
+                placeHolder="Enter Average App Backup Time"
+                required
+                [(ngModel)]="data.DETOX_DURATION"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </ng-container>
+  <div *nzModalFooter>
+    <button
+      nz-button
+      nzType="default"
+      [nzCondition]="switchValue"
+      (click)="DigitalDetoxClose()"
+    >
+      Cancel
+    </button>
+    <button
+      nz-button
+      nzType="primary"
+      [nzCondition]="switchValue"
+      (click)="handleOk()"
+    >
+      Save & Close
+    </button>
+  </div>
+</nz-modal>
+<nz-modal
+  [nzWidth]="700"
+  [(nzVisible)]="isApkVersionModalVisible"
+  [nzTitle]="apkVersionModalTitle"
+  [nzContent]="apkVersionModalContent"
+  [nzFooter]="apkVersionModalFooter"
+  (nzOnCancel)="handleApkVersionModalCancel()"
+>
+  <ng-template #apkVersionModalContent>
+    <form nz-form #myFormAPK="ngForm">
+      <div nz-row>
+        <div
+          nz-col
+          nzSpan="24"
+          *ngIf="isProgressVisible"
+          style="text-align: center; font-size: 50px; font-weight: bold"
+        >
+          {{ uploadProgress }} %
+        </div>
+        <div nz-col nzSpan="24">
+          <nz-spin [nzSpinning]="isApkVersionModalConfirmLoading">
+            <div nz-row>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon
+                    >Previous Version</nz-form-label
+                  >
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip="Previous Version is Required"
+                  >
+                    <input
+                      nz-input
+                      name="PreviousVersion"
+                      placeHolder="Previous Version"
+                      disabled
+                      (keypress)="numberWithDecimal($event)"
+                      [(ngModel)]="PREVIOUS_VERSION"
+                      maxlength="10"
+                      required
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon
+                    >Minimum Version</nz-form-label
+                  >
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip="Minimum Version is Required"
+                  >
+                    <input
+                      nz-input
+                      name="minimumVersion"
+                      placeHolder="Minimum Version"
+                      (keypress)="numberWithDecimal($event)"
+                      [(ngModel)]="MIN_VERSION"
+                      maxlength="10"
+                      required
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon
+                    >Current Version</nz-form-label
+                  >
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip="Current Version is Required"
+                  >
+                    <input
+                      nz-input
+                      name="currentVersion"
+                      placeHolder="Current Version"
+                      (keypress)="numberWithDecimal($event)"
+                      [(ngModel)]="CUR_VERSION"
+                      maxlength="10"
+                      required
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon
+                    >Description</nz-form-label
+                  >
+                  <nz-form-control nzHasFeedback nzErrorTip="Input is required">
+                    <textarea
+                      nz-input
+                      rows="1"
+                      name="description"
+                      [(ngModel)]="DESCRIPTION"
+                      required
+                    ></textarea>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <!-- <div nz-col nzSpan="24">
+<nz-form-item>
+<nz-form-label  nzNoColon>APK File</nz-form-label>
+<nz-form-control>
+<button nz-button style="height: 28px; padding: 0px 7px; font-size: 12px;"
+                      (click)="fileInput.click()">Choose File
+<input #fileInput type="file" (change)="onFileSelected($event)" (click)="fileInput.value = null"
+                        style="display: none;" />
+</button>
+</nz-form-control>
+</nz-form-item>
+</div> -->
+              <div
+                nz-col
+                nzSpan="23"
+                *ngIf="fileURL != null"
+                style="overflow: hidden; font-size: 13px"
+              >
+                {{ fileURL.name }}
+              </div>
+              <div nz-col nzSpan="1" *ngIf="fileURL != null">
+                <i
+                  nz-icon
+                  nzType="delete"
+                  (click)="clear()"
+                  [nzTheme]="'twotone'"
+                  [nzTwotoneColor]="'#ff0000'"
+                ></i>
+              </div>
+            </div>
+          </nz-spin>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+  <ng-template #apkVersionModalFooter>
+    <button nz-button nzType="default" (click)="handleApkVersionModalCancel()">
+      Cancel
+    </button>
+    <button
+      nz-button
+      nzType="primary"
+      (click)="handleApkVersionModalOk()"
+      [nzLoading]="isApkVersionModalConfirmLoading"
+    >
+      Submit
+    </button>
+  </ng-template>
+</nz-modal>

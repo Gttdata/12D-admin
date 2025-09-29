@@ -1,0 +1,191 @@
+<div>
+    <form nz-form #Teacher="ngForm">
+        <nz-spin [nzSpinning]="isSpinning">
+            <div nz-row>
+                <div nz-row >
+               
+                    <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzNoColon>
+                                Teacher Name
+                            </nz-form-label>
+                            <nz-form-control nzHasFeedback nzErrorTip=" Please Enter Valid Teacher Name">
+                                <input nz-input autocomplete="off" name="teachernm" placeholder="Enter Teacher Name"
+                                    [(ngModel)]="data.NAME  " minlength="4" maxlength="256"
+                                     required />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+
+                    <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="16">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzNoColon>Email Id </nz-form-label>
+
+                            <nz-form-control nzHasFeedback nzErrorTip="Please Enter Valid Email Id">
+                                <input nz-input autocomplete="off" name="email" placeholder="Enter Email Id"
+                                    [pattern]="commonFunction.emailpattern" maxlength="128" [(ngModel)]="data.EMAIL_ID"
+                                    required />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="8">
+                        <nz-form-label nzRequired nzNoColon>Mobile Number</nz-form-label>
+
+                        <nz-form-item>
+                            <nz-form-control nzHasFeedback nzErrorTip="Please Enter Valid Mobile No">
+                                <input nz-input autocomplete="off" name="mobileno" placeholder="Enter Mobile No."
+                                    [pattern]="commonFunction.mobpattern" (keypress)="commonFunction.omit($event)"
+                                    [(ngModel)]="data.MOBILE_NUMBER" maxlength="10" minlength="10" required />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+
+
+
+
+                    <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="8">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzNoColon>Gender </nz-form-label>
+                            <nz-form-control nzHasFeedback nzErrorTip="Please Select Gender">
+                                <nz-input-group nzCompact>
+                                    <nz-select name="gender" nzPlaceHolder="Select Gender"
+                                        [(ngModel)]="data.GENDER" style="width: 100%" required>
+                                        <nz-option [nzLabel]="'Male'" [nzValue]="'M'"></nz-option>
+                                        <nz-option [nzLabel]="'Female'" [nzValue]="'F'"></nz-option>
+                                        <nz-option [nzLabel]="'Other'" [nzValue]="'O'"></nz-option>
+                                    </nz-select>
+                                </nz-input-group>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+
+                    <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="8">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzNoColon> Birth Date </nz-form-label>
+                            <nz-form-control nzHasFeedback nzRequired nzErrorTip="Please Select Birth Date">
+                                <nz-date-picker name="birthdate" style="width: 100%" (nzOnOpenChange)="open18YearAgo($event)"                     [nzDisabledDate]="commonFunction.disabledAfterDate"
+                                [nzShowToday]="false"
+                                    [nzFormat]="commonFunction.dateFormatMMM" [(ngModel)]="data.DOB"
+                                    nzPlaceholder="Select Birth Date" required></nz-date-picker>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+
+                    <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="8">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzNoColon>Password </nz-form-label>
+
+                            <nz-form-control nzHasFeedback nzRequired nzErrorTip="Password must be 8 character">
+                                <nz-input-group [nzSuffix]="suffixTemplate">
+                                    <input nz-input [type]="passwordVisible ? 'text' : 'password'" name="password"
+                                        [(ngModel)]="data.PASSWORD" maxlength="65" minlength="8" placeholder="Password"
+                                        autocomplete="off" required />
+                                </nz-input-group>
+
+                                <ng-template #suffixTemplate>
+                                    <i nz-icon [nzType]="passwordVisible ? 'eye' : 'eye-invisible'"
+                                        (click)="passwordVisible = !passwordVisible"></i>
+                                </ng-template>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <!-- <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="16">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzNoColon> Select Class </nz-form-label>
+                            <nz-form-control nzHasFeedback nzErrorTip="Please Select Class ">
+                                <nz-select [nzLoading]="classload" nzMode="multiple" nzShowSearch nzAllowClear
+                                    nzPlaceHolder="Select Class"   name="class" [(ngModel)]="data.CLASS_ID" required>
+                
+                                    <nz-option *ngFor="let report of Classes" [nzValue]="report.ID"
+                                        [nzLabel]="report.NAME">
+                                    </nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div> -->
+
+                    <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="8" *ngIf="isShowBlocked">
+                        <nz-form-item>
+                          <nz-form-label  nzNoColon>Teacher Status
+                          </nz-form-label>
+                          <nz-form-control nzHasFeedback nzErrorTip="Please Select Teacher Status">
+                            <nz-input-group nzCompact>
+                              <nz-select name="teacherstatus" nzPlaceHolder="Teacher Status" [(ngModel)]="data.APPROVAL_STATUS"
+                                style="width: 100%" >
+                                <!-- <nz-option [nzLabel]="'Pending'" [nzValue]="'P'"></nz-option>
+                                <nz-option [nzLabel]="'Approved'" [nzValue]="'A'"></nz-option> -->
+                                <nz-option [nzLabel]="'Blocked'" [nzValue]="'B'"></nz-option>
+                                <nz-option *ngIf="data.APPROVAL_STATUS=='B'" [nzLabel]="'Unblock'" [nzValue]="'A'"></nz-option>
+                              </nz-select>
+                            </nz-input-group>
+                          </nz-form-control>
+                        </nz-form-item>
+                      </div>
+          
+                      <div *ngIf="data.APPROVAL_STATUS == 'R' || data.APPROVAL_STATUS == 'B'" nz-col nzXs="24" nzSm="24" nzMd="24"
+                        nzLg="24" nzXl="24">
+                        <nz-form-item>
+                          <nz-form-label nzRequired nzNoColon>
+                            Enter
+                            {{ data.APPROVAL_STATUS == "R" ? "Reject" : "Blocked" }} Remark
+                          </nz-form-label>
+                          <nz-form-control nzHasFeedback nzErrorTip="Please  Enter {{
+                              data.APPROVAL_STATUS == 'R' ? 'Reject' : 'Blocked'
+                            }} Remark">
+                            <textarea rows="2" required nz-input maxlength="256" minlength="2" name="remark1"
+                              placeholder="Enter Remark" [(ngModel)]="data.REJECT_BLOCKED_REMARK"></textarea>
+                            <span style="color: red; font-size: 10px" *ngIf="data.REJECT_BLOCKED_REMARK">{{
+                              data.REJECT_BLOCKED_REMARK.length }}/256</span>
+                          </nz-form-control>
+                        </nz-form-item>
+                      </div>
+                    <!-- <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="8">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzNoColon> Sequence No. </nz-form-label>
+                            <nz-form-control nzHasFeedback nzErrorTip=" Please Enter Correct Sequence Number ">
+                                <input nz-input placeholder="Sequence No." name="unitseq" style="width: 100%"
+                                    minlength="1" maxlength="3" [(ngModel)]="data.SEQ_NO"
+                                    (keypress)="commonFunction.omit($event)" maxlength="5" required disabled/>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div> -->
+
+                    <!-- <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="8">
+                        <nz-form-item>
+                            <nz-form-label nzNoColon>Status</nz-form-label>
+                            <nz-form-control>
+                                <nz-switch name="status" nzCheckedChildren="Yes" nzUnCheckedChildren="No"
+                                    [(ngModel)]="data.STATUS"></nz-switch>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div> -->
+                </div>
+
+
+            </div>
+      
+
+        </nz-spin>
+    </form>
+
+    <div class="footer">
+        <button type="button" nz-button (click)="close()" class="ant-btn" style="margin-right: 8px">
+            <span>Cancel</span>
+        </button>
+        <button type="button" class="ant-btn ant-btn-primary" *ngIf="!data.ID" nz-button nz-dropdown
+            [nzDropdownMenu]="menu" [nzLoading]="isSpinning"  (click)="save(false, Teacher)">
+            <span>Save & Close</span>
+        </button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+                <li nz-menu-item class="menuc" style="border-radius: 4px; background-color: #40a9ff">
+                    <a style="color: white" (click)="save(true, Teacher)">Save & New</a>
+                </li>
+            </ul>
+        </nz-dropdown-menu>
+        <button type="button" class="ant-btn ant-btn-primary" nz-button [nzLoading]="isSpinning" *ngIf="data.ID"
+            (click)="save(false, Teacher)">
+            <span>Update & close</span>
+        </button>
+    </div>
+</div>

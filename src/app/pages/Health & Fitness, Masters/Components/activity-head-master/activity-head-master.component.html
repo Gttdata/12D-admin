@@ -1,0 +1,488 @@
+<div nz-row nzType="flex">
+  <div nz-col nzXs="24" nzSm="24" nzMd="20" nzLg="20" nzXl="8">
+    <div class="formname">
+      <b> {{ formTitle }} </b>
+    </div>
+  </div>
+
+  <div
+    nz-col
+    nzXs="24"
+    nzSm="24"
+    nzMd="4"
+    nzLg="6"
+    nzXl="16"
+    style="display: flex; justify-content: flex-end"
+  >
+    <form nz-form [nzLayout]="'inline'">
+      <nz-form-item>
+        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+          <input
+            type="text"
+            name="search"
+            nz-input
+            placeholder="Search Records"
+            (keyup)="keyup($event)"
+            [(ngModel)]="searchText"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconButton>
+          <button nz-button nzType="primary" (click)="search(true)" nzSearch>
+            <i nz-icon nzType="search"></i>
+          </button>
+        </ng-template>
+      </nz-form-item>
+      <nz-form-item>
+        <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+          <i nz-icon nzType="plus"></i>Add New Activity Head
+        </button>
+      </nz-form-item>
+    </form>
+  </div>
+</div>
+<br />
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <nz-table
+      class="my-scroll no-wrap1"
+      nzBordered
+      #activityhead
+      nzShowSizeChanger
+      [nzFrontPagination]="false"
+      [nzData]="dataList"
+      [nzLoading]="loadingRecords"
+      nzSize="small"
+      [nzTotal]="totalRecords"
+      [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize"
+      (nzPageIndexChange)="search()"
+      (nzPageSizeChange)="search(true)"
+      (nzQueryParams)="sort($event)"
+      [nzScroll]="screenwidth > 500 ? { y: '55vh' } : { x: '800px', y: '55vh' }"
+    >
+      <thead>
+        <tr>
+          <th nzWidth="30px" nzLeft>Action</th>
+          <th nzWidth="50px">Map Activities</th>
+
+          <th nzWidth="200px" nzColumnKey="{{ 'HEAD_NAME' }}" [nzSortFn]="true">
+            Head Name
+          </th>
+          <!-- <th nzColumnKey="{{ 'HEAD_IMAGE' }}" [nzSortFn]="true" nzWidth="60px" style="text-align: center">
+            Head Image
+          </th> -->
+
+          <th nzWidth="30px" nzColumnKey="{{ 'STATUS' }}" [nzSortFn]="true">
+            Status
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of activityhead.data">
+          <td align="center" nzLeft>
+            <a (click)="edit(data)" nz-tooltip nzTooltipTitle="Edit">
+              <span
+                nz-icon
+                nzType="edit"
+                nzTheme="twotone"
+                style="font-size: 15px"
+              ></span>
+            </a>
+          </td>
+          <td align="center">
+            <nz-space>
+              <a
+                *nzSpaceItem
+                (click)="MapSubCategories(data)"
+                nz-tooltip
+                nzTooltipTitle="Map Activity"
+              >
+                <span
+                  nz-icon
+                  nzType="form"
+                  nzTheme="outline"
+                  style="font-size: 15px; color: #0d6efd; margin-left: 10px"
+                ></span>
+              </a>
+            </nz-space>
+          </td>
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['HEAD_NAME']"
+          >
+            {{ data["HEAD_NAME"] }}
+          </td>
+          <!-- <td style="white-space: pre-line;text-align: left; text-align: left">
+            {{ data["HEAD_IMAGE"] }}
+          </td> -->
+
+          <td align="center">
+            <i
+              nz-icon
+              *ngIf="data['STATUS']"
+              [nzType]="'check-circle'"
+              [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#52c41a'"
+            ></i>
+            <i
+              nz-icon
+              *ngIf="!data['STATUS']"
+              [nzType]="'close-circle'"
+              [nzTheme]="'twotone'"
+              [nzTwotoneColor]="'#f50'"
+            ></i>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+<div *ngIf="drawerVisible">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="500"
+    [nzVisible]="drawerVisible"
+    [nzTitle]="drawerTitle"
+    (nzOnClose)="drawerClose()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <div>
+        <form nz-form #activityform="ngForm">
+          <nz-spin [nzSpinning]="isSpinning">
+            <div nz-row class="custom-form-item">
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Head Name
+                  </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Enter Correct Head Name"
+                  >
+                    <input
+                      nz-input
+                      name="headname"
+                      placeholder="Enter Head Name"
+                      minlength="1"
+                      [(ngModel)]="drawerData.HEAD_NAME"
+                      maxlength="128"
+                      required
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div nz-col nzSpan="10">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Sequence No.
+                  </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Enter Correct Sequence Number "
+                  >
+                    <input
+                      nz-input
+                      placeholder="Sequence No."
+                      name="unitseq"
+                      style="width: 100%"
+                      minlength="1"
+                      [(ngModel)]="drawerData.SEQ_NO"
+                      (keypress)="commonFunction.omit($event)"
+                      maxlength="5"
+                      required
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="14">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Rest Between Sets
+                  </nz-form-label>
+                  <nz-form-control nzErrorTip="Please Enter Rest Between Sets">
+                    <nz-input-group [nzAddOnAfter]="addOnAfterTemplate4">
+                      <input
+                        type="number"
+                        name="activitytime"
+                        autocomplete="off"
+                        nz-input
+                        maxlength="20"
+                        [(ngModel)]="drawerData.REST_TIME"
+                        required
+                        placeholder="Enter Rest Time"
+                        style="width: 100%"
+                      />
+                    </nz-input-group>
+
+                    <ng-template #addOnAfterTemplate4>
+                      <nz-select
+                        name="timetype"
+                        class="custom-select-width1"
+                        [nzShowArrow]="false"
+                        [nzDropdownStyle]="{
+                          'padding-left': '2px',
+                          'padding-right': '2px'
+                        }"
+                        style="width: 63px"
+                        [(ngModel)]="TIMING_TYPE"
+                        required
+                      >
+                        <nz-option nzLabel="Sec" nzValue="Sec"></nz-option>
+                        <nz-option nzLabel="Min" nzValue="Min"></nz-option>
+                      </nz-select>
+                    </ng-template>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="8" style="margin-left: 6px">
+                <nz-form-item>
+                  <nz-form-label nzNoColon> Status </nz-form-label>
+                  <nz-form-control>
+                    <nz-switch
+                      name="headstatus"
+                      [(ngModel)]="drawerData.STATUS"
+                      nzCheckedChildren="Active"
+                      nzUnCheckedChildren="InActive"
+                    ></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="24">
+                <div nz-row>
+                  <div nz-col nzSpan="8">
+                    <nz-form-item>
+                      <nz-form-label nzRequired nzNoColon
+                        >Head Image</nz-form-label
+                      >
+                      <!-- <nz-form-control nzHasFeedback nzErrorTip="Upload Invoice Url"> -->
+                      <div style="color: blue">
+                        <button
+                          nz-button
+                          style="
+                            height: 28px;
+                            padding: 0px 7px;
+                            font-size: 12px;
+                            width: 152px;
+                          "
+                          (click)="fileInput.click()"
+                        >
+                          <span
+                            style="width: 138px"
+                            nz-icon
+                            nzType="upload"
+                            nzTheme="outline"
+                          ></span>
+                          <input
+                            #fileInput
+                            name="invoice"
+                            accept=".jpg, .jpeg, .png"
+                            (change)="onFileSelected($event)"
+                            type="file"
+                            style="display: none"
+                          />
+                        </button>
+                      </div>
+                    </nz-form-item>
+                  </div>
+                  <div
+                    nz-col
+                    [nzSpan]="
+                      progressBarProfilePhoto &&
+                      percentProfilePhoto < 100 &&
+                      percentProfilePhoto > 0
+                        ? 8
+                        : 0
+                    "
+                  >
+                    <span
+                      *ngIf="
+                        drawerData.HEAD_IMAGE !== null &&
+                        drawerData.HEAD_IMAGE !== undefined &&
+                        drawerData.HEAD_IMAGE !== ''
+                      "
+                    >
+                      <div
+                        *ngIf="
+                          progressBarProfilePhoto &&
+                          percentProfilePhoto < 100 &&
+                          percentProfilePhoto > 0
+                        "
+                      >
+                        <nz-progress
+                          style="color: black"
+                          [style.width]="percentProfilePhoto + '%'"
+                          [nzPercent]="percentProfilePhoto"
+                          >{{ percentProfilePhoto }}%</nz-progress
+                        >
+                      </div>
+                    </span>
+                  </div>
+
+                  <div
+                    nz-col
+                    [nzSpan]="
+                      progressBarProfilePhoto && percentProfilePhoto < 100
+                        ? 8
+                        : 14
+                    "
+                    *ngIf="
+                      drawerData.HEAD_IMAGE !== null &&
+                      drawerData.HEAD_IMAGE !== undefined &&
+                      drawerData.HEAD_IMAGE !== ''
+                    "
+                  >
+                    <!-- fisrt row -->
+                    <div style="margin: 37px 37px">
+                      <!-- Adjust margin-top as needed -->
+                      {{ drawerData.HEAD_IMAGE }}
+                      <span
+                        style="
+                          cursor: pointer;
+                          margin-top: 12px;
+                          padding-left: 7px;
+                        "
+                        nz-popconfirm
+                        nzPopconfirmTitle="Are you sure want delete?"
+                        (nzOnConfirm)="deleteConfirm(drawerData)"
+                        (nzOnCancel)="deleteCancel()"
+                        nzPopconfirmPlacement="top"
+                      >
+                        <span
+                          nz-icon
+                          nzType="delete"
+                          nzTheme="twotone"
+                          nz-tooltip
+                          nzTooltipTitle="Delete"
+                        >
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                  <div nz-col nzSpan="24">
+                    <!-- First row -->
+                    <div
+                      style="display: flex; justify-content: center"
+                      [ngClass]="drawerData.HEAD_IMAGE ? 'my-box' : ''"
+                    >
+                      <div
+                        *ngIf="
+                          drawerData.HEAD_IMAGE !== null &&
+                          drawerData.HEAD_IMAGE !== undefined &&
+                          drawerData.HEAD_IMAGE !== ''
+                        "
+                      >
+                        <!-- <img width="70%" nz-image style="    width: 246px;
+                      height: 140px;margin-left: 16px;margin-bottom: 10px;"
+                        src="{{ imgurl }}classWiseTask/{{ ticketData.HEAD_IMAGE }}" /> -->
+
+                        <img
+                          class="img"
+                          nz-image
+                          style="
+                            border-radius: 5px;
+                            max-height: 100%;
+                            max-width: 100%;
+                            aspect-ratio: 1;
+                          "
+                          [nzSrc]="taskurl"
+                          alt="No Image Found"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nz-spin>
+        </form>
+
+        <div class="footer">
+          <button
+            type="button"
+            nz-button
+            (click)="close()"
+            class="ant-btn"
+            style="margin-right: 8px"
+          >
+            <span> Cancel </span>
+          </button>
+          <button
+            type="button"
+            class="ant-btn ant-btn-primary"
+            *ngIf="!drawerData.ID"
+            nz-button
+            nz-dropdown
+            [nzDropdownMenu]="menu"
+            (click)="save(false, yearpage)"
+          >
+            <span> Save & Close</span>
+          </button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+              <li
+                nz-menu-item
+                class="menuc"
+                style="border-radius: 4px; background-color: #40a9ff"
+              >
+                <a style="color: white" (click)="save(true, yearpage)">
+                  Save & New</a
+                >
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+          <button
+            type="button"
+            class="ant-btn ant-btn-primary"
+            nz-button
+            [nzLoading]="isSpinning"
+            *ngIf="drawerData.ID"
+            (click)="save(false, yearpage)"
+          >
+            <span> Update & Close</span>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </nz-drawer>
+</div>
+<div *ngIf="isMapDrawerVisible">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="900"
+    [nzVisible]="isMapDrawerVisible"
+    [nzTitle]="MapdrawerTitle"
+    (nzOnClose)="MapdrawerClose()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <app-activitymap
+        [drawerClose2]="closeCallbackMap"
+        [drawerVisible]="drawerVisible"
+        [drawerData]="mapdrawerData"
+        [HEAD_ID]="HEAD_ID"
+      >
+      </app-activitymap>
+    </ng-container>
+  </nz-drawer>
+</div>

@@ -1,0 +1,245 @@
+<div>
+  <form nz-form #formData="ngForm">
+    <div class="my-box">
+      <div nz-row class="custom-form-item">
+        <div nz-col nzSpan="8">
+          <nz-form-item>
+            <nz-form-label nzNoColon>Class Name </nz-form-label>
+            <nz-form-control nzHasFeedback nzErrorTip="Enter Class Name">
+              <input
+                nz-input
+                name="class"
+                style="width: 100%"
+                autocomplete="off"
+                [(ngModel)]="MapData.CLASS_NAME"
+                placeholder=" Enter Class Name"
+                disabled="true"
+                required
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col nzSpan="8">
+          <nz-form-item>
+            <nz-form-label nzRequired nzNoColon>Division</nz-form-label>
+            <nz-select
+              name="Division"
+              nzShowSearch
+              nzAllowClear
+              style="width: 100%"
+              nzPlaceHolder="Select Division"
+              nzMode="multiple"
+              [(ngModel)]="MapData.DIVISION_ID"
+              [nzLoading]="loadDivision"
+              (ngModelChange)="onDivisionChange($event)"
+            >
+              <nz-option [nzValue]="0" [nzLabel]="'NA'"> </nz-option>
+              <nz-option
+                *ngFor="let Div of Divisionlist"
+                [nzValue]="Div.ID"
+                [nzLabel]="Div.NAME"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-item>
+        </div>
+
+        <div nz-col nzSpan="8">
+          <nz-form-item>
+            <nz-form-label nzRequired nzNoColon>Year</nz-form-label>
+            <nz-select
+              name="Year"
+              nzShowSearch
+              nzAllowClear
+              style="width: 100%"
+              nzPlaceHolder="Select Year"
+              [(ngModel)]="MapData.YEAR_ID"
+              (ngModelChange)="onYearChange($event)"
+              [nzLoading]="loadYearData"
+              disabled="true"
+            >
+              <nz-option
+                *ngFor="let Year of YearDatalist"
+                [nzValue]="Year.ID"
+                [nzLabel]="Year.YEAR"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-item>
+        </div>
+
+        <!-- <div nz-col nzSpan="7">
+          <nz-form-item>
+            <nz-form-label nzRequired nzNoColon>Head Name</nz-form-label>
+            <nz-select
+              name="head"
+              nzShowSearch
+              nzAllowClear
+              style="width: 100%"
+              nzPlaceHolder="Select Head Name"
+              [(ngModel)]="MapData.HEAD_ID"
+              (ngModelChange)="onHeadChange($event)"
+              [nzLoading]="loadHeadData"
+            >
+              <nz-option
+                *ngFor="let head of HeadDatalist"
+                [nzValue]="head.ID"
+                [nzLabel]="head.NAME"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-item>
+        </div> -->
+        <!-- 
+        <div nz-col nzSpan="5">
+          <nz-form-item>
+            <nz-form-label nzRequired nzNoColon>Amount</nz-form-label>
+
+            <nz-form-control nzErrorTip="Please Enter Amount">
+              <nz-input-group nzAddOnBefore="₹">
+                <input
+                  nz-input
+                  name="Amount"
+                  (keypress)="commonFunction.onlynumdot($event)"
+                  [(ngModel)]="MapData.AMOUNT"
+                  maxlength="9"
+                  autocomplete="off"
+                  placeholder="Enter Amount"
+                />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div
+          nz-col
+          nzSpan="4"
+          style="margin-top: 32px; text-align: left; margin-left: 11px"
+        >
+          <button nz-button nzType="primary" (click)="addData(true, formData)">
+            Add
+          </button>
+        </div> -->
+      </div>
+    </div>
+  </form>
+
+  <div nz-row>
+    <div nz-col nzSpan="24">
+      <nz-table
+        class="my-scroll no-wrap1"
+        nzBordered
+        [nzData]="['']"
+        [nzSize]="'small'"
+        [nzScroll]="{ y: '50vh' }"
+        [nzShowPagination]="false"
+        [nzLoading]="loadHeadData"
+        [nzFooter]="Footer"
+      >
+        <thead>
+          <tr>
+            <th nzWidth="18px" style="text-align: center">Map</th>
+            <th nzWidth="70px " style="text-align: center">Head Name</th>
+            <th nzWidth="30px " style="text-align: center">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of tableData; let i = index">
+            <td style="text-align: center">
+              <!-- <nz-switch
+                nzCheckedChildren="Yes"
+                nzUnCheckedChildren="No"
+                name="map"
+                [(ngModel)]="data.IS_MAPPED" 
+                (ngModelChange)="onIsMappedChange($event, data)"
+              ></nz-switch> -->
+              <label
+                  (ngModelChange)="onIsMappedChange($event, data)"
+                  nz-checkbox
+                  name="map"
+                  [(ngModel)]="data.IS_MAPPED"
+                ></label>
+            </td>
+
+            <td style="white-space: pre-line; text-align: left">
+              {{ data["NAME"] }}
+            </td>
+            <td style="white-space: pre-line; text-align: center">
+              <input
+                name="amt{{ i }}"
+                nz-input
+                style="text-align: right"
+                type="text"
+                [(ngModel)]="data.AMOUNT"
+                (keypress)="commonFunction.omit($event)"
+                maxlength="7"
+                class="plain-text-input"
+                [disabled]="!data.IS_MAPPED"
+                (ngModelChange)="onAmountChange($event)"
+              /> 
+            </td>
+          </tr>
+          <!-- <tr *ngIf="tableData.length > 0">
+            <td  colspan="7">
+              <div nz-row>
+                <div nz-col nzSpan="22" style="text-align: right">
+                  <span>
+                    <b>Total :- </b>
+                  </span>
+                </div>
+                <div nz-col nzSpan="2" style="text-align: right">
+                  <span>
+                    {{ Total }}
+                  </span>
+                </div>
+              </div>
+            </td>
+          </tr> -->
+        </tbody> 
+        <ng-template #Footer [ngOutletContext]="context">
+          <div nz-row>
+            <div nz-col nzSpan="23" style="text-align: right">
+              <span>
+                <b>Total :- </b>
+              </span>
+              <span>
+                {{ Total }}
+              </span>
+            </div>
+            <div nz-col nzSpan="1" style="text-align: right">
+              
+            </div>
+          </div>
+        </ng-template>
+      </nz-table>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <button
+    type="button"
+    nz-button
+    (click)="close()"
+    class="ant-btn"
+    style="margin-right: 8px"
+  >
+    <span>Cancel</span>
+  </button>
+  <button
+  type="button"
+  nz-button
+  [nzLoading]="isSpinning"
+  nzType="primary"
+  nz-popconfirm
+  nzPopconfirmTitle="Are You Sure You Want To Map Class?"
+  nzPopconfirmPlacement="top"
+  [nzCondition]="switchValue"
+  (nzOnConfirm)="confirm()" (click)="save()"
+  
+  style="margin-right: 12px"
+>
+  <span>Map & Close</span>
+</button>
+</div>

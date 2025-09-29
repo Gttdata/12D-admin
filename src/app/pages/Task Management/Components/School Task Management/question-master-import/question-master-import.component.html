@@ -1,0 +1,419 @@
+<div nz-row nzType="flex">
+  <div nz-col nzXs="24" nzSm="24" nzMd="20" nzLg="20" nzXl="12">
+    <div class="formname">{{ formTitle }}</div>
+  </div>
+</div>
+
+<div class="filter-box">
+  <form nz-form #questionpage="ngForm">
+    <div nz-row>
+      <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="6">
+        <nz-form-item>
+          <nz-form-label nzRequired nzNoColon> Select Class </nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="Please Select Class ">
+            <nz-select
+              style="width: 100%"
+              [nzLoading]="classload"
+              nzShowSearch
+              nzAllowClear
+              required
+              nzPlaceHolder="Select Class"
+              name="class"
+              [(ngModel)]="dataQuestion1.CLASS_ID"
+              required
+              (ngModelChange)="subjectData($event)"
+            >
+              <nz-option
+                *ngFor="let report of Classes"
+                [nzValue]="report.ID"
+                [nzLabel]="report.NAME"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="6">
+        <nz-form-item>
+          <nz-form-label nzRequired nzNoColon> Select Subject </nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="Please Select Subject ">
+            <nz-select
+              style="width: 100%"
+              [nzLoading]="subjectsload"
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="Select Subject"
+              name="subject"
+              (ngModelChange)="getallChapter($event)"
+              [(ngModel)]="dataQuestion1.SUBJECT_ID"
+              required
+            >
+              <nz-option
+                *ngFor="let report of subjects"
+                [nzValue]="report.ID"
+                [nzLabel]="report.NAME"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="6">
+        <nz-form-item>
+          <nz-form-label nzRequired nzNoColon>Select Chapter </nz-form-label>
+          <nz-form-control
+            nzHasFeedback
+            nzErrorTip="Please Select Chapter Name"
+          >
+            <nz-input-group nzCompact>
+              <nz-select
+                name="chapterName"
+                nzPlaceHolder="Select Chapter Name"
+                [(ngModel)]="dataQuestion1.CHAPTER_ID"
+                style="width: 100%"
+                nzAllowClear
+                nzShowSearch
+                required
+                [nzLoading]="chapterLoad"
+              >
+                <nz-option
+                  *ngFor="let chapter of chapterList"
+                  [nzValue]="chapter.ID"
+                  [nzLabel]="chapter.NAME"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nzSpan="6">
+        <nz-form-item>
+          <nz-form-label nzRequired nzNoColon>Select Medium</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="Please Select Medium ">
+            <nz-select
+              name="Medium"
+              nzShowSearch
+              nzAllowClear
+              style="width: 100%"
+              nzPlaceHolder="Select Medium"
+              [(ngModel)]="dataQuestion1.MEDIUM_ID"
+              required
+            >
+            <nz-option [nzValue]="0" [nzLabel]="'NA'"> </nz-option>
+
+              <nz-option
+                *ngFor="let Div of Mediumlist"
+                [nzValue]="Div.ID"
+                [nzLabel]="Div.NAME"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="6">
+        <nz-form-item>
+          <nz-form-label nzRequired nzNoColon
+            >Select Question Type
+          </nz-form-label>
+          <nz-form-control
+            nzHasFeedback
+            nzErrorTip="Please Select Question Type"
+          >
+            <nz-input-group nzCompact>
+              <nz-select
+                name="qtype"
+                nzPlaceHolder="Select Question Type"
+                [(ngModel)]="dataQuestion1.QUESTION_TYPE"
+                (ngModelChange)="DataChange($event)"
+                style="width: 100%"
+                nzShowSearch
+                nzAllowClear
+                required
+                [nzLoading]="typeLoad"
+              >
+                <nz-option
+                  *ngFor="let type of questionTypeList"
+                  [nzValue]="type.ID"
+                  [nzLabel]="type.LABEL"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="5">
+        <nz-form-item>
+          <nz-form-label nzNoColon> </nz-form-label>
+          <!-- <a  > -->
+          <!-- <a src="assets/question_importer.txt" > -->
+          <button
+            nz-button
+            nzType="primary"
+            nzJustify="end"
+            (click)="downloadTXT()"
+            style="width: 100%; text-align: center"
+          >
+            <i nz-icon nzType="download" nzTheme="outline"></i>Get Sample File
+          </button>
+          <!-- Get Sample File -->
+          <!-- </a>  -->
+        </nz-form-item>
+      </div>
+      <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="5">
+        <nz-form-item>
+          <nz-form-label nzNoColon>Choose File</nz-form-label>
+          <br />
+          <!-- <input type="file" accept="text/plain" (change)="onFileSelectedTXT($event.target.files)" /> -->
+
+          <button
+            nz-button
+            style="height: 32px; padding: 0px 7px; font-size: 12px; width: 100%"
+            (click)="fileInput.click()"
+          >
+            <span nz-icon nzType="upload" nzTheme="outline"></span>
+            <input
+              #fileInput
+              name="selectfile"
+              accept="text/plain"
+              (change)="onFileSelectedTXT($event.target.files)"
+              type="file"
+              style="display: none"
+            />
+          </button>
+          <div style="font-size: 12px" *ngIf="selectedFileName !== ''">
+            {{ selectedFileName }}
+          </div>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="4">
+        <nz-form-item>
+          <nz-form-label nzNoColon></nz-form-label>
+
+          <button
+            nz-button
+            nzType="primary"
+            [disabled]="diabledButton"
+            (click)="extract1()"
+            nzJustify="end"
+            style="width: 100%"
+          >
+            <i nz-icon nzType="import" nzTheme="outline"></i>Extract File
+          </button>
+        </nz-form-item>
+      </div>
+
+      <!-- </div> -->
+      <br />
+    </div>
+  </form>
+
+  <div class="steps-content">
+    <div nz-row>
+      <div nz-col nzSpan="24" style="align-content: center">
+        <nz-table
+          class="my-scroll no-wrap1"
+          nzFooter="Total Questions : {{ allquestionData.length }} "
+          nzBordered
+          #table
+          [nzFrontPagination]="false"
+          [nzScroll]="{ x: '1300px', y: '55vh' }"
+          [nzLoading]="loadingRecords"
+          [nzData]="allquestionData"
+        >
+          <thead>
+            <tr>
+              <th [nzWidth]="'10%'" style="font-weight: bold" nzLeft>Delete</th>
+              <th [nzWidth]="'10%'" style="font-weight: bold" nzLeft>Sr. No.</th>
+              <!-- <th [nzWidth]="'12%'" style="font-weight: bold">Direction</th> -->
+              <th [nzWidth]="'14%'" style="font-weight: bold">Question</th>
+              <th
+                *ngIf="!Descriptive"
+                [nzWidth]="'12%'"
+                style="font-weight: bold"
+              >
+                Option A
+              </th>
+              <th
+                *ngIf="!Descriptive"
+                [nzWidth]="'12%'"
+                style="font-weight: bold"
+              >
+                Option B
+              </th>
+              <th
+                *ngIf="!Descriptive"
+                [nzWidth]="'12%'"
+                style="font-weight: bold"
+              >
+                Option C
+              </th>
+              <th
+                *ngIf="!Descriptive"
+                [nzWidth]="'12%'"
+                style="font-weight: bold"
+              >
+                Option D
+              </th>
+              <th
+                *ngIf="!Descriptive"
+                [nzWidth]="'12%'"
+                style="font-weight: bold"
+              >
+                Option E
+              </th>
+              <!-- <th
+                *ngIf="!Descriptive"
+                [nzWidth]="'12%'"
+                style="font-weight: bold"
+              >
+                Answer
+              </th> -->
+              <th [nzWidth]="'55%'" style="font-weight: bold">Answer</th>
+              <th [nzWidth]="'12%'" style="font-weight: bold">Marks</th>
+              <th [nzWidth]="'14%'" style="font-weight: bold">Description</th>
+
+            </tr>
+            <!-- </thead> -->
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of table.data" >
+              <td align="center" nzLeft>
+                <a (click)="deleteRow(data)">
+                  <i
+                    nz-icon
+                    nzType="delete"
+                    nzTheme="outline"
+                    [nzTheme]="'twotone'"
+                  ></i
+                ></a>
+              </td>
+              <td style="text-align: center;" nzLeft>{{ data.ID }}</td>
+              <!-- <td>
+                <textarea
+                  nz-input
+                  rows="3"
+                  nzSize="small"
+                  [ngModelOptions]="{ standalone: true }"
+                  name="name1"
+                  [(ngModel)]="data.DIRECTION"
+                ></textarea>
+              </td> -->
+              
+              <td>
+                <textarea
+                  nz-input
+                  rows="3"
+                  nzSize="small"
+                  [ngModelOptions]="{ standalone: true }"
+                  name="name3"
+                  [(ngModel)]="data.QUESTION"
+                ></textarea>
+              </td>
+              <td *ngIf="Descriptive == false">
+                <textarea
+                  nz-input
+                  rows="3"
+                  nzSize="small"
+                  [ngModelOptions]="{ standalone: true }"
+                  name="name4"
+                  [(ngModel)]="data.OPTION_A"
+                ></textarea>
+              </td>
+              <td *ngIf="Descriptive == false">
+                <textarea
+                  nz-input
+                  rows="3"
+                  nzSize="small"
+                  [ngModelOptions]="{ standalone: true }"
+                  name="name5"
+                  [(ngModel)]="data.OPTION_B"
+                ></textarea>
+              </td>
+              <td *ngIf="Descriptive == false">
+                <textarea
+                  nz-input
+                  rows="3"
+                  nzSize="small"
+                  [ngModelOptions]="{ standalone: true }"
+                  name="name6"
+                  [(ngModel)]="data.OPTION_C"
+                ></textarea>
+              </td>
+              <td *ngIf="Descriptive == false">
+                <textarea
+                  nz-input
+                  rows="3"
+                  nzSize="small"
+                  [ngModelOptions]="{ standalone: true }"
+                  name="name7"
+                  [(ngModel)]="data.OPTION_D"
+                ></textarea>
+              </td>
+              <td *ngIf="Descriptive == false">
+                <textarea
+                  nz-input
+                  rows="3"
+                  nzSize="small"
+                  [ngModelOptions]="{ standalone: true }"
+                  name="name8"
+                  [(ngModel)]="data.OPTION_E"
+                ></textarea>
+              </td>
+              
+              <td>
+                <textarea
+                  nz-input
+                  rows="3"
+                  nzSize="small"
+                  [ngModelOptions]="{ standalone: true }"
+                  name="name9"
+                  [(ngModel)]="data.ANSWER"
+                ></textarea>
+              </td>
+              <td>
+                <textarea
+                  nz-input
+                  rows="3"
+                  nzSize="small"
+                  [ngModelOptions]="{ standalone: true }"
+                  name="marks"
+                  [(ngModel)]="data.MARKS"
+                ></textarea>
+              </td>
+              <td>
+                <textarea
+                  nz-input
+                  rows="3"
+                  nzSize="small"
+                  [ngModelOptions]="{ standalone: true }"
+                  name="name2"
+                  [(ngModel)]="data.DESCRIPTION"
+                ></textarea>
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+    </div>
+  </div>
+  <div style="text-align: right; margin-bottom: 50px; margin-top: 10px">
+    <button
+      type="button"
+      class="ant-btn ant-btn-primary"
+      nz-button
+      [nzLoading]="isSaveSpinning"
+      (click)="save(questionpage)"
+    >
+      <span>Import Questions</span>
+    </button>
+  </div>
+</div>

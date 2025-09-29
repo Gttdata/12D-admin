@@ -1,0 +1,422 @@
+<div style="display: flex;justify-content:right;">
+  <nz-form-item>
+    <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+      <i nz-icon nzType="plus"></i>Add Subject
+    </button>
+  </nz-form-item>
+</div>
+<div>
+  <nz-spin [nzSpinning]="promoteisSpinning">
+    <form nz-form #formData="ngForm">
+      <div class="my-box">
+        <div nz-row class="custom-form-item">
+          <div nz-col nzSpan="5">
+            <nz-form-item>
+              <nz-form-label nzNoColon>Class Name </nz-form-label>
+              <nz-form-control nzHasFeedback nzErrorTip="Enter Class Name">
+                <input
+                  nz-input
+                  name="class"
+                  style="width: 100%"
+                  autocomplete="off"
+                  [(ngModel)]="TeacherMapData.CLASS_NAME"
+                  placeholder=" Enter Class Name"
+                  disabled="true"
+                  required
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div nz-col nzSpan="5">
+            <nz-form-item>
+              <nz-form-label nzRequired nzNoColon>Division</nz-form-label>
+              <nz-select
+                name="Division"
+                (ngModelChange)="ChangedDivision($event)"
+                nzShowSearch
+                nzAllowClear
+                style="width: 100%"
+                nzPlaceHolder="Select Division"
+                [(ngModel)]="TeacherMapData.DIVISION_ID"
+                [nzLoading]="loadDivision"
+              >
+                <nz-option nzValue="0" [nzLabel]="'NA'"> </nz-option>
+                <nz-option
+                  *ngFor="let Div of Divisionlist"
+                  [nzValue]="Div.ID"
+                  [nzLabel]="Div.NAME"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-item>
+          </div>
+
+          <div nz-col nzSpan="5">
+            <nz-form-item>
+              <nz-form-label nzRequired nzNoColon>Year</nz-form-label>
+              <nz-select
+                name="Year"
+                nzShowSearch
+                nzAllowClear
+                style="width: 100%"
+                nzPlaceHolder="Select Year"
+                [(ngModel)]="TeacherMapData.YEAR_ID"
+                (ngModelChange)="ChangedYear($event)"
+                [nzLoading]="loadYearData"
+                disabled="true"
+              >
+                <nz-option
+                  *ngFor="let Year of YearDatalist"
+                  [nzValue]="Year.ID"
+                  [nzLabel]="Year.YEAR"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-item>
+          </div>
+
+          <div nz-col nzSpan="9">
+            <nz-form-item>
+              <nz-form-label nzRequired nzNoColon>Class Teacher</nz-form-label>
+              <nz-select
+                name="Teacher1"
+                nzShowSearch
+                nzAllowClear
+                style="width: 100%"
+                nzPlaceHolder="Select Class Teacher"
+                [(ngModel)]="TeacherMapData.CLASS_TEACHER_ID"
+                [nzLoading]="loadTeacher"
+              >
+                <nz-option
+                  *ngFor="let Year of Teacherlist"
+                  [nzValue]="Year.ID"
+                  [nzLabel]="Year.NAME"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-item>
+          </div>
+          <!-- <div nz-col nzSpan="6">
+            <nz-form-item>
+              <nz-form-label nzNoColon>Status</nz-form-label>
+              <nz-form-control>
+                <nz-switch name="is_active" [(ngModel)]="TeacherMapData.STATUS" nzCheckedChildren="Yes"
+                  nzUnCheckedChildren="No"></nz-switch>
+              </nz-form-control>
+            </nz-form-item>
+          </div> -->
+        </div>
+      </div>
+    </form>
+
+    <div nz-row>
+      <div nz-col nzSpan="24">
+        <nz-table
+          class="my-scroll no-wrap1"
+          nzBordered
+          #teacherdata
+          [nzData]="MapTeacher"
+          [nzFrontPagination]="false"
+          [nzLoading]="loadingRecords"
+          [nzSize]="'small'"
+          [nzScroll]="{ x: '600px', y: '55vh' }"
+        >
+          <thead>
+            <tr>
+              <th nzWidth="80px">Subject Name</th>
+              <th nzWidth="50px">Subject Teacher</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of teacherdata.data; let i = index">
+              <td style="white-space: pre-line; text-align: left">
+                {{ data["NAME"] }}
+              </td>
+
+              <td style="text-align: left; white-space: pre-line">
+                <nz-select
+                  name="Teacher{{ i }}"
+                  nzShowSearch
+                  nzAllowClear
+                  style="width: 100%"
+                  nzPlaceHolder="Select Subject Teacher"
+                  [(ngModel)]="data.TEACHER_ID"
+                >
+                  <nz-option
+                    *ngFor="let teacherName of Teacherlist"
+                    [nzValue]="teacherName.ID"
+                    [nzLabel]="teacherName.NAME"
+                  >
+                  </nz-option>
+                </nz-select>
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+    </div>
+  </nz-spin>
+</div>
+<div class="footer">
+  <button
+    type="button"
+    nz-button
+    (click)="close()"
+    class="ant-btn"
+    style="margin-right: 8px"
+  >
+    <span>Cancel</span>
+  </button>
+  <button
+    type="button"
+    [nzCondition]="switchValue"
+    class="ant-btn ant-btn-primary"
+    nz-popconfirm
+    nzPopconfirmTitle="Are You Sure You Want To Map Teacher?"
+    nzPopconfirmPlacement="bottom"
+    nz-button
+    nz-dropdown
+    (nzOnConfirm)="confirm()"
+    (click)="save()"
+  >
+    <span>Map & Close</span>
+  </button>
+</div>
+<div *ngIf="drawerVisible1">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="390"
+    [nzVisible]="drawerVisible1"
+    [nzTitle]="drawerTitle1"
+    (nzOnClose)="drawerClose1()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <div>
+        <form nz-form #websitebannerPage="ngForm">
+          <nz-spin [nzSpinning]="isSpinning">
+            <div nz-row class="custom-form-item">
+              <div
+                nz-col
+                nzXs="24"
+                nzSm="24"
+                nzMd="24"
+                nzLg="24"
+                nzXl="12"
+              >
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon> Class </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip="Please Select Class "
+                  >
+                    <nz-select
+                      [nzLoading]="classesload"
+                      nzShowSearch
+                      nzAllowClear
+                      require
+                      nzPlaceHolder="Select Class"
+                      name="classnm"
+                      [(ngModel)]="drawerData.CLASS_ID"
+                      disabled
+                      required
+                    >
+                      <nz-option
+                        *ngFor="let report of classes"
+                        [nzValue]="report.ID"
+                        [nzLabel]="report.NAME"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>Division</nz-form-label>
+                  <nz-form-control nzHasFeedback>
+                    <nz-select
+                      name="Division"
+                      nzShowSearch
+                      nzAllowClear
+                      style="width: 100%"
+                      nzPlaceHolder="Select Division"
+                      [(ngModel)]="drawerData.DIVISION_ID"
+                      disabled
+                    >
+                      <nz-option
+                        *ngFor="let Div of Divisionlist"
+                        [nzValue]="Div.ID"
+                        [nzLabel]="Div.NAME"
+                      >
+                      </nz-option>
+                      <nz-option nzValue="0" [nzLabel]="'NA'"> </nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div
+                nz-col
+                nz-col
+                nzXs="24"
+                nzSm="24"
+                nzMd="24"
+                nzLg="24"
+                nzXl="24"
+              >
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Subject Name
+                  </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Enter Correct Subject Name "
+                  >
+                    <input
+                      nz-input
+                      name="subnm"
+                      autocomplete="off"
+                      placeholder="Enter Subject Name"
+                      [(ngModel)]="drawerData.NAME"
+                      minlength="2"
+                      maxlength="128"
+                      required
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>Teacher</nz-form-label>
+                  <nz-select
+                    name="Teacher3"
+                    nzShowSearch
+                    nzAllowClear
+                    style="width: 100%"
+                    nzPlaceHolder="Select Teacher"
+                    [(ngModel)]="drawerData.TEACHER_ID"
+                    [nzLoading]="loadTeacher"
+                  >
+                    <nz-option
+                      *ngFor="let Year of Teacherlist"
+                      [nzValue]="Year.ID"
+                      [nzLabel]="Year.NAME"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="9">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>Year</nz-form-label>
+                  <nz-select
+                    name="Year"
+                    nzShowSearch
+                    nzAllowClear
+                    style="width: 100%"
+                    nzPlaceHolder="Select Year"
+                    [(ngModel)]="drawerData.YEAR_ID"
+                    [nzLoading]="loadYearData"
+                    disabled
+                  >
+                    <nz-option
+                      *ngFor="let Year of YearDatalist"
+                      [nzValue]="Year.ID"
+                      [nzLabel]="Year.YEAR"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="9">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>
+                    Sequence No.
+                  </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip=" Please Enter Correct Sequence Number "
+                  >
+                    <input
+                      nz-input
+                      placeholder="Sequence No."
+                      name="unitseq"
+                      style="width: 100%"
+                      minlength="1"
+                      [(ngModel)]="drawerData.SEQ_NO"
+                      (keypress)="commonFunction.omit($event)"
+                      maxlength="5"
+                      required
+                      disabled
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div nz-col nzSpan="5">
+                <nz-form-item>
+                  <nz-form-label nzNoColon> Status </nz-form-label>
+                  <nz-form-control>
+                    <nz-switch
+                      name="unitstatus"
+                      [(ngModel)]="drawerData.STATUS"
+                      nzCheckedChildren="Yes"
+                      nzUnCheckedChildren="No"
+                      disabled
+                    ></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </nz-spin>
+        </form>
+
+        <div class="footer">
+          <button
+            type="button"
+            nz-button
+            (click)="close1()"
+            class="ant-btn"
+            style="margin-right: 8px"
+          >
+            <span> Cancel </span>
+          </button>
+          <button
+            type="button"
+            class="ant-btn ant-btn-primary"
+            *ngIf="!drawerData.ID"
+            nz-button
+            nz-dropdown
+            [nzDropdownMenu]="menu"
+            (click)="save2(false, websitebannerPage)"
+          >
+            <span> Save & Close</span>
+          </button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+              <li
+                nz-menu-item
+                class="menuc"
+                style="border-radius: 4px; background-color: #40a9ff"
+              >
+                <a style="color: white" (click)="save2(true, websitebannerPage)">
+                  Save & New</a
+                >
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+       
+        </div>
+      </div>
+    </ng-container>
+  </nz-drawer>
+</div>

@@ -1,0 +1,654 @@
+<div nz-row nzType="flex">
+  <div nz-col nzXs="24" nzSm="24" nzMd="20" nzLg="20" nzXl="12">
+    <div nz-row>
+      <div nz-col nzSpan="2" style="margin-top: -5px">
+        <button
+          *ngIf="roleId == 2 && this.currentroute.trim() !== 'admindashboard'"
+          nz-button
+          nz-tooltip
+          nzTooltipTitle="Back To Dashboard"
+          nzType="primary"
+          nzShape="circle"
+          (click)="redirectToAdminDashboard()"
+        >
+          <i nz-icon nzType="arrow-left" nzTheme="outline"> </i>
+        </button>
+      </div>
+      <div nz-col nzSpan="21" style="margin-left: 10px">
+        <div class="formname">{{ formTitle }}</div>
+      </div>
+    </div>
+  </div>
+  <div
+    nz-col
+    nzXs="24"
+    nzSm="24"
+    nzMd="4"
+    nzLg="6"
+    nzXl="12"
+    style="display: flex; justify-content: flex-end"
+  >
+    <form nz-form [nzLayout]="'inline'">
+      <nz-form-item>
+        <button nz-button [nzType]="isFilterApplied" (click)="showFilter()">
+          <i nz-icon nzType="filter"></i>
+        </button>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+          <input
+            type="text"
+            name="search"
+            [(ngModel)]="searchText"
+            (keydown.enter)="onKeypressEvent($event)"
+            nz-input
+            placeholder="Search"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconButton>
+          <button
+            nz-button
+            nzType="primary"
+            (click)="search(true)"
+            id="button"
+            nzSearch
+          >
+            <i nz-icon nzType="search"></i>
+          </button>
+        </ng-template>
+      </nz-form-item>
+      <!-- <nz-form-item>
+        <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+          <i nz-icon nzType="plus"></i>Add Student Fee Details
+        </button>
+      </nz-form-item> -->
+    </form>
+  </div>
+</div>
+
+<div nz-row style="margin-bottom: 14px">
+  <div nz-col nzSpan="24">
+    <div class="filter {{ filterClass }}">
+      <div class="filter-box">
+        <form nz-form>
+          <div nz-row nzGutter="8" class="custom-form-item">
+            <div nz-col nzSpan="4">
+              <nz-form-item>
+                <nz-form-label nzNoColon><b>Year </b></nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    style="width: 100%"
+                    nzShowArrow="true"
+                    [nzLoading]="yearLoad"
+                    nzShowSearch
+                    nzAllowClear
+                    name="year2"
+                    [(ngModel)]="YEAR_ID"
+                    nzPlaceHolder="Select Year"
+                  >
+                    <nz-option
+                      *ngFor="let years of yearlist"
+                      [nzValue]="years.ID"
+                      [nzLabel]="years.YEAR"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="6">
+              <nz-form-item>
+                <nz-form-label nzNoColon><b>Class Name </b></nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    style="width: 100%"
+                    nzShowArrow="true"
+                    [nzLoading]="classload"
+                    nzShowSearch
+                    nzAllowClear
+                    name="className"
+                    [(ngModel)]="CLASS_ID"
+                    nzPlaceHolder="Select Class"
+                  >
+                    <nz-option
+                      *ngFor="let class of classlist"
+                      [nzValue]="class.ID"
+                      [nzLabel]="class.NAME"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="6">
+              <nz-form-item>
+                <nz-form-label nzNoColon><b>Division Name </b></nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    style="width: 100%"
+                    nzShowArrow="true"
+                    [nzLoading]="divisionload"
+                    nzShowSearch
+                    nzAllowClear
+                    name="DIVISIONName"
+                    [(ngModel)]="DIVISION_ID"
+                    nzPlaceHolder="Select Division"
+                  >
+                    <nz-option
+                      *ngFor="let division of divisionlist"
+                      [nzValue]="division.ID"
+                      [nzLabel]="division.NAME"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="8">
+              <nz-form-item
+                style="margin-top: 20px; margin-left: 10px; padding-top: 13px"
+              >
+                <button
+                  style="margin-right: 10px"
+                  nz-button
+                  [nzLoading]="loadingRecords"
+                  nzType="primary"
+                  (click)="applyFilter()"
+                  nzJustify="end"
+                >
+                  <i nz-icon nzType="filter"></i>Apply Filter
+                </button>
+
+                <button nz-button nzType="primary" (click)="clearFilter()">
+                  <i nz-icon nzType="filter"></i>Clear Filter
+                </button>
+              </nz-form-item>
+            </div>
+          </div>
+        </form>
+      </div>
+      <!-- <br /> -->
+    </div>
+  </div>
+</div>
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <nz-table
+      class="my-scroll no-wrap1"
+      nzBordered
+      #postTable
+      nzShowSizeChanger
+      [nzFrontPagination]="false"
+      [nzData]="dataList"
+      [nzLoading]="loadingRecords"
+      [nzSize]="'small'"
+      [nzTotal]="totalRecords"
+      [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize"
+      (nzPageIndexChange)="search()"
+      (nzPageSizeChange)="search(true)"
+      (nzQueryParams)="sort($event)"
+      [nzScroll]="{ x: '900px', y: '55vh' }"
+    >
+      <thead>
+        <tr>
+          <th nzWidth="40px" style="text-align: center" nzLeft>
+            <b>Action</b>
+          </th>
+          <th
+            nzWidth="100px"
+            nzColumnKey="{{ 'STUDENT_NAME' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Student Name </b>
+          </th>
+          <th
+            nzWidth="40px"
+            nzColumnKey="{{ 'CLASS_NAME' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Class Name </b>
+          </th>
+          <th
+            nzWidth="40px"
+            nzColumnKey="{{ 'DIVISION_NAME' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Division Name </b>
+          </th>
+          <th
+            nzWidth="40px"
+            nzColumnKey="{{ 'YEAR' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Year </b>
+          </th>
+          <th
+            nzWidth="40px"
+            nzColumnKey="{{ 'TOTAL_FEE' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Total Fee </b>
+          </th>
+          <th
+            nzWidth="40px"
+            nzColumnKey="{{ 'PAID_FEE' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Paid Fee </b>
+          </th>
+          <th
+            nzWidth="40px"
+            nzColumnKey="{{ 'PENDING_FEE' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Pending Fee </b>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of postTable.data">
+          <td align="center" nzLeft>
+            <nz-space>
+              <!-- <a
+                *nzSpaceItem
+                (click)="edit(data)"
+                nz-tooltip
+                nzTooltipTitle="Edit"
+              >
+                <span
+                  nz-icon
+                  nzType="edit"
+                  nzTheme="twotone"
+                  style="font-size: 15px"
+                ></span>
+              </a> -->
+
+              <a
+                *nzSpaceItem
+                (click)="mapFee(data)"
+                nz-tooltip
+                nzTooltipTitle="Map Fee"
+              >
+                <span
+                  nz-icon
+                  nzType="edit"
+                  nzTheme="twotone"
+                  style="font-size: 15px"
+                ></span>
+              </a>
+
+              <span
+                style="margin-left: 10px"
+                *nzSpaceItem
+                nz-icon
+                nzType="bell"
+                nz-popconfirm
+                nzPopconfirmPlacement="top"
+                [nzPopconfirmTitle]="
+                  'Do you Want to Send Fee Due Notification?'
+                "
+                (nzOnConfirm)="sendNotification(data)"
+                nzOkText="Yes"
+                nzCancelText="No"
+                nz-tooltip
+                nzTooltipTitle="Send Fee Due Notification"
+                nzTheme="twotone"
+              >
+              </span>
+
+              <span
+                style="margin-left: 10px"
+                *nzSpaceItem
+                nz-popconfirm
+                nzPopconfirmTitle="Are you sure want delete?"
+                (nzOnConfirm)="deleteConfirm(data)"
+                (nzOnCancel)="deleteCancel()"
+                (nzOnCancel)="deleteCancel()"
+                nzPopconfirmPlacement="top"
+              >
+                <span style="color: red" nz-tooltip nzTooltipTitle="Delete">
+                  <i nz-icon nzType="delete" nzTheme="outline"></i>
+                </span>
+              </span>
+            </nz-space>
+          </td>
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['STUDENT_NAME']"
+          >
+            {{ data["STUDENT_NAME"] }}
+          </td>
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['CLASS_NAME']"
+          >
+            {{ data["CLASS_NAME"] }}
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{ data["DIVISION_NAME"] }}
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{ data["YEAR"] }}
+          </td>
+          <td style="white-space: pre-line; text-align: right">
+            {{ data["TOTAL_FEE"] }}
+          </td>
+
+          <td style="white-space: pre-line; text-align: right">
+            {{ data["PAID_FEE"] }}
+          </td>
+          <td style="white-space: pre-line; text-align: right">
+            {{ data["PENDING_FEE"] }}
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+<div *ngIf="drawerVisible">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="500"
+    [nzVisible]="drawerVisible"
+    [nzTitle]="drawerTitle"
+    (nzOnClose)="drawerClose()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <div>
+        <form nz-form #websitebannerPage="ngForm">
+          <nz-spin [nzSpinning]="isSpinning">
+            <div nz-row class="custom-form-item">
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon> Student </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip="Please Select Student "
+                  >
+                    <nz-select
+                      [nzLoading]="countryload"
+                      nzShowSearch
+                      nzAllowClear
+                      nzPlaceHolder="Select Student"
+                      name="student"
+                      [(ngModel)]="drawerData.STUDENT_ID"
+                      required
+                    >
+                      <nz-option
+                        *ngFor="let stud of studentlist"
+                        [nzValue]="stud.ID"
+                        [nzLabel]="stud.NAME"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="12" nzXl="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon> Year </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip="Please Select Year "
+                  >
+                    <nz-select
+                      [nzLoading]="yearload"
+                      nzShowSearch
+                      nzAllowClear
+                      nzPlaceHolder="Select Year"
+                      name="year"
+                      [(ngModel)]="drawerData.YEAR_ID"
+                      required
+                    >
+                      <nz-option
+                        *ngFor="let yr of yearlist"
+                        [nzValue]="yr.ID"
+                        [nzLabel]="yr.YEAR"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="12" nzXl="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon> Class </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip="Please Select Class "
+                  >
+                    <nz-select
+                      [nzLoading]="classload"
+                      nzShowSearch
+                      nzAllowClear
+                      nzPlaceHolder="Select Class"
+                      name="class"
+                      [(ngModel)]="drawerData.CLASS_ID"
+                      (ngModelChange)="onClassSelected($event)"
+                      required
+                    >
+                      <nz-option
+                        *ngFor="let cl of classlist"
+                        [nzValue]="cl.ID"
+                        [nzLabel]="cl.NAME"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="12" nzXl="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon> Division </nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip="Please Select Division "
+                  >
+                    <nz-select
+                      [nzLoading]="divisionload"
+                      nzShowSearch
+                      nzAllowClear
+                      nzPlaceHolder="Select Division"
+                      name="division"
+                      [(ngModel)]="drawerData.DIVISION_ID"
+                      required
+                    >
+                      <nz-option [nzValue]="0" [nzLabel]="'NA'"></nz-option>
+                      <nz-option
+                        *ngFor="let cl of divisionlist"
+                        [nzValue]="cl.ID"
+                        [nzLabel]="cl.NAME"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>Total Fee </nz-form-label>
+                  <nz-form-control nzHasFeedback nzErrorTip="Enter Total Fee">
+                    <input
+                      nz-input
+                      name="totalfee"
+                      style="width: 100%"
+                      [(ngModel)]="drawerData.TOTAL_FEE"
+                      (keypress)="commonFunction.onlynumdot($event)"
+                      (ngModelChange)="pendingFee($event)"
+                      disabled
+                      maxlength="8"
+                      required
+                      placeholder="Enter Total Fee"
+                      autocomplete="off"
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon>Paid Fee </nz-form-label>
+                  <nz-form-control nzHasFeedback nzErrorTip="Enter Paid Fee">
+                    <input
+                      nz-input
+                      name="paidfee"
+                      style="width: 100%"
+                      [(ngModel)]="drawerData.PAID_FEE"
+                      (keypress)="commonFunction.onlynumdot($event)"
+                      (ngModelChange)="totalPendingFee($event)"
+                      maxlength="8"
+                      required
+                      placeholder="Enter Paid Fee"
+                      autocomplete="off"
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzNoColon
+                    >Pending Fees</nz-form-label
+                  >
+                  <nz-form-control
+                    nzHasFeedback
+                    nzErrorTip="Enter Pending Fees"
+                  >
+                    <input
+                      nz-input
+                      name="Pending Fee"
+                      (keypress)="commonFunction.onlynumdot($event)"
+                      [(ngModel)]="drawerData.PENDING_FEE"
+                      required
+                      maxlength="8"
+                      placeholder="Enter Pending fees..."
+                      autocomplete="off"
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div nz-col nzSpan="4">
+                <nz-form-item>
+                  <nz-form-label nzNoColon>Status</nz-form-label>
+                  <nz-form-control>
+                    <nz-switch
+                      name="is_active"
+                      [(ngModel)]="drawerData.STATUS"
+                      nzCheckedChildren="Yes"
+                      nzUnCheckedChildren="No"
+                    ></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </nz-spin>
+        </form>
+      </div>
+
+      <div class="footer">
+        <button
+          type="button"
+          nz-button
+          (click)="close()"
+          class="ant-btn"
+          style="margin-right: 8px"
+        >
+          <span>Close</span>
+        </button>
+        <button
+          type="button"
+          class="ant-btn ant-btn-primary"
+          *ngIf="!drawerData.ID"
+          nz-button
+          nz-dropdown
+          [nzDropdownMenu]="menu"
+          [nzLoading]="isSpinning"
+          (click)="save(false, websitebannerPage)"
+        >
+          <span>Save And Close</span>
+        </button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu>
+            <li
+              nz-menu-item
+              class="menuc"
+              style="border-radius: 4px; background-color: #40a9ff"
+            >
+              <a style="color: white" (click)="save(true, websitebannerPage)"
+                >Save And New</a
+              >
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+        <button
+          type="button"
+          class="ant-btn ant-btn-primary"
+          nz-button
+          [nzLoading]="isSpinning"
+          *ngIf="drawerData.ID"
+          (click)="save(false, websitebannerPage)"
+        >
+          <span>Update And Close</span>
+        </button>
+      </div>
+    </ng-container>
+  </nz-drawer>
+</div>
+
+<div *ngIf="drawerVisibleMap">
+  <nz-drawer
+    [nzBodyStyle]="{
+      height: 'calc(100% - 55px)',
+      overflow: 'auto',
+      'padding-bottom': '53px'
+    }"
+    [nzClosable]="true"
+    [nzMask]="true"
+    [nzMaskClosable]="false"
+    [nzWidth]="800"
+    [nzVisible]="drawerVisibleMap"
+    [nzTitle]="drawerTitleMap"
+    (nzOnClose)="drawerCloseMap()"
+    (nzKeyboard)="(true)"
+  >
+    <ng-container *nzDrawerContent>
+      <app-StudentWiseFeeMap
+        [drawerClose]="closeCallbackMap"
+        [drawerVisible]="drawerVisibleMap"
+        [Total]="Total"
+        [feeData]="feeData"
+        [MapData]="drawerData"
+      ></app-StudentWiseFeeMap>
+    </ng-container>
+  </nz-drawer>
+</div>

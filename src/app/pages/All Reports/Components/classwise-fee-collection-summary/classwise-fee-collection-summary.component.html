@@ -1,0 +1,246 @@
+<div nz-row nzType="flex">
+  <div nz-col nzSpan="1" style="margin-top: -5px;">
+    <button
+      *ngIf="roleId == 2 && this.currentroute.trim() !== 'admindashboard'"
+      nz-button
+      nz-tooltip
+      nzTooltipTitle="Back To Dashboard"
+      nzType="primary"
+      nzShape="circle"
+      (click)="redirectToAdminDashboard()"
+    >
+      <i nz-icon nzType="arrow-left" nzTheme="outline"> </i>
+    </button>
+  </div>
+  <div nz-col nzSpan="11" style="text-align: left;">
+    <div class="formname">{{ formTitle }}</div>
+  </div>
+  
+    <div nz-col nzXs="24" nzSm="24" nzMd="16" nzLg="12" nzXl="12">
+      <div style="display: flex; justify-content: flex-end; align-items: center">
+        <button
+          nz-button
+          nz-tooltip
+          nzTooltipTitle="Excel"
+          nzTooltipPlacement="top"
+          (click)="importInExcel()"
+          nzType="primary"
+          style="margin-right: 10px"
+        >
+          <i nz-icon nzType="file-excel" nzTheme="outline"></i>
+        </button>
+  
+        <button
+          nz-button
+          nzTooltipTitle="Filter"
+          [nzType]="isFilterApplied"
+          nzTooltipPlacement="top"
+          nz-tooltip
+          (click)="showFilter()"
+        >
+          <i nz-icon nzType="filter"></i>
+        </button>
+  
+        <form nz-form [nzLayout]="'inline'">
+          <nz-form-item class="Changeformitm">
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+              <input
+                type="text"
+                name="webbannersearch"
+                (keyup)="keyup($event)"
+                [(ngModel)]="searchText"
+                nz-input
+                placeholder="Search"
+              />
+            </nz-input-group>
+            <ng-template #suffixIconButton>
+              <button nz-button nzType="primary" (click)="search()" nzSearch>
+                <i nz-icon nzType="search"></i>
+              </button>
+            </ng-template>
+          </nz-form-item>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <div nz-row>
+    <div nz-col nzSpan="24">
+      <div class="filter {{ filterClass }}">
+        <div class="filter-box">
+          <form nz-form>
+            <div nz-row>
+              <div nz-col [nzSpan]="screenWidth > 1300 && roleId == 2 ? 4 : 4">
+                <nz-form-item>
+                  <nz-form-label nzNoColon>Select Class</nz-form-label>
+                  <nz-form-control>
+                    <nz-select
+                      [(ngModel)]="class"
+                      name="class"
+                      style="width: 100%"
+                      nzShowSearch
+                      nzAllowClear
+                      nzPlaceHolder="Select Class"
+                    >
+                      <nz-option
+                        *ngFor="let class of classlist"
+                        [nzValue]="class.ID"
+                        [nzLabel]="class.NAME"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col [nzSpan]="screenWidth > 1300 && roleId == 2 ? 4 : 4">
+                <nz-form-item>
+                  <nz-form-label nzNoColon>Select Division</nz-form-label>
+                  <nz-form-control>
+                    <nz-select
+                      [(ngModel)]="division"
+                      name="division"
+                      style="width: 100%"
+                      nzShowSearch
+                      nzAllowClear
+                      nzPlaceHolder="Select Division"
+                    >
+                      <nz-option
+                        *ngFor="let division of divisionlist"
+                        [nzValue]="division.ID"
+                        [nzLabel]="division.NAME"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+  
+              <!-- <div nz-col [nzSpan]="screenWidth > 1500 && roleId == 2 ? 4 : 4">
+                <nz-form-item>
+                  <nz-form-label nzNoColon>Select Year</nz-form-label>
+                  <nz-form-control>
+                    <nz-select
+                      [(ngModel)]="year"
+                      name="year"
+                      style="width: 100%"
+                      nzShowSearch
+                      nzAllowClear
+                      nzPlaceHolder="Select Year"
+                    >
+                      <nz-option
+                        *ngFor="let year of yearlist"
+                        [nzValue]="year.ID"
+                        [nzLabel]="year.NAME"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div> -->
+  
+              <div
+                nz-col
+                [nzSpan]="screenWidth > 1300 && roleId == 2 ? 4 : 4"
+                style="display: flex; gap: 10px; margin-top: 31px"
+              >
+                <button
+                  nz-button
+                  [nzLoading]="isSpinning"
+                  nzType="primary"
+                  (click)="applyFilter()"
+                >
+                  <i nz-icon nzType="filter"></i>
+                </button>
+                <button
+                  nz-button
+                  nzType="primary"
+                  [nzLoading]="isSpinning"
+                  (click)="clearFilter()"
+                >
+                  <i nz-icon nzType="close"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div nz-row style="margin-top: 10px">
+    <div nz-col nzSpan="24">
+      <nz-table
+        class="my-scroll no-wrap1"
+        nzBordered
+        #table
+        nzShowSizeChanger
+        [nzFrontPagination]="false"
+        [nzData]="dataList"
+        [nzLoading]="loadingRecords"
+        [nzSize]="'small'"
+        [nzTotal]="totalRecords"
+        [nzScroll]="
+          screenWidth > 1300 && roleId == 2
+            ? {  y: '55vh' }
+            : { x: '700px', y: '55vh' }
+        "
+        [(nzPageIndex)]="pageIndex"
+        [(nzPageSize)]="pageSize"
+        (nzPageIndexChange)="search()"
+        (nzPageSizeChange)="search(true)"
+        (nzQueryParams)="sort($event)"
+      >
+        <thead>
+          <tr>
+          
+            <th
+              nzWidth="40px"
+              style="text-align: center"
+              nzColumnKey="{{ 'TOTAL_CLASSES' }}"
+              [nzSortFn]="true"
+            >
+              <b>Total Classes</b>
+            </th>
+  
+            <!-- <th
+              nzWidth="40px"
+              style="text-align: center"
+              nzColumnKey="{{ 'YEAR' }}"
+              [nzSortFn]="true"
+            >
+              <b>Year</b>
+            </th> -->
+            <th
+              nzWidth="30px"
+              style="text-align: center"
+              nzColumnKey="{{ 'TOTAL_COLLECTED' }}"
+              [nzSortFn]="true"
+            >
+              <b>Total Collected</b>
+            </th>
+            <th
+              nzWidth="30px"
+              style="text-align: center"
+              nzColumnKey="{{ 'TOTAL_PENDING' }}"
+              [nzSortFn]="true"
+            >
+              <b>Total Pending</b>
+            </th>
+          </tr>
+        </thead>
+  
+        <tbody>
+          <tr *ngFor="let data of table.data">
+            <td style="white-space: pre-line; text-align: left">
+              {{ data.TOTAL_CLASSES }}
+            </td>
+        
+            <td style="white-space: pre-line; text-align: left">
+              {{ data.TOTAL_COLLECTED }}
+            </td>
+            <td style="white-space: pre-line; text-align: left">
+              {{ data.TOTAL_PENDING }}
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+  

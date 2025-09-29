@@ -1,0 +1,269 @@
+<div nz-row nzType="flex">
+  <div nz-col nzSpan="12" style="text-align: left">
+    <div class="formname">{{ formTitle }}</div>
+  </div>
+
+  <div nz-col nzXs="24" nzSm="24" nzMd="16" nzLg="12" nzXl="12">
+    <div style="display: flex; justify-content: flex-end; align-items: center">
+      <button
+        nz-button
+        nz-tooltip
+        nzTooltipTitle="Excel"
+        nzTooltipPlacement="top"
+        (click)="importInExcel()"
+        nzType="primary"
+        style="margin-right: 10px"
+      >
+        <i nz-icon nzType="file-excel" nzTheme="outline"></i>
+      </button>
+
+      <button
+        nz-button
+        nzTooltipTitle="Filter"
+        [nzType]="isFilterApplied"
+        nzTooltipPlacement="top"
+        nz-tooltip
+        (click)="showFilter()"
+      >
+        <i nz-icon nzType="filter"></i>
+      </button>
+
+      <form nz-form [nzLayout]="'inline'">
+        <nz-form-item class="Changeformitm">
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+            <input
+              type="text"
+              name="webbannersearch"
+              (keyup)="keyup($event)"
+              [(ngModel)]="searchText"
+              nz-input
+              placeholder="Search"
+            />
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <button nz-button nzType="primary" (click)="search()" nzSearch>
+              <i nz-icon nzType="search"></i>
+            </button>
+          </ng-template>
+        </nz-form-item>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <div class="filter {{ filterClass }}">
+      <div class="filter-box">
+        <form nz-form>
+          <div nz-row>
+            <div nz-col [nzSpan]="screenWidth > 1500 && roleId == 2 ? 6 : 6">
+              <nz-form-item>
+                <nz-form-label nzNoColon>Activity Head</nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    name="activity"
+                    nzAllowClear
+                    nzShowSearch
+                    [(ngModel)]="activtyId"
+                    nzPlaceHolder="Select Activity"
+                    [nzLoading]="activityLoad"
+                  >
+                    <nz-option
+                      *ngFor="let option of activityList"
+                      ks
+                      [nzValue]="option.ID"
+                      [nzLabel]="option.HEAD_NAME"
+                    ></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="screenWidth > 1500 && roleId == 2 ? 6 : 6">
+              <nz-form-item>
+                <nz-form-label nzNoColon>From Date</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker
+                    nz-input
+                    nzFormat="dd/MMM/yyyy HH:mm"
+                    nzShowTime
+                    name="frmDate"
+                    [(ngModel)]="fromDate"
+                    (ngModelChange)="onChange($event)"
+                    style="width: 100%"
+                  ></nz-date-picker>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="screenWidth > 1500 && roleId == 2 ? 6 : 6">
+              <nz-form-item>
+                <nz-form-label nzNoColon>To Date</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker
+                    nz-input
+                    nzFormat="dd/MMM/yyyy HH:mm"
+                    name="toDate1"
+                    [(ngModel)]="toDate"
+                    nzShowTime
+                    (ngModelChange)="onChange($event)"
+                    style="width: 100%"
+                  ></nz-date-picker>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div
+              nz-col
+              [nzSpan]="screenWidth > 1300 && roleId == 2 ? 4 : 4"
+              style="display: flex; gap: 10px; margin-top: 31px"
+            >
+              <button
+                nz-button
+                [nzLoading]="isSpinning"
+                nzType="primary"
+                (click)="applyFilter()"
+              >
+                <i nz-icon nzType="filter"></i>
+              </button>
+              <button
+                nz-button
+                nzType="primary"
+                [nzLoading]="isSpinning"
+                (click)="clearFilter()"
+              >
+                <i nz-icon nzType="close"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div nz-row style="margin-top: 10px">
+  <div nz-col nzSpan="24">
+    <nz-table
+      class="my-scroll no-wrap1"
+      nzBordered
+      #table
+      nzShowSizeChanger
+      [nzFrontPagination]="false"
+      [nzData]="dataList"
+      [nzLoading]="loadingRecords"
+      [nzSize]="'small'"
+      [nzTotal]="totalRecords"
+      [nzScroll]="
+        screenWidth > 1300 && roleId == 2
+          ? { x: '1200px', y: '55vh' }
+          : { x: '1200px', y: '55vh' }
+      "
+      [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize"
+      (nzPageIndexChange)="search()"
+      (nzPageSizeChange)="search(true)"
+      (nzQueryParams)="sort($event)"
+    >
+      <thead>
+        <tr>
+          <th
+            nzLeft
+            nzWidth="100px"
+            style="text-align: center"
+            nzColumnKey="{{ 'HEAD_NAME' }}"
+            [nzSortFn]="true"
+          >
+            <b>Pre Arrange Activity Head Name</b>
+          </th>
+          <th
+            nzWidth="100px"
+            style="text-align: center"
+            nzColumnKey="{{ 'USER_NAME' }}"
+            [nzSortFn]="true"
+          >
+            <b>User Name</b>
+          </th>
+          <th
+            nzWidth="60px"
+            style="text-align: center"
+            nzColumnKey="{{ 'START_DATETIME' }}"
+            [nzSortFn]="true"
+          >
+            <b>Started Date Time</b>
+          </th>
+          <th
+            nzWidth="70px"
+            style="text-align: center"
+            nzColumnKey="{{ 'COMPLETED_PERCENTAGE' }}"
+            [nzSortFn]="true"
+          >
+            <b>Completed Percentage</b>
+          </th>
+          <th nzWidth="60px" style="text-align: center">
+            <b>Is Completed</b>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let data of table.data">
+          <td
+            nzLeft
+            nz-tooltip
+            [nzTooltipTitle]="data['HEAD_NAME']"
+            style="
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              text-align: left;
+            "
+          >
+            {{ data.HEAD_NAME }}
+          </td>
+          <td
+            nz-tooltip
+            [nzTooltipTitle]="data['USER_NAME']"
+            style="
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              text-align: left;
+            "
+          >
+            {{ data.USER_NAME }}
+          </td>
+          <!-- <td style="white-space: pre-line; text-align: center">
+                  {{ data.COUPON_CODE }}
+                </td> -->
+
+          <td style="white-space: pre-line; text-align: center">
+            {{ data.START_DATETIME | date : "dd/MMM/yyyy HH:mm" }}
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{
+              data.COMPLETED_PERCENTAGE ? data.COMPLETED_PERCENTAGE + " %" : ""
+            }}
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            <!-- {{ data.IS_COMPLETED}} -->
+            <span *ngIf="data.COMPLETED_PERCENTAGE==100">
+              <i
+                nz-icon
+                [nzType]="'check-circle'"
+                [nzTheme]="'twotone'"
+                [nzTwotoneColor]="'#52c41a'"
+              ></i>
+            </span>
+            <span *ngIf="data.COMPLETED_PERCENTAGE<100">
+              <i
+                nz-icon
+                [nzType]="'close-circle'"
+                [nzTheme]="'twotone'"
+                [nzTwotoneColor]="'#f50'"
+              ></i>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>

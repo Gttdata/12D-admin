@@ -1,0 +1,30 @@
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <nz-table class="my-scroll no-wrap1" nzBordered #table [nzData]="roleDetailsData">
+      <thead>
+        <tr>
+          <th>Is Allowed</th>
+          <th>Form Name</th>
+          <th>Link</th>
+          <th>Is Show In Menu</th>
+          <th>Seq. No</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of table.data">
+          <td> <nz-switch name="is_allowed" [(ngModel)]="data['IS_ALLOWED']"></nz-switch> </td>
+          <td> {{data.NAME}} </td>
+          <td> {{data.LINK}} </td>
+          <td> <nz-switch name="is_allowed" [(ngModel)]="data.SHOW_IN_MENU"></nz-switch> </td>
+          <td> <input nz-input name="saq_no" [(ngModel)]="data.SEQ_NO" /> </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+<div class="footer">
+  <button type="button" nz-button (click)="close()" class="ant-btn"
+    style="margin-right: 8px;"><span>Cancel</span></button>
+  <button type="button" class="ant-btn ant-btn-primary" nz-button [nzLoading]="isSpinning" *ngIf="data.ID"
+    (click)="save()"><span>Save & Close</span></button>
+</div>

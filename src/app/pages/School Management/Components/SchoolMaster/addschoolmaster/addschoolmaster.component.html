@@ -1,0 +1,1085 @@
+<div>
+  <form nz-form #School="ngForm">
+    <nz-spin [nzSpinning]="isSpinning">
+      <div nz-row>
+        <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="11">
+          <div nz-row class="my-box" style="margin-top: 0px !important">
+            <div
+              nz-col
+              nz-col
+              nzXs="24"
+              nzSm="24"
+              nzMd="24"
+              nzLg="24"
+              nzXl="24"
+            >
+              <h6
+                style="
+                  margin-left: 11px;
+                  font-size: 15px;
+                  font-weight: 600;
+                  margin-bottom: 11px;
+                "
+              >
+                School Details :
+              </h6>
+            </div>
+
+            <div
+              nz-col
+              nzXs="24"
+              nzSm="24"
+              nzMd="24"
+              nzLg="24"
+              nzXl="24"
+            >
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon>
+                  School Name
+                </nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip=" Please Enter Valid School Name"
+                >
+                  <input
+                    nz-input
+                    autocomplete="off"
+                    name="schoolnm"
+                    placeholder="Enter School Name"
+                    [(ngModel)]="data.SCHOOL_NAME"
+                    minlength="4"
+                    maxlength="256"
+                    required
+                    [disabled]="!isChangeable"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div
+            nz-col
+            nzXs="24"
+            nzSm="24"
+            nzMd="10"
+            nzLg="7"
+            nzXl="10"
+          >
+            <nz-form-item>
+              <nz-form-label nzNoColon>
+                School Short Code
+              </nz-form-label>
+              <nz-form-control
+                nzHasFeedback
+                nzErrorTip=" Please Enter Valid School Short Code"
+              >
+                <input
+                  nz-input
+                  autocomplete="off"
+                  name="schoolshortcode"
+                  placeholder="Enter School Short Code"
+                  [(ngModel)]="data.SHORT_CODE"
+                  minlength="2"
+                  maxlength="12"
+                  [disabled]="!isChangeable"
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+            <div
+              nz-col
+              nzXs="24"
+              nzSm="24"
+              nzMd="10"
+              nzLg="10"
+              nzXl="14"
+            >
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon>
+                  School Head Name
+                </nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip=" Please Enter Valid School Head Name"
+                >
+                  <input
+                    nz-input
+                    autocomplete="off"
+                    name="principal"
+                    placeholder="Enter School Head Name"
+                    [(ngModel)]="data.PRINCIPLE_NAME"
+                    minlength="4"
+                    maxlength="256"
+                    required
+                    [disabled]="!isChangeable"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzXs="24" nzSm="24" nzMd="10" nzLg="10" nzXl="14">
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon> Year </nz-form-label>
+                <nz-form-control nzHasFeedback>
+                  <nz-select
+                    [nzLoading]="yearsload"
+                    nzShowArrow="true"
+                    nzShowSearch
+                    nzAllowClear
+                    name="year"
+                    [(ngModel)]="data.YEAR_ID"
+                    nzPlaceHolder="Select Year"
+                    required
+                    [disabled]="!isChangeable"
+                  >
+                    <nz-option
+                      *ngFor="let year of yearlist"
+                      [nzValue]="year.ID"
+                      [nzLabel]="year.YEAR"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="7" nzXl="10">
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon>
+                  Sequence No.
+                </nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip=" Please Enter Correct Sequence Number "
+                >
+                  <input
+                    nz-input
+                    placeholder="Sequence No."
+                    name="unitseq"
+                    style="width: 100%"
+                    minlength="1"
+                    maxlength="3"
+                    [(ngModel)]="data.SEQ_NO"
+                    (keypress)="commonFunction.omit($event)"
+                    maxlength="5"
+                    required
+                    disabled
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div
+              nz-col
+              nz-col
+              nzXs="24"
+              nzSm="24"
+              nzMd="24"
+              nzLg="24"
+              nzXl="14"
+            >
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon> Board</nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Select Board "
+                >
+                  <nz-select
+                    [nzLoading]="boarddataLoad"
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder="Select Board"
+                    name="Board"
+                    [(ngModel)]="data.BOARD_ID"
+                    required
+                    [disabled]="!isChangeable"
+                  >
+                    <nz-option
+                      *ngFor="let report of board"
+                      [nzValue]="report.ID"
+                      [nzLabel]="report.NAME"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div
+              nz-col
+              nz-col
+              nzXs="24"
+              nzSm="24"
+              nzMd="12"
+              nzLg="12"
+              nzXl="10"
+            >
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon>Board Medium</nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Select Board Medium"
+                >
+                  <nz-select
+                    [nzLoading]="boarddataLoad"
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder="Select Board Medium"
+                    name="boardmedium"
+                    [(ngModel)]="data.BOARD_MEDIUM_ID"
+                    required
+                    [disabled]="!isChangeable"
+                  >
+                    <nz-option
+                      *ngFor="let medium of boardmedium"
+                      [nzValue]="medium.ID"
+                      [nzLabel]="medium.NAME"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div
+              nz-col
+              nz-col
+              nzXs="24"
+              nzSm="24"
+              nzMd="24"
+              nzLg="24"
+              nzXl="14"
+            >
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon>Email Id </nz-form-label>
+
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Enter Valid Email Id"
+                >
+                  <input
+                    nz-input
+                    autocomplete="off"
+                    name="email"
+                    placeholder="Enter Email Id"
+                    [pattern]="commonFunction.emailpattern"
+                    maxlength="128"
+                    [(ngModel)]="data.EMAIL_ID"
+                    required
+                    [disabled]="!isChangeable"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="8" nzXl="10">
+
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon>Mobile Number</nz-form-label>
+
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Enter Valid Mobile No"
+                >
+                  <input
+                    nz-input
+                    autocomplete="off"
+                    name="mobileno"
+                    placeholder="Enter Mobile No."
+                    [pattern]="commonFunction.mobpattern"
+                    (keypress)="commonFunction.omit($event)"
+                    [(ngModel)]="data.PHONE_NUMBER"
+                    maxlength="10"
+                    minlength="10"
+                    required
+                    [disabled]="!isChangeable"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="9" nzXl="9">
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon>Password </nz-form-label>
+
+                <nz-form-control
+                  nzHasFeedback
+                  nzRequired
+                  nzErrorTip="Password must be 8 character"
+                >
+                  <nz-input-group [nzSuffix]="suffixTemplate">
+                    <input
+                      nz-input
+                      [type]="passwordVisible ? 'text' : 'password'"
+                      name="password"
+                      [(ngModel)]="data.PASSWORD"
+                      maxlength="32"
+                      minlength="8"
+                      placeholder="Password"
+                      autocomplete="off"
+                      required
+                      [disabled]="!isChangeable"
+                    />
+                  </nz-input-group>
+
+                  <ng-template #suffixTemplate>
+                    <i
+                      nz-icon
+                      [nzType]="passwordVisible ? 'eye' : 'eye-invisible'"
+                      (click)="passwordVisible = !passwordVisible"
+                    ></i>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="5" nzXl="5">
+              <nz-form-item>
+                <nz-form-label nzNoColon>Status</nz-form-label>
+                <nz-form-control>
+                  <nz-switch
+                    name="status"
+                    nzCheckedChildren="Active"
+                      nzUnCheckedChildren="InActive"
+                    [(ngModel)]="data.STATUS"
+                    [disabled]="!isChangeable"
+                  ></nz-switch>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div
+              nz-col
+              nzXs="24"
+              nzSm="24"
+              nzMd="24"
+              nzLg="8"
+              nzXl="8"
+              *ngIf="isShowBlocked"
+            >
+              <nz-form-item>
+                <nz-form-label nzNoColon>School Status </nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Select School Status"
+                >
+                  <nz-input-group nzCompact>
+                    <nz-select
+                      name="SchoolStatus"
+                      nzPlaceHolder=" Status"
+                      [(ngModel)]="data.SCHOOL_STATUS"
+                      style="width: 100%"
+                    >
+                      <!-- <nz-option
+                      [nzLabel]="'Pending'"
+                      [nzValue]="'P'"
+                    ></nz-option>
+                    <nz-option
+                      [nzLabel]="'Approved'"
+                      [nzValue]="'A'"
+                    ></nz-option>
+                    <nz-option
+                      [nzLabel]="'Reject'"
+                      [nzValue]="'R'"
+                    ></nz-option> -->
+                      <nz-option
+                        [nzLabel]="'Blocked'"
+                        [nzValue]="'B'"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+              <nz-form-item>
+                <nz-form-label nzNoColon>Description</nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Enter Description"
+                >
+                  <textarea
+                    rows="2"
+                    nz-input
+                    placeholder="Description"
+                    name="Description"
+                    maxlength="256"
+                    [(ngModel)]="data.DESCRIPTION"
+                  ></textarea>
+                  <h6
+                    style="color: red; font-size: 10px"
+                    *ngIf="data.DESCRIPTION != undefined"
+                  >
+                    {{ data.DESCRIPTION.length }}/256
+                  </h6>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+        <div nz-col style="margin-left: 25px"></div>
+
+        <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+          <div nz-row class="my-box" style="margin-top: 0px !important">
+            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+              <h6
+                style="
+                  margin-left: 11px;
+                  font-size: 15px;
+                  font-weight: 600;
+                  margin-bottom: 11px;
+                "
+              >
+                Bank Details :
+              </h6>
+            </div>
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label nzNoColon>Account Holder Name</nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Enter Valid Account Holder Name"
+                >
+                  <input
+                    nz-input
+                    name="AccountHolderName"
+                    autocomplete="off"
+                    [pattern]="commonFunction.namepatt"
+                    maxlength="128"
+                    [(ngModel)]="data.ACC_HOLDER_NAME"
+                    (keypress)="commonFunction.omit_special_char($event)"
+                    placeholder=" Enter Account Holder Name"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label nzNoColon>Account Number </nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Enter Valid Account Number"
+                >
+                  <input
+                    nz-input
+                    name="ACCOUNT_NO"
+                    autocomplete="off"
+                    [(ngModel)]="data.ACC_NO"
+                    [pattern]="commonFunction.Accountpatt"
+                    (keypress)="commonFunction.omit($event)"
+                    maxlength="32"
+                    placeholder=" Enter Account Number"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label nzNoColon>IFSC Code </nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Enter Valid IFSC Code"
+                >
+                  <input
+                    nz-input
+                    autocomplete="off"
+                    minlength="8"
+                    [pattern]="commonFunction.IFSCpatt"
+                    placeholder="IFSC Code"
+                    maxlength="32"
+                    name="Ifsccode"
+                    [(ngModel)]="data.IFSC_CODE"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div
+              nz-col
+              nz-col
+              nzXs="24"
+              nzSm="24"
+              nzMd="24"
+              nzLg="24"
+              nzXl="12"
+            >
+              <nz-form-item>
+                <nz-form-label nzNoColon>UPI ID</nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Enter Valid UPI ID"
+                >
+                  <input
+                    nz-input
+                    autocomplete="off"
+                    placeHolder="Enter UPI ID"
+                    [pattern]="commonFunction.upiid"
+                    required
+                    maxlength="32"
+                    name="upiid"
+                    [(ngModel)]="data.UPI_ID"
+                  />
+                </nz-form-control>
+                <h6 style="color: red; font-size: 10px">ex. abcd@oksbi</h6>
+              </nz-form-item>
+            </div>
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label nzNoColon>Bank Name</nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Enter Valid Bank Name"
+                >
+                  <input
+                    nz-input
+                    name="bankholdernm"
+                    autocomplete="off"
+                    [pattern]="commonFunction.namepatt"
+                    maxlength="128"
+                    [(ngModel)]="data.BANK_NAME"
+                    (keypress)="commonFunction.omit_special_char($event)"
+                    placeholder=" Enter Bank Name"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div nz-row class="my-box">
+            <div
+              nz-col
+              nz-col
+              nzXs="24"
+              nzSm="24"
+              nzMd="24"
+              nzLg="24"
+              nzXl="24"
+            >
+              <h6
+                style="
+                  margin-left: 11px;
+                  font-size: 15px;
+                  font-weight: 600;
+                  margin-bottom: 11px;
+                "
+              >
+                Address Details :
+              </h6>
+            </div>
+
+            <div
+              nz-col
+              nz-col
+              nzXs="24"
+              nzSm="24"
+              nzMd="24"
+              nzLg="24"
+              nzXl="24"
+            >
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon>Address</nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Enter Address"
+                >
+                  <textarea
+                    rows="2"
+                    nz-input
+                    placeholder="Address"
+                    name="address"
+                    maxlength="256"
+                    required
+                    [(ngModel)]="data.ADDRESS"
+                  ></textarea>
+                  <h6
+                    style="color: red; font-size: 10px"
+                    *ngIf="data.ADDRESS != undefined"
+                  >
+                    {{ data.ADDRESS.length }}/256
+                  </h6>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="8">
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon> Country </nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Select Country "
+                >
+                  <nz-select
+                    [nzLoading]="countryload"
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder="Select Country"
+                    name="country"
+                    (ngModelChange)="getallStates($event)"
+                    [(ngModel)]="data.COUNTRY_ID"
+                    required
+                  >
+                    <nz-option
+                      *ngFor="let report of countrys"
+                      [nzValue]="report.ID"
+                      [nzLabel]="report.NAME"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div
+              nz-col
+              nz-col
+              nzXs="24"
+              nzSm="24"
+              nzMd="24"
+              nzLg="24"
+              nzXl="8"
+              *ngIf="showState === 0"
+            >
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon> State Name </nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Enter Valid State Name"
+                >
+                  <input
+                    nz-input
+                    autocomplete="off"
+                    name="statename"
+                    placeholder="Enter State Name"
+                    [(ngModel)]="data.STATE_NAME"
+                    minlength="4"
+                    maxlength="256"
+                    required
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div
+              nz-col
+              nz-col
+              nzXs="24"
+              nzSm="24"
+              nzMd="24"
+              nzLg="24"
+              nzXl="8"
+              *ngIf="showState !== 0"
+            >
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon> State </nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Select State "
+                >
+                  <nz-select
+                    [nzLoading]="stateload"
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder="Select State"
+                    (ngModelChange)="getALlDistrict($event)"
+                    name="state"
+                    [(ngModel)]="data.STATE_ID"
+                    required
+                  >
+                    <nz-option
+                      *ngFor="let report of States"
+                      [nzValue]="report.ID"
+                      [nzLabel]="report.NAME"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <!-- <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12" *ngIf="(!countryWithStatesAvailable || countryWithStatesAvailable['IS_STATE_AVALIBLE'] !== 0 ) || (!stateWithDistrictsAvailable || stateWithDistrictsAvailable['IS_DISTRICT_AVALIBLE'] !== 0)"> -->
+            <div
+              nz-col
+              nzXs="24"
+              nzSm="24"
+              nzMd="24"
+              nzLg="10"
+              nzXl="8"
+              *ngIf="showDistrictByState == 1"
+            >
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon> District </nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip=" Please Select Valid District"
+                >
+                  <nz-select
+                    nzShowArrow="true"
+                    [nzLoading]="districtload"
+                    nzShowSearch
+                    nzAllowClear
+                    name="disctrictselect"
+                    [(ngModel)]="data.DISTRICT_ID"
+                    nzPlaceHolder="Select District"
+                    required
+                  >
+                    <nz-option
+                      *ngFor="let report of districts"
+                      [nzValue]="report.ID"
+                      [nzLabel]="report.NAME"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <!-- <div nz-col nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12" *ngIf="(countryWithStatesAvailable && countryWithStatesAvailable['IS_STATE_AVALIBLE'] === 0) ||  (!stateWithDistrictsAvailable || stateWithDistrictsAvailable['IS_DISTRICT_AVALIBLE'] === 0)"> -->
+            <div
+              nz-col
+              nz-col
+              nzXs="24"
+              nzSm="24"
+              nzMd="24"
+              nzLg="10"
+              nzXl="8"
+              *ngIf="showDistrictByState == 0"
+            >
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon>
+                  District Name
+                </nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Enter Valid District Name"
+                >
+                  <input
+                    nz-input
+                    autocomplete="off"
+                    name="districtnm"
+                    placeholder="Enter District Name"
+                    [(ngModel)]="data.DISTRICT_NAME"
+                    minlength="4"
+                    maxlength="256"
+                    required
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="7" nzXl="7">
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon>Pincode</nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please Enter Valid Pincode"
+                >
+                  <input
+                    nz-input
+                    autocomplete="off"
+                    placeHolder="Enter Pincode"
+                    (keypress)="commonFunction.omit($event)"
+                    required
+                    maxlength="6"
+                    [pattern]="commonFunction.pinpatt"
+                    name="pincode"
+                    [(ngModel)]="data.PINCODE"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div nz-row>
+        <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+          <div nz-row class="my-box" style="margin-right: 25px !important">
+            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+              <h6
+                style="
+                  margin-left: 11px;
+                  font-size: 15px;
+                  font-weight: 600;
+                  margin-bottom: 11px;
+                "
+              >
+                Other Info :
+              </h6>
+            </div>
+
+            <div nz-col nzXs="24" nzSm="24" nzMd="6" nzLg="4" nzXl="4">
+              <nz-form-item>
+                <nz-form-label nzNoColon>Is ERP Mapped ?</nz-form-label>
+                <nz-form-control>
+                  <nz-switch
+                    name="status1"
+                    nzCheckedChildren="Yes"
+                    nzUnCheckedChildren="No"
+                    [(ngModel)]="data.IS_ERP_MAPPED"
+                  ></nz-switch>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div
+              *ngIf="data.SCHOOL_STATUS == 'R' || data.SCHOOL_STATUS == 'B'"
+              nz-col
+              nzXs="24"
+              nzSm="24"
+              nzMd="24"
+              nzLg="24"
+              nzXl="24"
+            >
+              <nz-form-item>
+                <nz-form-label nzRequired nzNoColon>
+                  Enter
+                  {{ data.SCHOOL_STATUS == "R" ? "Reject" : "Blocked" }} Remark
+                </nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Please  Enter {{
+                    data.SCHOOL_STATUS == 'R' ? 'Reject' : 'Blocked'
+                  }} Remark"
+                >
+                  <textarea
+                    rows="2"
+                    required
+                    nz-input
+                    maxlength="256"
+                    minlength="2"
+                    name="remark1"
+                    placeholder="Enter Remark"
+                    [(ngModel)]="data.REJECT_BLOCKED_REMARK"
+                  ></textarea>
+                  <span
+                    style="color: red; font-size: 10px"
+                    *ngIf="data.REJECT_BLOCKED_REMARK"
+                    >{{ data.REJECT_BLOCKED_REMARK.length }}/256</span
+                  >
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="8" nzXl="8">
+              <nz-form-item>
+                <nz-form-label nzNoColon class="wrap-label"
+                  >Is class teacher able to take attendance?</nz-form-label
+                >
+                <nz-form-control>
+                  <nz-switch
+                    name="classteacherattendance"
+                    nzCheckedChildren="Yes"
+                    nzUnCheckedChildren="No"
+                    [(ngModel)]="data.C_TEACHER_ATTENDANCE_ENABLED"
+                  ></nz-switch>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="10" nzXl="10">
+              <nz-form-item>
+                <nz-form-label nzNoColon class="wrap-label"
+                  >Is subject teacher able to take attendance?</nz-form-label
+                >
+                <nz-form-control>
+                  <nz-switch
+                    name="subjectteacherattendance"
+                    nzCheckedChildren="Yes"
+                    nzUnCheckedChildren="No"
+                    [(ngModel)]="data.S_TEACHER_ATTENDANCE_ENABLED"
+                  ></nz-switch>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="14" nzLg="10" nzXl="10">
+              <nz-form-item>
+                <nz-form-label nzNoColon>Institution Slogan</nz-form-label>
+                <nz-form-control>
+                  <input
+                    nz-input
+                    [(ngModel)]="data.SLOGAN"
+                    name="slogan"
+                    type="text"
+                    maxlength="128"
+                    placeholder="Enter Institution Slogan..."
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="10" nzLg="9" nzXl="9">
+              <div nz-row>
+                <div nz-col nzSpan="8">
+                  <nz-form-item>
+                    <nz-form-label nzNoColon>Institution Logo</nz-form-label>
+                    <!-- <nz-form-control nzHasFeedback nzErrorTip="Upload Invoice Url"> -->
+                    <div style="color: blue">
+                      <button
+                        nz-button
+                        style="
+                          height: 28px;
+                          padding: 0px 7px;
+                          font-size: 12px;
+                          width: 152px;
+                        "
+                        (click)="fileInput.click()"
+                      >
+                        <span
+                          style="width: 138px"
+                          nz-icon
+                          nzType="upload"
+                          nzTheme="outline"
+                        ></span>
+                        <input
+                          #fileInput
+                          name="invoice"
+                          accept=".jpg, .jpeg, .png"
+                          (change)="onFileSelected($event)"
+                          type="file"
+                          style="display: none"
+                        />
+                      </button>
+                    </div>
+                  </nz-form-item>
+                </div>
+                <div
+                  nz-col
+                  [nzSpan]="
+                    progressBarProfilePhoto &&
+                    percentProfilePhoto < 100 &&
+                    percentProfilePhoto > 0
+                      ? 8
+                      : 0
+                  "
+                >
+                  <span
+                    *ngIf="
+                      data.INSTITUTE_LOGO !== null &&
+                      data.INSTITUTE_LOGO !== undefined &&
+                      data.INSTITUTE_LOGO !== ''
+                    "
+                  >
+                    <div
+                      *ngIf="
+                        progressBarProfilePhoto &&
+                        percentProfilePhoto < 100 &&
+                        percentProfilePhoto > 0
+                      "
+                    >
+                      <nz-progress
+                        style="color: black"
+                        [style.width]="percentProfilePhoto + '%'"
+                        [nzPercent]="percentProfilePhoto"
+                        >{{ percentProfilePhoto }}%</nz-progress
+                      >
+                    </div>
+                  </span>
+                </div>
+
+                <div
+                  nz-col
+                  [nzSpan]="
+                    progressBarProfilePhoto && percentProfilePhoto < 100
+                      ? 8
+                      : 14
+                  "
+                  *ngIf="
+                    data.INSTITUTE_LOGO !== null &&
+                    data.INSTITUTE_LOGO !== undefined &&
+                    data.INSTITUTE_LOGO !== ''
+                  "
+                >
+                  <!-- First row -->
+                  <!-- <div style="display: flex; justify-content: center">
+                  <div
+                    *ngIf="
+                      data.INSTITUTE_LOGO !== null &&
+                      data.INSTITUTE_LOGO !== undefined &&
+                      data.INSTITUTE_LOGO !== ''
+                    "
+                  >
+                    <!-- <img width="70%" nz-image style="    width: 246px;
+                  height: 140px;margin-left: 16px;margin-bottom: 10px;"
+                    src="{{ imgurl }}classWiseTask/{{ ticketData.INSTITUTE_LOGO }}" /> --
+  
+                    <img
+                      class="img"
+                      nz-image
+                      style="border-radius: 5px"
+                      width="100%"
+                      height="100%"
+                      [nzSrc]="taskurl"
+                      alt="No Image Found"
+                    />
+                  </div>
+                </div> -->
+
+                  <!-- Second row -->
+                  <div style="margin: 37px 37px">
+                    <!-- Adjust margin-top as needed -->
+                    {{ data.INSTITUTE_LOGO }}
+                    <span
+                      style="
+                        cursor: pointer;
+                        margin-top: 12px;
+                        padding-left: 7px;
+                      "
+                      nz-popconfirm
+                      nzPopconfirmTitle="Are you sure want delete?"
+                      (nzOnConfirm)="deleteConfirm(data)"
+                      (nzOnCancel)="deleteCancel()"
+                      (nzOnCancel)="deleteCancel()"
+                      nzPopconfirmPlacement="top"
+                    >
+                      <span
+                        nz-icon
+                        nzType="delete"
+                        nzTheme="twotone"
+                        nz-tooltip
+                        nzTooltipTitle="Delete"
+                      >
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nz-spin>
+  </form>
+
+  <div class="footer">
+    <button
+      type="button"
+      nz-button
+      (click)="close()"
+      class="ant-btn"
+      style="margin-right: 8px"
+    >
+      <span>Cancel</span>
+    </button>
+    <button
+      type="button"
+      class="ant-btn ant-btn-primary"
+      *ngIf="!data.ID"
+      nz-button
+      nz-dropdown
+      [nzDropdownMenu]="menu"
+      (click)="save(false, School)"
+    >
+      <span>Save & Close</span>
+    </button>
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+      <ul nz-menu>
+        <li
+          nz-menu-item
+          class="menuc"
+          style="border-radius: 4px; background-color: #40a9ff"
+        >
+          <a style="color: white" (click)="save(true, School)">Save & New</a>
+        </li>
+      </ul>
+    </nz-dropdown-menu>
+    <button
+      type="button"
+      class="ant-btn ant-btn-primary"
+      nz-button
+      [nzLoading]="isSpinning"
+      *ngIf="data.ID"
+      (click)="save(false, School)"
+    >
+      <span>Update & close</span>
+    </button>
+  </div>
+</div>

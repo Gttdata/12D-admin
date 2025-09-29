@@ -1,0 +1,26 @@
+.custom-css-form-item nz-form-item{
+    display: inline-block;
+    margin-bottom: 5px;
+    width: -webkit-fill-available;
+    padding: 0px 10px;
+  }
+
+  h3{
+    text-decoration: underline;
+    font-size: larger;
+    color:#330033;
+
+}
+
+b{
+  color:#955454 !important;
+}
+
+.classCss{
+    height: 100%;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    width: 100%;
+}

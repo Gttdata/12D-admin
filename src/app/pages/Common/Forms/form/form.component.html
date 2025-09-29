@@ -1,0 +1,67 @@
+<div>
+    <form nz-form>
+        <nz-spin [nzSpinning]="isSpinning">
+            <div nz-row>
+                <div nz-col nzSpan="24">
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzNoColon>Parent Form </nz-form-label>
+                        <nz-input-group>
+                            <nz-select name="parent" nzShowSearch style="width: 100%" nzPlaceHolder="Select a parent"
+                                [(ngModel)]="data.PARENT_ID">
+                                <nz-option *ngFor="let form of forms" [nzValue]="form.ID" [nzLabel]="form.NAME">
+                                </nz-option>
+                                <nz-option nzValue="0" nzLabel="None"></nz-option>
+                            </nz-select>
+                        </nz-input-group>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div nz-row>
+                <div nz-col nzSpan="24">
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzNoColon>Name </nz-form-label>
+                        <nz-form-control nzHasFeedback nzErrorTip="Input is required">
+                            <input nz-input name="name" [(ngModel)]="data.NAME" required />
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div nz-row>
+                <div nz-col nzSpan="24">
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzNoColon>Link </nz-form-label>
+                        <nz-form-control nzHasFeedback nzErrorTip="Input is required">
+                            <input nz-input name="link" [(ngModel)]="data.LINK" required />
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div nz-row>
+                <div nz-col nzSpan="24">
+                    <nz-form-item >
+                        <nz-form-label nzRequired nzNoColon>Icon </nz-form-label>
+                        <nz-form-control>
+                            <input nz-input name="icon" [(ngModel)]="data.ICON" />
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+        </nz-spin>
+    </form>
+
+    <div class="footer">
+        <button type="button" nz-button (click)="close()" class="ant-btn"
+            style="margin-right: 8px;"><span>Cancel</span></button>
+        <button type="button" class="ant-btn ant-btn-primary" *ngIf="!data.ID" nz-button nz-dropdown
+            [nzDropdownMenu]="menu" (click)="save(false)"><span>Save & Close</span></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+                <li nz-menu-item class="menuc" style="border-radius: 4px;background-color: #40a9ff;">
+                    <a style="color:white" (click)="save(true)">Save & New</a>
+                </li>
+            </ul>
+        </nz-dropdown-menu>
+        <button type="button" class="ant-btn ant-btn-primary" nz-button [nzLoading]="isSpinning" *ngIf="data.ID"
+            (click)="save(false)"><span>Update & close</span></button>
+    </div>
+</div>

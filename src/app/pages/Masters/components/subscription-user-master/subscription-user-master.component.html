@@ -1,0 +1,195 @@
+<div nz-row nzType="flex">
+    <div nz-col nzXs="24" nzSm="24" nzMd="20" nzLg="20" nzXl="12">
+        <div class="formname">
+            <b> {{ formTitle }} </b>
+        </div>
+    </div>
+
+    <div nz-col nzXs="24" nzSm="24" nzMd="4" nzLg="6" nzXl="12" style="display: flex; justify-content: flex-end">
+        <form nz-form [nzLayout]="'inline'">
+            <nz-form-item>
+                <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                    <input type="text" name="search" (keyup)="keyup($event)" [(ngModel)]="searchText" nz-input
+                        placeholder="Search" />
+                </nz-input-group>
+                <ng-template #suffixIconButton>
+                    <button nz-button nzType="primary" (click)="search(true)" nzSearch>
+                        <i nz-icon nzType="search"></i>
+                    </button>
+                </ng-template>
+            </nz-form-item>
+            <nz-form-item>
+                <button nz-button nzType="primary" (click)="add()" nzJustify="end">
+                    <i nz-icon nzType="plus"></i>Add User Subscription
+                </button>
+            </nz-form-item>
+        </form>
+    </div>
+</div>
+<br />
+<div nz-row>
+    <div nz-col nzSpan="24">
+        <nz-table class="my-scroll no-wrap1" nzBordered #postTable nzShowSizeChanger [nzFrontPagination]="false"
+            [nzData]="dataList" [nzLoading]="loadingRecords" [nzSize]="'small'" [nzTotal]="totalRecords"
+            [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" (nzPageIndexChange)="search()"
+            (nzPageSizeChange)="search(true)" (nzQueryParams)="sort($event)" [nzScroll]="{ x: '800px', y: '55vh' }">
+            <thead>
+                <tr>
+                    <th nzWidth="70px" style="text-align: center"><b>Action</b></th>
+                    <th nzWidth="210px" nzColumnKey="{{ 'SUBSCRIPTION_NAME' }}" style="text-align: center"
+                        [nzSortFn]="true">
+                        <b>Subscription Name </b>
+                    </th>
+
+
+                    <th nzWidth="210px" nzColumnKey="{{ 'TEACHER_NAME' }}" style="text-align: center" [nzSortFn]="true">
+                        <b> Teacher Name </b>
+                    </th>
+
+                    <th nzWidth="210px" nzColumnKey="{{ 'STUDENT_NAME' }}" style="text-align: center" [nzSortFn]="true">
+                        <b> Student Name </b>
+                    </th>
+                    <th nzWidth="210px" nzColumnKey="{{ 'PURCHASE_DATE_NAME' }}" style="text-align: center"
+                        [nzSortFn]="true">
+                        <b> Purchase Date </b>
+                    </th>
+
+                    <th nzWidth="210px" nzColumnKey="{{ 'EXPIRE_DATE_NAME' }}" style="text-align: center"
+                        [nzSortFn]="true">
+                        <b> Expire Date </b>
+                    </th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of postTable.data">
+                    <td style="text-align: center">
+                        <i nz-icon nzType="edit" nz-tooltip nzTooltipTitle="Edit" nzTheme="twotone"
+                            (click)="edit(data)"></i>
+                    </td>
+
+                    <td style="white-space: pre-line;text-align: left;">{{ data["SUBSCRIPTION_NAME"] }}</td>
+                    <td style="white-space: pre-line;text-align: left;">{{ data["TEACHER_NAME"] }}</td>
+
+                    <td style="white-space: pre-line;text-align: left;">{{ data["STUDENT_NAME"] }}</td>
+
+                    <td style="white-space: pre-line; text-align: center">
+                        {{ data["PURCHASE_DATE_NAME"] | date : "dd/MMM/yyyy HH:mm" }}
+                    </td>
+                    <td style="white-space: pre-line; text-align: center">
+                        {{ data["EXPIRE_DATE_NAME"] | date : "dd/MMM/yyyy HH:mm" }}
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+</div>
+<div *ngIf="drawerVisible">
+    <nz-drawer [nzBodyStyle]="{
+        height: 'calc(100% - 55px)',
+        overflow: 'auto',
+        'padding-bottom': '53px'
+      }" [nzClosable]="true" [nzMask]="true" [nzMaskClosable]="false" [nzWidth]="500" [nzVisible]="drawerVisible"
+        [nzTitle]="drawerTitle" (nzOnClose)="drawerClose()" (nzKeyboard)="(true)">
+        <ng-container *nzDrawerContent>
+            <div>
+                <!-- <form nz-form #form32> -->
+                <form nz-form #subscriptionspage="ngForm">
+                    <nz-spin [nzSpinning]="isSpinning">
+                        <div nz-row class="custom-form-item">
+                            <div nz-col nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired nzNoColon> Subscription </nz-form-label>
+                                    <nz-form-control nzHasFeedback nzErrorTip="Please Select Subscription ">
+                                        <nz-select [nzLoading]="subscriptionsload" nzShowSearch nzAllowClear require
+                                            nzPlaceHolder="Select Subscription" name="Subscription"
+                                            [(ngModel)]="drawerData.SUBSCRIPTION_ID" required>
+                                            <nz-option *ngFor="let report of subscriptions" [nzValue]="report.ID"
+                                                [nzLabel]="report.NAME">
+                                            </nz-option>
+                                        </nz-select>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+
+                            <div nz-col nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired nzNoColon> Teacher </nz-form-label>
+                                    <nz-form-control nzHasFeedback nzErrorTip="Please Select Teacher ">
+                                        <nz-select [nzLoading]="Teachersload" nzShowSearch nzAllowClear require
+                                            nzPlaceHolder="Select Teacher" name="Teacher"
+                                            [(ngModel)]="drawerData.TEACHER_ID" required>
+                                            <nz-option *ngFor="let report of Teachers" [nzValue]="report.ID"
+                                                [nzLabel]="report.NAME">
+                                            </nz-option>
+                                        </nz-select>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+
+                            <div nz-col nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired nzNoColon> Student </nz-form-label>
+                                    <nz-form-control nzHasFeedback nzErrorTip="Please Select Student ">
+                                        <nz-select [nzLoading]="Studentsload" nzShowSearch nzAllowClear require
+                                            nzPlaceHolder="Select Student" name="Student"
+                                            [(ngModel)]="drawerData.STUDENT_ID" required>
+                                            <nz-option *ngFor="let report of Students" [nzValue]="report.ID"
+                                                [nzLabel]="report.NAME">
+                                            </nz-option>
+                                        </nz-select>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+
+                            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired nzNoColon>Purchase Date</nz-form-label>
+                                    <nz-form-control nzHasFeedback nzErrorTip="Please Select Purchase Date">
+                                        <nz-date-picker [(ngModel)]="drawerData.PURCHASE_DATE" name="PURCHASE_DATE"
+                                            nzFormat="dd/MMM/yyyy" style="width: 100%" required></nz-date-picker>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+
+                            <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="12">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired nzNoColon>Expire Date</nz-form-label>
+                                    <nz-form-control nzHasFeedback nzErrorTip="Please Select Expire Date">
+                                        <nz-date-picker [(ngModel)]="drawerData.EXPIRE_DATE" name="EXPIRE_DATE"
+                                            nzFormat="dd/MMM/yyyy" style="width: 100%" required></nz-date-picker>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+
+
+                        </div>
+
+                    </nz-spin>
+                </form>
+            </div>
+
+            <div class="footer">
+                <button type="button" nz-button (click)="close()" class="ant-btn" style="margin-right: 8px">
+                    <span>Close</span>
+                </button>
+                <button type="button" class="ant-btn ant-btn-primary" *ngIf="!drawerData.ID" nz-button nz-dropdown
+                    [nzDropdownMenu]="menu" [nzLoading]="isSpinning" (click)="save(false, subscriptionspage)">
+                    <span>Save And Close</span>
+                </button>
+                <nz-dropdown-menu #menu="nzDropdownMenu">
+                    <ul nz-menu>
+                        <li nz-menu-item class="menuc" style="border-radius: 4px; background-color: #40a9ff">
+                            <a style="color: white" (click)="save(true, subscriptionspage)">Save And New</a>
+                        </li>
+                    </ul>
+                </nz-dropdown-menu>
+                <button type="button" class="ant-btn ant-btn-primary" nz-button [nzLoading]="isSpinning"
+                    *ngIf="drawerData.ID" (click)="save(false, subscriptionspage)">
+                    <span>Update And Close</span>
+                </button>
+            </div>
+        </ng-container>
+    </nz-drawer>
+</div>

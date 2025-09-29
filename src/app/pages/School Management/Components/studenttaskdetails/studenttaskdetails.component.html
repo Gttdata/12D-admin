@@ -1,0 +1,327 @@
+<div nz-row nzType="flex">
+  <div nz-col [nzSpan]="roleId == 2 ? 1 : 0" style="margin-top: -5px">
+    <button
+      *ngIf="roleId == 2 && this.currentroute.trim() !== 'admindashboard'"
+      nz-button
+      nz-tooltip
+      nzTooltipTitle="Back To Dashboard"
+      nzType="primary"
+      nzShape="circle"
+      (click)="redirectToAdminDashboard()"
+    >
+      <i nz-icon nzType="arrow-left" nzTheme="outline"> </i>
+    </button>
+  </div>
+  <div nz-col [nzSpan]="roleId == 2 ? 11 : 12" style="text-align: left">
+    <div class="formname">{{ formTitle }}</div>
+  </div>
+
+  <div
+    nz-col
+    nzXs="24"
+    nzSm="24"
+    nzMd="4"
+    nzLg="12"
+    nzXl="12"
+    style="display: flex; justify-content: flex-end"
+  >
+    <form nz-form [nzLayout]="'inline'">
+      <nz-form-item>
+        <button
+          nz-button
+          nz-tooltip
+          nzTooltipTitle="Excel"
+          nzTooltipPlacement="top"
+          (click)="importInExcel()"
+          nzType="primary"
+          style="margin-right: 10px"
+        >
+          <i nz-icon nzType="file-excel" nzTheme="outline"></i>
+        </button>
+        <button
+          nz-button
+          [nzType]="isFilterApplied"
+          (click)="showFilter()"
+          *ngIf="!counttype && !classFilter && !divisionFilter && !yearFilter"
+        >
+          <i nz-icon nzType="filter"></i>
+        </button>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+          <input
+            type="text"
+            name="search"
+            [(ngModel)]="searchText"
+            nz-input
+            (keydown.enter)="onKeypressEvent()"
+            placeholder="Search"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconButton>
+          <button
+            id="button"
+            nz-button
+            nzType="primary"
+            (click)="search(true)"
+            nzSearch
+          >
+            <i nz-icon nzType="search"></i>
+          </button>
+        </ng-template>
+      </nz-form-item>
+    </form>
+  </div>
+</div>
+<br />
+<!--                            ***Table***             -->
+<div nz-row style="margin-bottom: 14px">
+  <div nz-col nzSpan="24">
+    <div class="filter {{ filterClass }}">
+      <div class="filter-box">
+        <form nz-form>
+          <div nz-row nzGutter="8" class="custom-form-item">
+            <div nz-col nzSpan="6">
+              <nz-form-item>
+                <nz-form-label nzNoColon><b>Task </b></nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    nzShowSearch
+                    nzAllowClear
+                    nzShowArrow="true"
+                    nzPlaceHolder="Select Task"
+                    name="task"
+                    [(ngModel)]="taskid"
+                  >
+                    <nz-option
+                      *ngFor="let task of tasks"
+                      [nzValue]="task.ID"
+                      [nzLabel]="task.DESCRIPTION"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <!-- <div nz-col nzSpan="6">
+              <nz-form-item>
+                <nz-form-label nzNoColon><b>Student </b></nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    style="width: 100%"
+                    nzShowArrow="true"
+                    [nzLoading]="studentloading"
+                    nzShowSearch
+                    nzAllowClear
+                    name="student"
+                    [(ngModel)]="studentid"
+                    nzPlaceHolder="Select Student"
+                  >
+                    <nz-option
+                      *ngFor="let data of students"
+                      [nzValue]="data.ID"
+                      [nzLabel]="data.NAME"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div> -->
+
+            <div nz-col nzSpan="8">
+              <nz-form-item
+                style="margin-top: 20px; margin-left: 10px; padding-top: 13px"
+              >
+                <button
+                  style="margin-right: 10px"
+                  nz-button
+                  [nzLoading]="isSpinning"
+                  nzType="primary"
+                  (click)="applyFilter()"
+                  nzJustify="end"
+                >
+                  <i nz-icon nzType="filter"></i>Apply Filter
+                </button>
+
+                <button nz-button nzType="primary" (click)="clearFilter()">
+                  <i nz-icon nzType="filter"></i>Clear Filter
+                </button>
+              </nz-form-item>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <nz-table
+      class="my-scroll no-wrap1"
+      nzBordered
+      #postTable
+      nzShowSizeChanger
+      [nzFrontPagination]="false"
+      [nzData]="dataList"
+      [nzLoading]="loadingRecords"
+      [nzSize]="'small'"
+      [nzTotal]="totalRecords"
+      [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize"
+      (nzPageIndexChange)="search()"
+      (nzPageSizeChange)="search(true)"
+      (nzQueryParams)="sort($event)"
+      [nzScroll]="{ x: '1400px', y: '55vh' }"
+    >
+      <thead>
+        <tr>
+          <th
+            nzWidth="60px"
+            nzColumnKey="{{ 'ASSIGNED_DATE' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b>Assigned Date</b>
+          </th>
+          <th
+            nzWidth="100px"
+            nzColumnKey="{{ 'STUDENT_NAME' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b>Student</b>
+          </th>
+          <th
+            nzWidth="38px"
+            nzColumnKey="{{ 'CLASS_NAME' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b>Class</b>
+          </th>
+          <th
+            nzWidth="38px"
+            nzColumnKey="{{ 'DIVISION_NAME' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b>Division</b>
+          </th>
+          <th
+            nzWidth="150px"
+            nzColumnKey="{{ 'TASK' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Task </b>
+          </th>
+          <th
+            nzWidth="42px"
+            nzColumnKey="{{ 'TYPE' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Task Type</b>
+          </th>
+          <th
+            nzWidth="40px"
+            *ngIf="counttype != ''"
+            nzColumnKey="{{ 'STATUS' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b> Status</b>
+          </th>
+          <th
+            nzWidth="70px"
+            nzColumnKey="{{ 'COMPLETION_DATE_TIME' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b>Completion Date </b>
+          </th>
+          <th
+            nzWidth="70px"
+            nzColumnKey="{{ 'SUBMISSION_DATE' }}"
+            style="text-align: center"
+            [nzSortFn]="true"
+          >
+            <b>Submission Date </b>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of postTable.data">
+          <td style="white-space: pre-line; text-align: center">
+            {{ data["ASSIGNED_DATE"] | date : "dd/MMM/yyyy" }}
+          </td>
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['STUDENT_NAME']"
+          >
+            {{ data["STUDENT_NAME"] }}
+          </td>
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['CLASS_NAME']"
+          >
+            {{ data["CLASS_NAME"] }}
+          </td>
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['DIVISION_NAME']"
+          >
+            {{ data["DIVISION_NAME"] }}
+          </td>
+          <td
+            style="
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: left;
+            "
+            nz-tooltip
+            [nzTooltipTitle]="data['TASK']"
+          >
+            {{ data["TASK"] }}
+          </td>
+          <td style="text-align: left">
+            <span *ngIf="data['TYPE'] == 'CW'">Classwork</span>
+            <span *ngIf="data['TYPE'] == 'HW'">Homework</span>
+            <span *ngIf="data['TYPE'] == 'AS'">Assignment</span>
+          </td>
+          <td style="text-align: left" *ngIf="counttype != ''">
+            <span *ngIf="data['STATUS'] == 'P'">Pending</span>
+            <span *ngIf="data['STATUS'] == 'C'">Completed</span>
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{ data["COMPLETION_DATE_TIME"] | date : "dd/MMM/yyyy" }}
+          </td>
+          <td style="white-space: pre-line; text-align: center">
+            {{ data["SUBMISSION_DATE"] | date : "dd/MMM/yyyy" }}
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+<!--                            ***Form****                   -->

@@ -1,7 +1,5 @@
 export const appkeys = {
   gmUrl: 'http://gm.tecpool.in:8079/',
-  // baseUrl :'https://1387-2405-201-1011-1031-e5cc-518f-efae-ec47.ngrok-free.app/',
-  //   retriveimgUrl: 'https://1387-2405-201-1011-1031-e5cc-518f-efae-ec47.ngrok-free.app/static/',
 
   // // Live
   // baseUrl: 'http://12dimension.uvtechsoft.com:9889/',
